@@ -1,0 +1,40 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ConfigProvider, App as AntdApp } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import MainLayout from './layouts/MainLayout';
+import Dashboard from './pages/Dashboard';
+import Indicators from './pages/Indicators';
+import Portfolio from './pages/Portfolio';
+import Settings from './pages/Settings';
+import './App.css';
+
+const App: React.FC = () => {
+  return (
+    <ConfigProvider
+      locale={zhCN}
+      theme={{
+        token: {
+          colorPrimary: '#1890ff',
+          borderRadius: 6,
+        },
+      }}
+    >
+      <AntdApp>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="indicators" element={<Indicators />} />
+              <Route path="portfolio" element={<Portfolio />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AntdApp>
+    </ConfigProvider>
+  );
+};
+
+export default App;
