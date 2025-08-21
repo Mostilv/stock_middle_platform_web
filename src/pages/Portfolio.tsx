@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
-import { 
-  Card, 
-  Button, 
-  Table, 
-  Tag, 
-  Space, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
+import {
+  Card,
+  Button,
+  Table,
+  Tag,
+  Space,
+  Modal,
+  Form,
+  Input,
+  Select,
   InputNumber,
   message,
   Row,
   Col,
-  Statistic
+  Statistic,
 } from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
   EyeOutlined,
   SwapOutlined,
-  RiseOutlined
+  RiseOutlined,
 } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -48,7 +48,7 @@ const Portfolio: React.FC = () => {
       currentWeight: 15.2,
       targetWeight: 18.0,
       action: 'buy',
-      price: 1688.00,
+      price: 1688.0,
       quantity: 100,
       status: 'pending',
       createdAt: '2024-01-15',
@@ -60,7 +60,7 @@ const Portfolio: React.FC = () => {
       currentWeight: 12.8,
       targetWeight: 10.0,
       action: 'sell',
-      price: 245.60,
+      price: 245.6,
       quantity: 200,
       status: 'completed',
       createdAt: '2024-01-14',
@@ -72,7 +72,7 @@ const Portfolio: React.FC = () => {
       currentWeight: 8.5,
       targetWeight: 8.5,
       action: 'hold',
-      price: 35.20,
+      price: 35.2,
       quantity: 0,
       status: 'completed',
       createdAt: '2024-01-13',
@@ -111,8 +111,10 @@ const Portfolio: React.FC = () => {
       dataIndex: 'action',
       key: 'action',
       render: (action: string) => {
-        const color = action === 'buy' ? 'green' : action === 'sell' ? 'red' : 'blue';
-        const text = action === 'buy' ? '买入' : action === 'sell' ? '卖出' : '持有';
+        const color =
+          action === 'buy' ? 'green' : action === 'sell' ? 'red' : 'blue';
+        const text =
+          action === 'buy' ? '买入' : action === 'sell' ? '卖出' : '持有';
         return <Tag color={color}>{text}</Tag>;
       },
     },
@@ -126,15 +128,25 @@ const Portfolio: React.FC = () => {
       title: '数量',
       dataIndex: 'quantity',
       key: 'quantity',
-      render: (quantity: number) => quantity > 0 ? quantity : '-',
+      render: (quantity: number) => (quantity > 0 ? quantity : '-'),
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => {
-        const color = status === 'completed' ? 'green' : status === 'pending' ? 'orange' : 'red';
-        const text = status === 'completed' ? '已完成' : status === 'pending' ? '待执行' : '已取消';
+        const color =
+          status === 'completed'
+            ? 'green'
+            : status === 'pending'
+              ? 'orange'
+              : 'red';
+        const text =
+          status === 'completed'
+            ? '已完成'
+            : status === 'pending'
+              ? '待执行'
+              : '已取消';
         return <Tag color={color}>{text}</Tag>;
       },
     },
@@ -147,26 +159,26 @@ const Portfolio: React.FC = () => {
       title: '操作',
       key: 'action',
       render: (_: any, record: PortfolioItem) => (
-        <Space size="middle">
-          <Button 
-            type="text" 
-            icon={<EyeOutlined />} 
+        <Space size='middle'>
+          <Button
+            type='text'
+            icon={<EyeOutlined />}
             onClick={() => handleView(record)}
           >
             查看
           </Button>
-          <Button 
-            type="text" 
-            icon={<EditOutlined />} 
+          <Button
+            type='text'
+            icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
             disabled={record.status === 'completed'}
           >
             编辑
           </Button>
-          <Button 
-            type="text" 
-            danger 
-            icon={<DeleteOutlined />} 
+          <Button
+            type='text'
+            danger
+            icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.key)}
             disabled={record.status === 'completed'}
           >
@@ -194,17 +206,41 @@ const Portfolio: React.FC = () => {
       title: `${item.stock} (${item.code}) 调仓详情`,
       content: (
         <div>
-          <p><strong>当前权重：</strong>{item.currentWeight}%</p>
-          <p><strong>目标权重：</strong>{item.targetWeight}%</p>
-          <p><strong>调仓动作：</strong>
-            {item.action === 'buy' ? '买入' : item.action === 'sell' ? '卖出' : '持有'}
+          <p>
+            <strong>当前权重：</strong>
+            {item.currentWeight}%
           </p>
-          <p><strong>价格：</strong>¥{item.price.toFixed(2)}</p>
-          <p><strong>数量：</strong>{item.quantity > 0 ? item.quantity : '-'}</p>
-          <p><strong>状态：</strong>
-            {item.status === 'completed' ? '已完成' : item.status === 'pending' ? '待执行' : '已取消'}
+          <p>
+            <strong>目标权重：</strong>
+            {item.targetWeight}%
           </p>
-          <p><strong>创建时间：</strong>{item.createdAt}</p>
+          <p>
+            <strong>调仓动作：</strong>
+            {item.action === 'buy'
+              ? '买入'
+              : item.action === 'sell'
+                ? '卖出'
+                : '持有'}
+          </p>
+          <p>
+            <strong>价格：</strong>¥{item.price.toFixed(2)}
+          </p>
+          <p>
+            <strong>数量：</strong>
+            {item.quantity > 0 ? item.quantity : '-'}
+          </p>
+          <p>
+            <strong>状态：</strong>
+            {item.status === 'completed'
+              ? '已完成'
+              : item.status === 'pending'
+                ? '待执行'
+                : '已取消'}
+          </p>
+          <p>
+            <strong>创建时间：</strong>
+            {item.createdAt}
+          </p>
         </div>
       ),
     });
@@ -222,14 +258,14 @@ const Portfolio: React.FC = () => {
   };
 
   const handleModalOk = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(values => {
       if (editingItem) {
         // 编辑模式
-        setPortfolioItems(portfolioItems.map(item => 
-          item.key === editingItem.key 
-            ? { ...item, ...values }
-            : item
-        ));
+        setPortfolioItems(
+          portfolioItems.map(item =>
+            item.key === editingItem.key ? { ...item, ...values } : item,
+          ),
+        );
         message.success('更新成功');
       } else {
         // 新增模式
@@ -248,44 +284,46 @@ const Portfolio: React.FC = () => {
 
   // 统计数据
   const totalItems = portfolioItems.length;
-  const pendingItems = portfolioItems.filter(item => item.status === 'pending').length;
-  const completedItems = portfolioItems.filter(item => item.status === 'completed').length;
+  const pendingItems = portfolioItems.filter(
+    item => item.status === 'pending',
+  ).length;
+  const completedItems = portfolioItems.filter(
+    item => item.status === 'completed',
+  ).length;
   const buyItems = portfolioItems.filter(item => item.action === 'buy').length;
-  const sellItems = portfolioItems.filter(item => item.action === 'sell').length;
+  const sellItems = portfolioItems.filter(
+    item => item.action === 'sell',
+  ).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className='space-y-6'>
+      <div className='flex justify-between items-center'>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">调仓管理</h1>
-          <p className="text-gray-600">管理您的投资组合调仓操作</p>
+          <h1 className='text-2xl font-bold text-gray-800'>调仓管理</h1>
+          <p className='text-gray-600'>管理您的投资组合调仓操作</p>
         </div>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={handleAdd}
-        >
+        <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
           新建调仓
         </Button>
       </div>
 
       {/* 统计卡片 */}
-      <Row gutter={16} className="mb-6">
+      <Row gutter={16} className='mb-6'>
         <Col span={6}>
           <Card>
             <Statistic
-              title="总调仓数"
+              title='总调仓数'
               value={totalItems}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
             />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
             <Statistic
-              title="待执行"
+              title='待执行'
               value={pendingItems}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: 'var(--ant-color-warning)' }}
               suffix={<SwapOutlined />}
             />
           </Card>
@@ -293,9 +331,9 @@ const Portfolio: React.FC = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="已完成"
+              title='已完成'
               value={completedItems}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
               suffix={<RiseOutlined />}
             />
           </Card>
@@ -303,23 +341,23 @@ const Portfolio: React.FC = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="买入/卖出"
+              title='买入/卖出'
               value={`${buyItems}/${sellItems}`}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: 'var(--ant-color-purple)' }}
             />
           </Card>
         </Col>
       </Row>
 
       <Card>
-        <Table 
-          columns={columns} 
+        <Table
+          columns={columns}
           dataSource={portfolioItems}
           pagination={{
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条记录`,
+            showTotal: total => `共 ${total} 条记录`,
           }}
         />
       </Card>
@@ -333,105 +371,102 @@ const Portfolio: React.FC = () => {
       >
         <Form
           form={form}
-          layout="vertical"
+          layout='vertical'
           initialValues={{ action: 'hold', status: 'pending' }}
         >
           <Form.Item
-            name="stock"
-            label="股票名称"
+            name='stock'
+            label='股票名称'
             rules={[{ required: true, message: '请输入股票名称' }]}
           >
-            <Input placeholder="请输入股票名称" />
+            <Input placeholder='请输入股票名称' />
           </Form.Item>
 
           <Form.Item
-            name="code"
-            label="股票代码"
+            name='code'
+            label='股票代码'
             rules={[{ required: true, message: '请输入股票代码' }]}
           >
-            <Input placeholder="请输入股票代码" />
+            <Input placeholder='请输入股票代码' />
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="currentWeight"
-                label="当前权重(%)"
+                name='currentWeight'
+                label='当前权重(%)'
                 rules={[{ required: true, message: '请输入当前权重' }]}
               >
-                <InputNumber 
-                  min={0} 
-                  max={100} 
-                  placeholder="当前权重"
-                  style={{ width: '100%' }}
+                <InputNumber
+                  min={0}
+                  max={100}
+                  placeholder='当前权重'
+                  className='form-input-full-width'
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="targetWeight"
-                label="目标权重(%)"
+                name='targetWeight'
+                label='目标权重(%)'
                 rules={[{ required: true, message: '请输入目标权重' }]}
               >
-                <InputNumber 
-                  min={0} 
-                  max={100} 
-                  placeholder="目标权重"
-                  style={{ width: '100%' }}
+                <InputNumber
+                  min={0}
+                  max={100}
+                  placeholder='目标权重'
+                  className='form-input-full-width'
                 />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item
-            name="action"
-            label="调仓动作"
+            name='action'
+            label='调仓动作'
             rules={[{ required: true, message: '请选择调仓动作' }]}
           >
-            <Select placeholder="请选择调仓动作">
-              <Option value="buy">买入</Option>
-              <Option value="sell">卖出</Option>
-              <Option value="hold">持有</Option>
+            <Select placeholder='请选择调仓动作'>
+              <Option value='buy'>买入</Option>
+              <Option value='sell'>卖出</Option>
+              <Option value='hold'>持有</Option>
             </Select>
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="price"
-                label="价格"
+                name='price'
+                label='价格'
                 rules={[{ required: true, message: '请输入价格' }]}
               >
-                <InputNumber 
-                  min={0} 
-                  placeholder="价格"
-                  style={{ width: '100%' }}
+                <InputNumber
+                  min={0}
+                  placeholder='价格'
+                  className='form-input-full-width'
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="quantity"
-                label="数量"
+                name='quantity'
+                label='数量'
                 rules={[{ required: true, message: '请输入数量' }]}
               >
-                <InputNumber 
-                  min={0} 
-                  placeholder="数量"
-                  style={{ width: '100%' }}
+                <InputNumber
+                  min={0}
+                  placeholder='数量'
+                  className='form-input-full-width'
                 />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
-            name="status"
-            label="状态"
-          >
+          <Form.Item name='status' label='状态'>
             <Select>
-              <Option value="pending">待执行</Option>
-              <Option value="completed">已完成</Option>
-              <Option value="cancelled">已取消</Option>
+              <Option value='pending'>待执行</Option>
+              <Option value='completed'>已完成</Option>
+              <Option value='cancelled'>已取消</Option>
             </Select>
           </Form.Item>
         </Form>
@@ -441,4 +476,3 @@ const Portfolio: React.FC = () => {
 };
 
 export default Portfolio;
-

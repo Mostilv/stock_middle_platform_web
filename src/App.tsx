@@ -1,15 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { ConfigProvider, App as AntdApp } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-import MainLayout from './layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
+import MainLayout from './components/Layout';
+import Dashboard from './components/Dashboard';
 import Indicators from './pages/Indicators';
 import Portfolio from './pages/Portfolio';
 import Settings from './pages/Settings';
 import './App.css';
 
-const App: React.FC = () => {
+const App: React.FC = (): JSX.Element => {
   return (
     <ConfigProvider
       locale={zhCN}
@@ -23,12 +28,12 @@ const App: React.FC = () => {
       <AntdApp>
         <Router>
           <Routes>
-            <Route path="/" element={<MainLayout />}>
+            <Route path='/' element={<MainLayout />}>
               <Route index element={<Dashboard />} />
-              <Route path="indicators" element={<Indicators />} />
-              <Route path="portfolio" element={<Portfolio />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path='indicators' element={<Indicators />} />
+              <Route path='portfolio' element={<Portfolio />} />
+              <Route path='settings' element={<Settings />} />
+              <Route path='*' element={<Navigate to='/' replace />} />
             </Route>
           </Routes>
         </Router>

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { 
-  Card, 
-  Button, 
-  Table, 
-  Tag, 
-  Space, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
-  message 
+import {
+  Card,
+  Button,
+  Table,
+  Tag,
+  Space,
+  Modal,
+  Form,
+  Input,
+  Select,
+  message,
 } from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
-  EyeOutlined 
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -62,7 +62,9 @@ const Indicators: React.FC = () => {
   ]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(null);
+  const [editingIndicator, setEditingIndicator] = useState<Indicator | null>(
+    null,
+  );
   const [form] = Form.useForm();
 
   const columns = [
@@ -82,9 +84,7 @@ const Indicators: React.FC = () => {
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => (
-        <Tag color={type === '技术指标' ? 'blue' : 'green'}>
-          {type}
-        </Tag>
+        <Tag color={type === '技术指标' ? 'blue' : 'green'}>{type}</Tag>
       ),
     },
     {
@@ -106,25 +106,25 @@ const Indicators: React.FC = () => {
       title: '操作',
       key: 'action',
       render: (_: any, record: Indicator) => (
-        <Space size="middle">
-          <Button 
-            type="text" 
-            icon={<EyeOutlined />} 
+        <Space size='middle'>
+          <Button
+            type='text'
+            icon={<EyeOutlined />}
             onClick={() => handleView(record)}
           >
             查看
           </Button>
-          <Button 
-            type="text" 
-            icon={<EditOutlined />} 
+          <Button
+            type='text'
+            icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
             编辑
           </Button>
-          <Button 
-            type="text" 
-            danger 
-            icon={<DeleteOutlined />} 
+          <Button
+            type='text'
+            danger
+            icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.key)}
           >
             删除
@@ -151,11 +151,26 @@ const Indicators: React.FC = () => {
       title: indicator.name,
       content: (
         <div>
-          <p><strong>描述：</strong>{indicator.description}</p>
-          <p><strong>类型：</strong>{indicator.type}</p>
-          <p><strong>公式：</strong>{indicator.formula}</p>
-          <p><strong>状态：</strong>{indicator.status === 'active' ? '启用' : '禁用'}</p>
-          <p><strong>创建时间：</strong>{indicator.createdAt}</p>
+          <p>
+            <strong>描述：</strong>
+            {indicator.description}
+          </p>
+          <p>
+            <strong>类型：</strong>
+            {indicator.type}
+          </p>
+          <p>
+            <strong>公式：</strong>
+            {indicator.formula}
+          </p>
+          <p>
+            <strong>状态：</strong>
+            {indicator.status === 'active' ? '启用' : '禁用'}
+          </p>
+          <p>
+            <strong>创建时间：</strong>
+            {indicator.createdAt}
+          </p>
         </div>
       ),
     });
@@ -173,14 +188,14 @@ const Indicators: React.FC = () => {
   };
 
   const handleModalOk = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(values => {
       if (editingIndicator) {
         // 编辑模式
-        setIndicators(indicators.map(item => 
-          item.key === editingIndicator.key 
-            ? { ...item, ...values }
-            : item
-        ));
+        setIndicators(
+          indicators.map(item =>
+            item.key === editingIndicator.key ? { ...item, ...values } : item,
+          ),
+        );
         message.success('更新成功');
       } else {
         // 新增模式
@@ -198,30 +213,26 @@ const Indicators: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className='space-y-6'>
+      <div className='flex justify-between items-center'>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">自定义指标</h1>
-          <p className="text-gray-600">管理和创建您的自定义技术指标</p>
+          <h1 className='text-2xl font-bold text-gray-800'>自定义指标</h1>
+          <p className='text-gray-600'>管理和创建您的自定义技术指标</p>
         </div>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={handleAdd}
-        >
+        <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
           新建指标
         </Button>
       </div>
 
       <Card>
-        <Table 
-          columns={columns} 
+        <Table
+          columns={columns}
           dataSource={indicators}
           pagination={{
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条记录`,
+            showTotal: total => `共 ${total} 条记录`,
           }}
         />
       </Card>
@@ -235,58 +246,52 @@ const Indicators: React.FC = () => {
       >
         <Form
           form={form}
-          layout="vertical"
+          layout='vertical'
           initialValues={{ status: 'active' }}
         >
           <Form.Item
-            name="name"
-            label="指标名称"
+            name='name'
+            label='指标名称'
             rules={[{ required: true, message: '请输入指标名称' }]}
           >
-            <Input placeholder="请输入指标名称" />
+            <Input placeholder='请输入指标名称' />
           </Form.Item>
 
           <Form.Item
-            name="description"
-            label="描述"
+            name='description'
+            label='描述'
             rules={[{ required: true, message: '请输入指标描述' }]}
           >
-            <Input.TextArea 
-              rows={3} 
-              placeholder="请输入指标描述"
-            />
+            <Input.TextArea rows={3} placeholder='请输入指标描述' />
           </Form.Item>
 
           <Form.Item
-            name="type"
-            label="类型"
+            name='type'
+            label='类型'
             rules={[{ required: true, message: '请选择指标类型' }]}
           >
-            <Select placeholder="请选择指标类型">
-              <Option value="技术指标">技术指标</Option>
-              <Option value="自定义">自定义</Option>
-              <Option value="基本面">基本面</Option>
+            <Select placeholder='请选择指标类型'>
+              <Option value='技术指标'>技术指标</Option>
+              <Option value='自定义'>自定义</Option>
+              <Option value='基本面'>基本面</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="formula"
-            label="计算公式"
+            name='formula'
+            label='计算公式'
             rules={[{ required: true, message: '请输入计算公式' }]}
           >
-            <Input.TextArea 
-              rows={3} 
-              placeholder="请输入计算公式，例如：RSI = 100 - (100 / (1 + RS))"
+            <Input.TextArea
+              rows={3}
+              placeholder='请输入计算公式，例如：RSI = 100 - (100 / (1 + RS))'
             />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="状态"
-          >
+          <Form.Item name='status' label='状态'>
             <Select>
-              <Option value="active">启用</Option>
-              <Option value="inactive">禁用</Option>
+              <Option value='active'>启用</Option>
+              <Option value='inactive'>禁用</Option>
             </Select>
           </Form.Item>
         </Form>
@@ -296,4 +301,3 @@ const Indicators: React.FC = () => {
 };
 
 export default Indicators;
-
