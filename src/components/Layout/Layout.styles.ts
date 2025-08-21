@@ -16,9 +16,9 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   bottom: 0;
   z-index: ${theme.zIndex.sider};
   overflow: hidden;
-  transition: left ${theme.transitions.default};
   left: ${({ $collapsed }) => ($collapsed ? '-200px' : '0')};
-
+  transition: all 0.3s ease;
+  
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
