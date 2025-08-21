@@ -13,13 +13,14 @@ import {
   TimeDisplay,
   ChartCard,
   SmallChartCard,
+  CombinedSmallCharts,
 } from './Dashboard.styles';
 
-const { RangePicker } = DatePicker;
 
 const Dashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   // 实时时间更新
   useEffect(() => {
@@ -266,62 +267,60 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  // 中间上方图表 - 行业宽度矩阵图
+  // 生成最近N天日期，最后一天为今天
+  const generateRecentDates = (days: number) => {
+    const result: string[] = [];
+    const now = selectedDate ? new Date(selectedDate) : new Date();
+    for (let i = days - 1; i >= 0; i -= 1) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      const mm = `${d.getMonth() + 1}`.padStart(2, '0');
+      const dd = `${d.getDate()}`.padStart(2, '0');
+      result.push(`${mm}-${dd}`);
+    }
+    return result;
+  };
+
+  // 中间上方图表 - 行业宽度矩阵图（可横向滚动，默认右端对齐到今天）
+  const dateLabels = generateRecentDates(60);
+  const industries = ['银行', '科技', '消费', '医药', '金融', '地产', '能源', '材料'];
+  const widthData: [number, number, number][] = [];
+  for (let i = 0; i < dateLabels.length; i += 1) {
+    for (let j = 0; j < industries.length; j += 1) {
+      const base = 50 + 30 * Math.sin(i / 6 + j);
+      const val = Math.max(0, Math.min(100, Math.round(base)));
+      widthData.push([i, j, val]);
+    }
+  }
+
   const industryWidthOption = {
     backgroundColor: 'transparent',
-    grid: { left: 60, right: 20, top: 30, bottom: 30 },
-    tooltip: { 
-      trigger: 'axis' as const,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      borderColor: '#1890ff',
-      textStyle: { color: '#e6f7ff' }
-    },
+    grid: { left: 60, right: 10, top: 10, bottom: 30 },
+    tooltip: { show: false },
     xAxis: {
       type: 'category' as const,
-      data: ['01-01', '01-02', '01-03', '01-04', '01-05', '01-08', '01-09', '01-10', '01-11', '01-12'],
+      data: dateLabels,
       axisLine: { lineStyle: { color: '#4a5568' } },
-      axisLabel: { color: '#e6f7ff' }
+      axisLabel: { color: '#e6f7ff', fontSize: 10, rotate: 45 },
     },
-    yAxis: { 
+    yAxis: {
       type: 'category' as const,
-      data: ['银行', '科技', '消费', '医药', '金融', '地产', '能源', '材料'],
+      data: industries,
       axisLine: { lineStyle: { color: '#4a5568' } },
-      axisLabel: { color: '#e6f7ff' }
+      axisLabel: { color: '#e6f7ff', fontSize: 10 },
     },
-    visualMap: {
-      min: 0,
-      max: 100,
-      calculable: true,
-      orient: 'horizontal' as const,
-      left: 'center',
-      bottom: '0%',
-      inRange: {
-        color: ['#52c41a', '#faad14', '#f5222d']
-      },
-      textStyle: { color: '#e6f7ff' }
-    },
+    visualMap: { show: false, min: 0, max: 100, inRange: { color: ['rgba(0,100,0,0.35)', 'rgba(139,0,0,0.35)'] } },
+    dataZoom: [
+      { type: 'inside' as const, xAxisIndex: 0, filterMode: 'weakFilter' as const, zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: true, start: 60, end: 100 },
+      { type: 'slider' as const, xAxisIndex: 0, bottom: 6, height: 12, brushSelect: false },
+    ],
     series: [
       {
         type: 'heatmap' as const,
-        data: [
-          [0, 0, 85], [1, 0, 88], [2, 0, 92], [3, 0, 90], [4, 0, 95], [5, 0, 98], [6, 0, 100], [7, 0, 102], [8, 0, 99], [9, 0, 96],
-          [0, 1, 65], [1, 1, 68], [2, 1, 72], [3, 1, 70], [4, 1, 75], [5, 1, 78], [6, 1, 80], [7, 1, 82], [8, 1, 79], [9, 1, 76],
-          [0, 2, 45], [1, 2, 48], [2, 2, 52], [3, 2, 50], [4, 2, 55], [5, 2, 58], [6, 2, 60], [7, 2, 62], [8, 2, 59], [9, 2, 56],
-          [0, 3, 25], [1, 3, 28], [2, 3, 32], [3, 3, 30], [4, 3, 35], [5, 3, 38], [6, 3, 40], [7, 3, 42], [8, 3, 39], [9, 3, 36],
-          [0, 4, 15], [1, 4, 18], [2, 4, 22], [3, 4, 20], [4, 4, 25], [5, 4, 28], [6, 4, 30], [7, 4, 32], [8, 4, 29], [9, 4, 26],
-          [0, 5, 35], [1, 5, 38], [2, 5, 42], [3, 5, 40], [4, 5, 45], [5, 5, 48], [6, 5, 50], [7, 5, 52], [8, 5, 49], [9, 5, 46],
-          [0, 6, 55], [1, 6, 58], [2, 6, 62], [3, 6, 60], [4, 6, 65], [5, 6, 68], [6, 6, 70], [7, 6, 72], [8, 6, 69], [9, 6, 66],
-          [0, 7, 75], [1, 7, 78], [2, 7, 82], [3, 7, 80], [4, 7, 85], [5, 7, 88], [6, 7, 90], [7, 7, 92], [8, 7, 89], [9, 7, 86],
-        ],
-        label: {
-          show: false
-        },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
+        data: widthData,
+        label: { show: true, formatter: ({ value }: any) => (Array.isArray(value) ? value[2] : value), color: 'rgba(230,247,255,0.9)', fontSize: 10, animation: false },
+        progressive: 0,
+        emphasis: { disabled: true },
       },
     ],
   };
@@ -401,11 +400,11 @@ const Dashboard: React.FC = () => {
     setShowDatePicker(!showDatePicker);
   };
 
-  const handleTimeRangeChange = (dates: any) => {
-    if (dates) {
-      console.log('时间范围改变:', dates[0].toDate(), dates[1].toDate());
-      setShowDatePicker(false);
+  const handleDateChange = (date: any) => {
+    if (date) {
+      setSelectedDate(date.toDate());
     }
+    setShowDatePicker(false);
   };
 
   return (
@@ -417,8 +416,12 @@ const Dashboard: React.FC = () => {
           <span onClick={handleTimeClick}>{formatTime(currentTime)}</span>
         </Space>
         {showDatePicker && (
-          <RangePicker 
-            onChange={handleTimeRangeChange}
+          <DatePicker 
+            autoFocus
+            open={showDatePicker}
+            onOpenChange={(open) => setShowDatePicker(open)}
+            getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
+            onChange={handleDateChange}
             style={{ 
               backgroundColor: 'rgba(0, 0, 0, 0.3)',
               border: '1px solid #1890ff',
@@ -433,10 +436,10 @@ const Dashboard: React.FC = () => {
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <IndicatorCard>
-              <Statistic
+          <Statistic
                 title="上证指数"
                 value={marketData.shanghaiIndex}
-                precision={2}
+            precision={2}
                 valueStyle={{ color: marketData.shanghaiChange >= 0 ? '#52c41a' : '#ff4d4f' }}
                 prefix={marketData.shanghaiChange >= 0 ? <RiseOutlined /> : <FallOutlined />}
                 suffix={
@@ -449,10 +452,10 @@ const Dashboard: React.FC = () => {
           </Col>
           <Col span={6}>
             <IndicatorCard>
-              <Statistic
+          <Statistic
                 title="纳指"
                 value={marketData.nasdaqIndex}
-                precision={2}
+            precision={2}
                 valueStyle={{ color: marketData.nasdaqChange >= 0 ? '#52c41a' : '#ff4d4f' }}
                 prefix={marketData.nasdaqChange >= 0 ? <RiseOutlined /> : <FallOutlined />}
                 suffix={
@@ -465,10 +468,10 @@ const Dashboard: React.FC = () => {
           </Col>
           <Col span={6}>
             <IndicatorCard>
-              <Statistic
+          <Statistic
                 title="黄金"
                 value={marketData.goldIndex}
-                precision={2}
+            precision={2}
                 valueStyle={{ color: marketData.goldChange >= 0 ? '#52c41a' : '#ff4d4f' }}
                 prefix={marketData.goldChange >= 0 ? <RiseOutlined /> : <FallOutlined />}
                 suffix={
@@ -481,7 +484,7 @@ const Dashboard: React.FC = () => {
           </Col>
           <Col span={6}>
             <IndicatorCard>
-              <Statistic
+          <Statistic
                 title="中证2000"
                 value={marketData.zhongzheng2000Index}
                 precision={2}
@@ -512,11 +515,11 @@ const Dashboard: React.FC = () => {
 
         {/* 中间图表区域 */}
         <CenterCharts>
-          <ChartCard style={{ marginBottom: '16px' }}>
+          <ChartCard $transparent>
             <h3>行业宽度</h3>
             <EChart height={200} option={industryWidthOption} />
           </ChartCard>
-          <ChartCard>
+          <ChartCard $transparent>
             <h3>行业动量</h3>
             <EChart height={200} option={industryMomentumOption} />
           </ChartCard>
@@ -532,6 +535,16 @@ const Dashboard: React.FC = () => {
           ))}
         </RightCharts>
       </MainContent>
+
+      {/* 窄屏时，合并六个小图为2x3网格排列在最下方 */}
+      <CombinedSmallCharts>
+        {[...leftChartOptions, ...rightChartOptions].map((chart, index) => (
+          <SmallChartCard key={`combined-${index}`}>
+            <h4>{chart.title}</h4>
+            <EChart height={120} option={(chart as any).option} />
+          </SmallChartCard>
+        ))}
+      </CombinedSmallCharts>
     </DashboardContainer>
   );
 };

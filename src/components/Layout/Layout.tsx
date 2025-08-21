@@ -59,7 +59,7 @@ const LayoutComponent: React.FC = () => {
         width={200}
       >
         <LogoContainer $collapsed={collapsed}>
-          {collapsed ? 'A股' : 'A股指标平台'}
+          {collapsed ? 'A股' : 'S'}
         </LogoContainer>
         <Menu
           theme='dark'
@@ -73,7 +73,14 @@ const LayoutComponent: React.FC = () => {
         {/* 固定在左上角的按钮 */}
         <HeaderButton 
           $collapsed={collapsed}
-          onClick={() => setCollapsed(!collapsed)}
+          $isDashboard={location.pathname === '/'}
+          onClick={() => {
+            setCollapsed(!collapsed);
+            // 通知窗口变化，强制子图表重算布局，避免展开后不变窄
+            setTimeout(() => {
+              window.dispatchEvent(new Event('resize'));
+            }, 200);
+          }}
         >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </HeaderButton>

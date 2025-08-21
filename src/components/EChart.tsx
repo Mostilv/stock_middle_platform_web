@@ -34,18 +34,25 @@ const EChart: React.FC<EChartProps> = ({
     });
     resizeObserver.observe(containerRef.current);
 
+    const handleWindowResize = () => {
+      chartInstance.resize();
+    };
+    window.addEventListener('resize', handleWindowResize);
+
     return () => {
       resizeObserver.disconnect();
+      window.removeEventListener('resize', handleWindowResize);
       chartInstance.dispose();
       chartRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme, renderer]);
 
-  // 响应配置变更
+  // 响应容器与option变更（避免频繁重绘造成闪烁）
   useEffect(() => {
     if (chartRef.current) {
-      chartRef.current.setOption(option, { notMerge: true, lazyUpdate: true });
+      chartRef.current.setOption(option, { notMerge: false, lazyUpdate: true, replaceMerge: [] });
+      chartRef.current.resize();
     }
   }, [option]);
 
@@ -55,6 +62,7 @@ const EChart: React.FC<EChartProps> = ({
       className={className}
       style={{
         width: '100%',
+        minWidth: 0,
         height: typeof height === 'number' ? `${height}px` : height,
       }}
     />

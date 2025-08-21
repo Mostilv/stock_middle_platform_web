@@ -59,28 +59,33 @@ export const HeaderContainer = styled(AntHeader)`
 `;
 
 // 头部按钮 - 固定在子页面左上角
-export const HeaderButton = styled.button<{ $collapsed: boolean }>`
+export const HeaderButton = styled.button<{ $collapsed: boolean; $isDashboard?: boolean }>`
   position: fixed;
-  top: 16px;
-  left: ${({ $collapsed }) => ($collapsed ? '16px' : '216px')};
+  top: 10px;
+  left: ${({ $collapsed }) => ($collapsed ? '10px' : '210px')};
   z-index: ${theme.zIndex.sider + 1};
   font-size: 16px;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border: none;
-  background: transparent;
+  background: ${({ $isDashboard }) => ($isDashboard ? 'rgba(255,255,255,0.1)' : 'transparent')};
   border-radius: ${theme.borderRadius.md};
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  color: ${({ $isDashboard }) => ($isDashboard ? '#e6f7ff' : '#333')};
+
+  &:hover {
+    background: ${({ $isDashboard }) => ($isDashboard ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.04)')};
+  }
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     top: 8px;
     left: 8px;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
   }
 `;
 
@@ -94,15 +99,15 @@ export const HeaderTitle = styled.span`
 
 // 内容容器 - 为固定按钮留出空间
 export const ContentContainer = styled(AntContent)`
-  margin: 12px 16px;
-  padding: 0px 12px 12px 12px; /* 顶部padding增加，为固定按钮留出空间 */
+  margin: 0;
+  padding: 0; /* 子页面内部自行控制外侧间距 */
   min-height: 280px;
-  background: white;
-  border-radius: ${theme.borderRadius.lg};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: transparent; /* 去掉全局白底和边框阴影，避免首页白边 */
+  border-radius: 0;
+  box-shadow: none;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
-    margin: 16px 8px;
-    padding: 60px 16px 16px 16px; /* 移动端减少顶部padding */
+    margin: 0;
+    padding: 0;
   }
 `;

@@ -6,7 +6,7 @@ export const DashboardContainer = styled.div`
   min-height: 100vh;
   color: #e6f7ff;
   font-family: 'Microsoft YaHei', sans-serif;
-  overflow: hidden;
+  overflow: auto; /* 允许页面滚动，不固定，避免内容被遮挡 */
 `;
 
 export const DashboardHeader = styled.div`
@@ -29,18 +29,13 @@ export const DashboardHeader = styled.div`
 
 // 顶部时间显示
 export const TimeDisplay = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
+  position: relative; /* 不再固定，随内容布局 */
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 12px;
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #1890ff;
-  border-radius: 6px;
-  backdrop-filter: blur(10px);
+  padding: 16px 20px 0 20px; /* 放在页面右上角，但不覆盖内容 */
+  z-index: 1;
 
   span {
     color: #e6f7ff;
@@ -66,35 +61,48 @@ export const TimeDisplay = styled.div`
       color: #1890ff !important;
     }
   }
+
+  /* 隐藏触发器，仅显示弹层面板 */
+  .hidden-picker {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
 `;
 
 // 顶部数字指标
 export const TopIndicators = styled.div`
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 20px 16px 8px 16px; /* 上方更大，下方更小 */
+  margin-bottom: 8px;
+  margin-top: 12px;
 
   .ant-col {
     .ant-statistic {
       .ant-statistic-title {
         color: #a0aec0 !important;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
+        margin-bottom: 2px;
       }
       
       .ant-statistic-content {
         color: #e6f7ff !important;
-        font-size: 24px;
-        font-weight: bold;
+        font-size: 20px;
+        font-weight: 700;
       }
     }
   }
 `;
 
 export const IndicatorCard = styled.div`
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #1890ff;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(42, 59, 77, 0.8); /* 深色系，不用绿色 */
   border-radius: 12px;
-  padding: 20px;
+  padding: 12px;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   position: relative;
@@ -106,45 +114,48 @@ export const IndicatorCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #1890ff, #52c41a);
+    height: 0px; /* 去除顶部彩色装饰 */
+    background: transparent;
   }
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(24, 144, 255, 0.3);
-    border-color: #52c41a;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    border-color: rgba(42, 59, 77, 0.9);
   }
 
   .ant-statistic {
     .ant-statistic-title {
       color: #a0aec0 !important;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
     }
     
     .ant-statistic-content {
       color: #e6f7ff !important;
-      font-size: 28px;
-      font-weight: bold;
-      line-height: 1.2;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
     }
   }
 `;
 
 // 主要内容区域
 export const MainContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 20px;
-  height: calc(100vh - 200px);
-  padding: 0 20px 20px 20px;
+  display: flex; /* 使用flex布局 */
+  gap: 12px;
+  height: calc(100vh - 180px); /* 更紧凑 */
+  padding: 0 16px 16px 16px;
+  min-width: 0;
 
   @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
     height: auto;
+  }
+  
+  /* 窄屏：中间图表置顶，左右小图表置于下方 */
+  @media (max-width: 992px) {
+    display: block;
   }
 `;
 
@@ -154,6 +165,13 @@ export const LeftCharts = styled.div`
   flex-direction: column;
   gap: 16px;
   height: 100%;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
 `;
 
 // 中间图表区域
@@ -161,6 +179,15 @@ export const CenterCharts = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: 12px;
+  flex: 2 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  
+  & > div { /* 内部两个图表按比例分配高度 */
+    flex: 1 1 0;
+    min-height: 0;
+  }
 `;
 
 // 右侧三个小折线图
@@ -169,19 +196,27 @@ export const RightCharts = styled.div`
   flex-direction: column;
   gap: 16px;
   height: 100%;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
 `;
 
 // 图表卡片
-export const ChartCard = styled.div`
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #1890ff;
+export const ChartCard = styled.div<{ $transparent?: boolean }>`
+  background: ${({ $transparent }) => ($transparent ? 'transparent' : 'rgba(0, 0, 0, 0.28)')};
+  border: ${({ $transparent }) => ($transparent ? 'none' : '1px solid rgba(42, 59, 77, 0.8)')};
   border-radius: 12px;
-  padding: 20px;
+  padding: 14px;
   backdrop-filter: blur(10px);
   height: 100%;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 
   &::before {
     content: '';
@@ -189,20 +224,20 @@ export const ChartCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #1890ff, #52c41a);
+    height: 0px; /* 去除顶部彩线 */
+    background: transparent;
   }
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(24, 144, 255, 0.3);
+    box-shadow: ${({ $transparent }) => ($transparent ? 'none' : '0 8px 25px rgba(0, 0, 0, 0.25)')};
   }
 
   h3 {
     color: #e6f7ff;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     text-align: center;
     position: relative;
     
@@ -224,16 +259,36 @@ export const ChartCard = styled.div`
   }
 `;
 
+// 合并小图容器（窄屏使用）
+export const CombinedSmallCharts = styled.div`
+  display: none;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 20px 20px 20px;
+
+  @media (max-width: 992px) {
+    display: grid;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; /* 极窄屏单列 */
+  }
+`;
+
 // 小图表卡片
 export const SmallChartCard = styled.div`
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #1890ff;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(42, 59, 77, 0.8);
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 
   &::before {
     content: '';
@@ -241,25 +296,25 @@ export const SmallChartCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #1890ff, #52c41a);
+    height: 0px;
+    background: transparent;
   }
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
   }
 
   h4 {
     color: #e6f7ff;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
     text-align: center;
   }
 
   .echarts-for-react {
-    height: calc(100% - 30px) !important;
+    height: calc(100% - 24px) !important;
   }
 `;
 
