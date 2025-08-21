@@ -59,7 +59,7 @@ const LayoutComponent: React.FC = () => {
         width={200}
       >
         <LogoContainer $collapsed={collapsed}>
-          {collapsed ? 'A股' : 'S'}
+          {collapsed ? 'A股' : 'SOHA价投'}
         </LogoContainer>
         <Menu
           theme='dark'
