@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, Statistic, Progress, Table } from 'antd';
+import EChart from '../components/EChart';
 import { 
   ArrowUpOutlined, 
   ArrowDownOutlined,
@@ -127,7 +128,7 @@ const Dashboard: React.FC = () => {
         </Col>
       </Row>
 
-      {/* 资产配置 */}
+      {/* 资产配置 + 示例图表 */}
       <Row gutter={16} className="mb-6">
         <Col span={12}>
           <Card title="资产配置" className="h-80">
@@ -157,37 +158,28 @@ const Dashboard: React.FC = () => {
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="行业分布" className="h-80">
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>消费</span>
-                  <span>30%</span>
-                </div>
-                <Progress percent={30} strokeColor="#722ed1" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>科技</span>
-                  <span>25%</span>
-                </div>
-                <Progress percent={25} strokeColor="#eb2f96" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>金融</span>
-                  <span>20%</span>
-                </div>
-                <Progress percent={20} strokeColor="#13c2c2" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>其他</span>
-                  <span>25%</span>
-                </div>
-                <Progress percent={25} strokeColor="#fa8c16" />
-              </div>
-            </div>
+          <Card title="行业分布（示例图表）" className="h-80">
+            <EChart
+              height={280}
+              option={{
+                grid: { left: 40, right: 20, top: 30, bottom: 30 },
+                tooltip: { trigger: 'axis' },
+                xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                },
+                yAxis: { type: 'value' },
+                series: [
+                  {
+                    type: 'line',
+                    smooth: true,
+                    areaStyle: {},
+                    data: [120, 132, 101, 134, 90],
+                  },
+                ],
+              }}
+            />
           </Card>
         </Col>
       </Row>
