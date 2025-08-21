@@ -8,10 +8,10 @@ import {
 import { ConfigProvider, App as AntdApp } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import MainLayout from './components/Layout';
-import Dashboard from './components/Dashboard';
-import Indicators from './pages/Indicators';
-import Portfolio from './pages/Portfolio';
-import Settings from './pages/Settings';
+import Dashboard from './pages/Dashboard';
+import Indicators from './pages/Indicators/Indicators';
+import Portfolio from './pages/Portfolio/Portfolio';
+import Settings from './pages/Settings/Settings';
 import './App.css';
 
 const App: React.FC = (): JSX.Element => {

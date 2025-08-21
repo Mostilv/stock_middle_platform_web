@@ -1,6 +1,6 @@
 import React from 'react';
 import { Statistic, Progress, Table } from 'antd';
-import EChart from '../EChart';
+import EChart from '../../components/EChart';
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
