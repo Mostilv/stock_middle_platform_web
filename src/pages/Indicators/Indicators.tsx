@@ -214,11 +214,12 @@ const Indicators: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
-        <div>
-          <h1 className='text-2xl font-bold text-gray-800'>自定义指标</h1>
-          <p className='text-gray-600'>管理和创建您的自定义技术指标</p>
-        </div>
+      <div className='text-center mb-6'>
+        <h1 className='text-2xl font-bold text-gray-800 mb-2'>自定义指标</h1>
+        <p className='text-gray-600'>管理和创建您的自定义技术指标</p>
+      </div>
+      
+      <div className='flex justify-end mb-6'>
         <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
           新建指标
         </Button>

@@ -44,8 +44,8 @@ const Settings: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <div>
-        <h1 className='text-2xl font-bold text-gray-800'>系统设置</h1>
+      <div className='text-center mb-6'>
+        <h1 className='text-2xl font-bold text-gray-800 mb-2'>系统设置</h1>
         <p className='text-gray-600'>配置您的个人偏好和系统参数</p>
       </div>
 

@@ -13,13 +13,11 @@ import {
   SiderContainer,
   LogoContainer,
   MainLayout,
-  HeaderContainer,
   HeaderButton,
-  HeaderTitle,
   ContentContainer,
 } from './Layout.styles';
 
-const LayoutComponent: React.FC = (): JSX.Element => {
+const LayoutComponent: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +31,7 @@ const LayoutComponent: React.FC = (): JSX.Element => {
     {
       key: '/indicators',
       icon: <BarChartOutlined />,
-      label: '自定义指标',
+      label: '指标管理',
     },
     {
       key: '/portfolio',

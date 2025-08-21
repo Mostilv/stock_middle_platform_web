@@ -14,7 +14,7 @@ import Portfolio from './pages/Portfolio/Portfolio';
 import Settings from './pages/Settings/Settings';
 import './App.css';
 
-const App: React.FC = (): JSX.Element => {
+const App: React.FC = () => {
   return (
     <ConfigProvider
       locale={zhCN}

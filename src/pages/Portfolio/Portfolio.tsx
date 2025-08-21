@@ -297,11 +297,12 @@ const Portfolio: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
-        <div>
-          <h1 className='text-2xl font-bold text-gray-800'>调仓管理</h1>
-          <p className='text-gray-600'>管理您的投资组合调仓操作</p>
-        </div>
+      <div className='text-center mb-6'>
+        <h1 className='text-2xl font-bold text-gray-800 mb-2'>调仓管理</h1>
+        <p className='text-gray-600'>管理您的投资组合调仓操作</p>
+      </div>
+      
+      <div className='flex justify-end mb-6'>
         <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
           新建调仓
         </Button>
