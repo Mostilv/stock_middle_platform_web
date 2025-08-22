@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Card,
   Button,
@@ -27,14 +27,11 @@ import {
   EyeOutlined,
   SwapOutlined,
   RiseOutlined,
-  CaretRightOutlined,
-  CaretDownOutlined,
-  SettingOutlined,
   DollarOutlined,
   BarChartOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
 import {
   PortfolioContainer,
   PortfolioHeader,
@@ -42,8 +39,6 @@ import {
   PortfolioCard,
   ActionTag,
   StatusTag,
-  ActionButton,
-  FormInput,
   ClickableButton,
 } from './Portfolio.styles';
 
@@ -168,35 +163,42 @@ const Portfolio: React.FC = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
-  const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
-  const [currentStockDetail, setCurrentStockDetail] = useState<StockDetail | null>(null);
+  const [currentStockDetail, setCurrentStockDetail] =
+    useState<StockDetail | null>(null);
   const [form] = Form.useForm();
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
 
   // 模拟股票详情数据
   const getStockDetail = (code: string): StockDetail => {
     // 生成最近30个交易日的K线数据
-    const generateKlineData = (basePrice: number, volatility: number = 0.03) => {
+    const generateKlineData = (
+      basePrice: number,
+      volatility: number = 0.03
+    ) => {
       const data: Array<[string, number, number, number, number, number]> = [];
       let currentPrice = basePrice;
-      
+
       for (let i = 29; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
-        
+
         // 生成随机价格波动
         const change = (Math.random() - 0.5) * 2 * volatility * currentPrice;
         const open = currentPrice;
         const close = currentPrice + change;
-        const high = Math.max(open, close) + Math.random() * volatility * currentPrice;
-        const low = Math.min(open, close) - Math.random() * volatility * currentPrice;
+        const high =
+          Math.max(open, close) + Math.random() * volatility * currentPrice;
+        const low =
+          Math.min(open, close) - Math.random() * volatility * currentPrice;
         const volume = Math.floor(Math.random() * 1000000) + 500000;
-        
+
         data.push([dateStr, open, close, low, high, volume]);
         currentPrice = close;
       }
-      
+
       return data;
     };
 
@@ -244,20 +246,22 @@ const Portfolio: React.FC = () => {
         klineData: generateKlineData(245.6, 0.05),
       },
     };
-    return details[code] || {
-      name: '未知股票',
-      code: code,
-      industry: '未知',
-      marketCap: '0',
-      pe: 0,
-      pb: 0,
-      dividendYield: 0,
-      volume: '0',
-      turnover: 0,
-      high52w: 0,
-      low52w: 0,
-      klineData: generateKlineData(100, 0.03),
-    };
+    return (
+      details[code] || {
+        name: '未知股票',
+        code,
+        industry: '未知',
+        marketCap: '0',
+        pe: 0,
+        pb: 0,
+        dividendYield: 0,
+        volume: '0',
+        turnover: 0,
+        high52w: 0,
+        low52w: 0,
+        klineData: generateKlineData(100, 0.03),
+      }
+    );
   };
 
   const columns = [
@@ -293,11 +297,13 @@ const Portfolio: React.FC = () => {
       key: 'action',
       width: 100,
       render: (action: string) => {
-        const color =
-          action === 'buy' ? 'green' : action === 'sell' ? 'red' : 'blue';
         const text =
           action === 'buy' ? '买入' : action === 'sell' ? '卖出' : '持有';
-        return <ActionTag $action={action as 'buy' | 'sell' | 'hold'}>{text}</ActionTag>;
+        return (
+          <ActionTag $action={action as 'buy' | 'sell' | 'hold'}>
+            {text}
+          </ActionTag>
+        );
       },
     },
     {
@@ -320,33 +326,48 @@ const Portfolio: React.FC = () => {
       key: 'status',
       width: 100,
       render: (status: string) => {
-        const color =
-          status === 'completed'
-            ? 'green'
-            : status === 'pending'
-              ? 'orange'
-              : 'red';
         const text =
           status === 'completed'
             ? '已完成'
             : status === 'pending'
               ? '待执行'
               : '已取消';
-        return <StatusTag $status={status as 'pending' | 'completed' | 'cancelled'}>{text}</StatusTag>;
+        return (
+          <StatusTag $status={status as 'pending' | 'completed' | 'cancelled'}>
+            {text}
+          </StatusTag>
+        );
       },
     },
     {
-      title: '查看详情',
-      key: 'detail',
-      width: 100,
+      title: '操作',
+      key: 'action',
+      width: 200,
       render: (_: any, record: PortfolioItem) => (
-        <ClickableButton
-          type='text'
-          icon={<EyeOutlined />}
-          onClick={() => handleViewStockDetail(record)}
-        >
-          查看详情
-        </ClickableButton>
+        <Space size='small'>
+          <ClickableButton
+            type='text'
+            icon={<EyeOutlined />}
+            onClick={() => handleViewStockDetail(record)}
+          >
+            详情
+          </ClickableButton>
+          <ClickableButton
+            type='text'
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            编辑
+          </ClickableButton>
+          <ClickableButton
+            type='text'
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.key)}
+            danger
+          >
+            删除
+          </ClickableButton>
+        </Space>
       ),
     },
   ];
@@ -357,38 +378,72 @@ const Portfolio: React.FC = () => {
     setStockDetailVisible(true);
   };
 
+  // 处理图表渲染
+  useEffect(() => {
+    if (stockDetailVisible && currentStockDetail && chartRef.current) {
+      // 销毁之前的图表实例
+      if (chartInstance.current) {
+        chartInstance.current.dispose();
+      }
+
+      // 创建新的图表实例
+      const chart = echarts.init(chartRef.current);
+      chartInstance.current = chart;
+
+      // 设置图表配置
+      const option = getKlineOption(currentStockDetail);
+      chart.setOption(option);
+
+      // 监听窗口大小变化
+      const handleResize = () => {
+        chart.resize();
+      };
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        if (chartInstance.current) {
+          chartInstance.current.dispose();
+        }
+      };
+    }
+  }, [stockDetailVisible, currentStockDetail]);
+
   // K线图配置
   const getKlineOption = (stockDetail: StockDetail) => {
     const dates = stockDetail.klineData.map(item => item[0]);
     const data = stockDetail.klineData.map(item => item.slice(1, 5)); // 只取OHLC数据
-    
+
     return {
       title: {
         text: `${stockDetail.name} (${stockDetail.code}) 最近30个交易日K线图`,
         left: 'center',
         textStyle: {
           fontSize: 16,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        },
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
-          type: 'cross'
+          type: 'cross',
         },
-        formatter: function (params: any) {
-          const data = params[0].data;
-          return `${params[0].axisValue}<br/>
-                  开盘: ${data[1]}<br/>
-                  收盘: ${data[2]}<br/>
-                  最低: ${data[3]}<br/>
-                  最高: ${data[4]}`;
-        }
+        formatter(params: any) {
+          if (params && params[0] && params[0].data) {
+            const data = params[0].data;
+            return `${params[0].axisValue}<br/>
+                    开盘: ¥${data[1].toFixed(2)}<br/>
+                    收盘: ¥${data[2].toFixed(2)}<br/>
+                    最低: ¥${data[3].toFixed(2)}<br/>
+                    最高: ¥${data[4].toFixed(2)}`;
+          }
+          return '';
+        },
       },
       grid: {
         left: '10%',
         right: '10%',
-        bottom: '15%'
+        bottom: '15%',
       },
       xAxis: {
         type: 'category',
@@ -397,95 +452,51 @@ const Portfolio: React.FC = () => {
         boundaryGap: false,
         axisLine: { onZero: false },
         splitLine: { show: false },
-        splitNumber: 20
+        splitNumber: 20,
       },
       yAxis: {
         scale: true,
         splitArea: {
-          show: true
-        }
+          show: true,
+        },
       },
       dataZoom: [
         {
           type: 'inside',
           start: 0,
-          end: 100
+          end: 100,
         },
         {
           show: true,
           type: 'slider',
           top: '90%',
           start: 0,
-          end: 100
-        }
+          end: 100,
+        },
       ],
       series: [
         {
           name: 'K线',
           type: 'candlestick',
-          data: data,
+          data,
           itemStyle: {
             color: '#FD1050',
             color0: '#0CF49B',
             borderColor: '#FD1050',
-            borderColor0: '#0CF49B'
-          }
-        }
-      ]
+            borderColor0: '#0CF49B',
+          },
+        },
+      ],
     };
   };
 
   const handleEdit = (item: PortfolioItem) => {
     setEditingItem(item);
-    setEditingStrategy(null);
     form.setFieldsValue(item);
     setIsModalVisible(true);
   };
 
-  const handleView = (item: PortfolioItem) => {
-    Modal.info({
-      title: `${item.stock} (${item.code}) 调仓详情`,
-      content: (
-        <div>
-          <p>
-            <strong>当前权重：</strong>
-            {item.currentWeight}%
-          </p>
-          <p>
-            <strong>目标权重：</strong>
-            {item.targetWeight}%
-          </p>
-          <p>
-            <strong>调仓动作：</strong>
-            {item.action === 'buy'
-              ? '买入'
-              : item.action === 'sell'
-                ? '卖出'
-                : '持有'}
-          </p>
-          <p>
-            <strong>价格：</strong>¥{item.price.toFixed(2)}
-          </p>
-          <p>
-            <strong>数量：</strong>
-            {item.quantity > 0 ? item.quantity : '-'}
-          </p>
-          <p>
-            <strong>状态：</strong>
-            {item.status === 'completed'
-              ? '已完成'
-              : item.status === 'pending'
-                ? '待执行'
-                : '已取消'}
-          </p>
-          <p>
-            <strong>创建时间：</strong>
-            {item.createdAt}
-          </p>
-        </div>
-      ),
-    });
-  };
+
 
   const handleDelete = (key: string) => {
     Modal.confirm({
@@ -494,7 +505,7 @@ const Portfolio: React.FC = () => {
       onOk: () => {
         const updatedStrategies = strategies.map(strategy => ({
           ...strategy,
-          items: strategy.items.filter(item => item.key !== key)
+          items: strategy.items.filter(item => item.key !== key),
         }));
         setStrategies(updatedStrategies);
         message.success('删除成功');
@@ -509,8 +520,8 @@ const Portfolio: React.FC = () => {
         const updatedStrategies = strategies.map(strategy => ({
           ...strategy,
           items: strategy.items.map(item =>
-            item.key === editingItem.key ? { ...item, ...values } : item
-          )
+            item.key === editingItem.key ? { ...item, ...values } : item,
+          ),
         }));
         setStrategies(updatedStrategies);
         message.success('更新成功');
@@ -523,28 +534,46 @@ const Portfolio: React.FC = () => {
           createdAt: new Date().toISOString().split('T')[0],
           marketValue: (values.price || 0) * (values.quantity || 0),
         };
-        const updatedStrategies = strategies.map((strategy, index) => 
-          index === 0 ? { ...strategy, items: [...strategy.items, newItem] } : strategy
+        const updatedStrategies = strategies.map((strategy, index) =>
+          index === 0
+            ? { ...strategy, items: [...strategy.items, newItem] }
+            : strategy,
         );
         setStrategies(updatedStrategies);
         message.success('创建成功');
       }
       setIsModalVisible(false);
+      setEditingItem(null);
+      form.resetFields();
     });
   };
 
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setEditingItem(null);
+    form.resetFields();
+  };
+
   const toggleStrategyStatus = (strategyId: string) => {
-    setStrategies(strategies.map(strategy =>
-      strategy.id === strategyId
-        ? { ...strategy, status: strategy.status === 'active' ? 'inactive' : 'active' }
-        : strategy
-    ));
+    setStrategies(
+      strategies.map(strategy =>
+        strategy.id === strategyId
+          ? {
+              ...strategy,
+              status: strategy.status === 'active' ? 'inactive' : 'active',
+            }
+          : strategy,
+      ),
+    );
   };
 
   // 统计数据
   const totalStrategies = strategies.length;
   const activeStrategies = strategies.filter(s => s.status === 'active').length;
-  const totalHoldings = strategies.reduce((sum, strategy) => sum + strategy.items.length, 0);
+  const totalHoldings = strategies.reduce(
+    (sum, strategy) => sum + strategy.items.length,
+    0
+  );
   const activeStrategyHoldings = strategies
     .filter(s => s.status === 'active')
     .reduce((sum, strategy) => sum + strategy.items.length, 0);
@@ -560,13 +589,26 @@ const Portfolio: React.FC = () => {
           <h1>调仓管理</h1>
           <p>查看和管理您的投资组合调仓操作（中转数据库辅助功能）</p>
         </div>
+        <div className='header-actions'>
+          <Button
+            type='primary'
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setEditingItem(null);
+              form.resetFields();
+              setIsModalVisible(true);
+            }}
+          >
+            新建调仓
+          </Button>
+        </div>
       </PortfolioHeader>
 
       {/* 统计卡片 */}
       <StatisticsRow>
         <Row gutter={[16, 16]}>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='总策略数'
                 value={totalStrategies}
@@ -576,7 +618,7 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='总持仓数'
                 value={totalHoldings}
@@ -586,7 +628,7 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='活跃策略'
                 value={activeStrategies}
@@ -596,7 +638,7 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='活跃策略持仓'
                 value={activeStrategyHoldings}
@@ -606,29 +648,39 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='当日盈亏'
                 value={todayPnL}
-                valueStyle={{ color: todayPnL >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)' }}
+                valueStyle={{
+                  color:
+                    todayPnL >= 0
+                      ? 'var(--ant-color-success)'
+                      : 'var(--ant-color-error)',
+                }}
                 prefix={todayPnL >= 0 ? '+' : ''}
                 suffix='元'
               />
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='累计盈亏'
                 value={totalPnL}
-                valueStyle={{ color: totalPnL >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)' }}
+                valueStyle={{
+                  color:
+                    totalPnL >= 0
+                      ? 'var(--ant-color-success)'
+                      : 'var(--ant-color-error)',
+                }}
                 prefix={totalPnL >= 0 ? '+' : ''}
                 suffix='元'
               />
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='今日调仓'
                 value={todayRebalance}
@@ -638,7 +690,7 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small">
+            <Card size='small'>
               <Statistic
                 title='今日待调仓'
                 value={todayPendingRebalance}
@@ -653,19 +705,33 @@ const Portfolio: React.FC = () => {
       {/* 策略列表 */}
       <PortfolioCard>
         <Collapse defaultActiveKey={['1']} ghost>
-          {strategies.map((strategy) => (
+          {strategies.map(strategy => (
             <Panel
               key={strategy.id}
               header={
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }}
+                >
                   <div>
-                    <Title level={4} style={{ margin: 0, display: 'inline-block', marginRight: 16 }}>
+                    <Title
+                      level={4}
+                      style={{
+                        margin: 0,
+                        display: 'inline-block',
+                        marginRight: 16,
+                      }}
+                    >
                       {strategy.name}
                     </Title>
                     <Tag color={strategy.status === 'active' ? 'green' : 'red'}>
                       {strategy.status === 'active' ? '活跃' : '停用'}
                     </Tag>
-                    <Text type="secondary" style={{ marginLeft: 16 }}>
+                    <Text type='secondary' style={{ marginLeft: 16 }}>
                       {strategy.description}
                     </Text>
                   </div>
@@ -673,8 +739,8 @@ const Portfolio: React.FC = () => {
                     <Switch
                       checked={strategy.status === 'active'}
                       onChange={() => toggleStrategyStatus(strategy.id)}
-                      checkedChildren="启用"
-                      unCheckedChildren="停用"
+                      checkedChildren='启用'
+                      unCheckedChildren='停用'
                     />
                   </div>
                 </div>
@@ -696,17 +762,23 @@ const Portfolio: React.FC = () => {
                   </Col>
                 </Row>
               </div>
-              
+
               {strategy.items.length > 0 ? (
                 <Table
                   columns={columns}
                   dataSource={strategy.items}
                   pagination={false}
-                  size="small"
+                  size='small'
                   scroll={{ x: 800 }}
                 />
               ) : (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '20px',
+                    color: '#999',
+                  }}
+                >
                   暂无调仓记录
                 </div>
               )}
@@ -717,55 +789,58 @@ const Portfolio: React.FC = () => {
 
       {/* 股票详情弹窗 */}
       <Modal
-        title={currentStockDetail ? `${currentStockDetail.name} (${currentStockDetail.code}) 股票详情` : '股票详情'}
+        title={
+          currentStockDetail
+            ? `${currentStockDetail.name} (${currentStockDetail.code}) 股票详情`
+            : '股票详情'
+        }
         open={stockDetailVisible}
         onCancel={() => setStockDetailVisible(false)}
         footer={null}
-        width={900}
+        width={1000}
         style={{ top: 20 }}
       >
         {currentStockDetail && (
           <div>
             {/* K线图 */}
             <div style={{ marginBottom: 24 }}>
-              <ReactECharts 
-                option={getKlineOption(currentStockDetail)}
+              <div
+                ref={chartRef}
                 style={{ height: '400px', width: '100%' }}
-                opts={{ renderer: 'canvas' }}
-              />
+              ></div>
             </div>
-            
+
             {/* 基本面信息 */}
-            <Divider orientation="left">基本面信息</Divider>
-            <Descriptions bordered column={3} size="small">
-              <Descriptions.Item label="股票代码">
+            <Divider orientation='left'>基本面信息</Divider>
+            <Descriptions bordered column={3} size='small'>
+              <Descriptions.Item label='股票代码'>
                 {currentStockDetail.code}
               </Descriptions.Item>
-              <Descriptions.Item label="所属行业">
+              <Descriptions.Item label='所属行业'>
                 {currentStockDetail.industry}
               </Descriptions.Item>
-              <Descriptions.Item label="市值">
+              <Descriptions.Item label='市值'>
                 {currentStockDetail.marketCap}
               </Descriptions.Item>
-              <Descriptions.Item label="市盈率(PE)">
+              <Descriptions.Item label='市盈率(PE)'>
                 {currentStockDetail.pe}
               </Descriptions.Item>
-              <Descriptions.Item label="市净率(PB)">
+              <Descriptions.Item label='市净率(PB)'>
                 {currentStockDetail.pb}
               </Descriptions.Item>
-              <Descriptions.Item label="股息率">
+              <Descriptions.Item label='股息率'>
                 {currentStockDetail.dividendYield}%
               </Descriptions.Item>
-              <Descriptions.Item label="成交量">
+              <Descriptions.Item label='成交量'>
                 {currentStockDetail.volume}
               </Descriptions.Item>
-              <Descriptions.Item label="换手率">
+              <Descriptions.Item label='换手率'>
                 {currentStockDetail.turnover}%
               </Descriptions.Item>
-              <Descriptions.Item label="52周最高">
+              <Descriptions.Item label='52周最高'>
                 ¥{currentStockDetail.high52w}
               </Descriptions.Item>
-              <Descriptions.Item label="52周最低">
+              <Descriptions.Item label='52周最低'>
                 ¥{currentStockDetail.low52w}
               </Descriptions.Item>
             </Descriptions>
@@ -777,13 +852,20 @@ const Portfolio: React.FC = () => {
         title={editingItem ? '编辑调仓' : '新建调仓'}
         open={isModalVisible}
         onOk={handleModalOk}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={handleModalCancel}
         width={600}
       >
         <Form
           form={form}
           layout='vertical'
-          initialValues={{ action: 'hold', status: 'pending' }}
+          initialValues={{
+            action: 'hold',
+            status: 'pending',
+            currentWeight: 0,
+            targetWeight: 0,
+            price: 0,
+            quantity: 0,
+          }}
         >
           <Form.Item
             name='stock'

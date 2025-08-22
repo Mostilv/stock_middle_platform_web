@@ -56,10 +56,28 @@ export const StatisticsRow = styled.div`
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s ease;
+        height: 100%;
 
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .ant-card-body {
+          padding: 16px;
+        }
+
+        .ant-statistic {
+          .ant-statistic-title {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #666;
+          }
+          
+          .ant-statistic-content {
+            font-size: 18px;
+            font-weight: 600;
+          }
         }
       }
     }
