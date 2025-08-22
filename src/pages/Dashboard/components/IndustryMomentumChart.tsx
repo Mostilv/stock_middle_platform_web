@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import EChart from '../../../components/EChart';
 import { ChartCard } from './IndustryMomentumChart.styles';
 
-const IndustryMomentumChart: React.FC = () => {
-  // 中间下方图表 - 行业动量时序图
-  const industryMomentumOption = {
+const IndustryMomentumChart: React.FC = React.memo(() => {
+  // 使用useMemo缓存图表配置，避免重复计算
+  const industryMomentumOption = useMemo(() => ({
     backgroundColor: 'transparent',
     grid: { left: 40, right: 20, top: 30, bottom: 30 },
     tooltip: { 
@@ -72,14 +72,16 @@ const IndustryMomentumChart: React.FC = () => {
         symbol: 'none'
       },
     ],
-  };
+  }), []);
 
   return (
     <ChartCard $transparent>
       <h3>行业动量</h3>
-      <EChart height={200} option={industryMomentumOption} />
+      <EChart height={200} option={industryMomentumOption} lazy={true} />
     </ChartCard>
   );
-};
+});
+
+IndustryMomentumChart.displayName = 'IndustryMomentumChart';
 
 export default IndustryMomentumChart;

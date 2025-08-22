@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import TimeDisplay from './components/TimeDisplay';
 import TopIndicators from './components/TopIndicators';
 import SideCharts from './components/SideCharts';
@@ -10,15 +10,16 @@ import {
   MainContent,
 } from './Dashboard.styles';
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC = React.memo(() => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   
-  // 获取市场数据
-  const marketData = getMarketData();
+  // 使用useMemo缓存市场数据，避免重复计算
+  const marketData = useMemo(() => getMarketData(), []);
 
-  const handleDateChange = (date: Date | null) => {
+  // 使用useCallback优化事件处理函数
+  const handleDateChange = useCallback((date: Date | null) => {
     setSelectedDate(date);
-  };
+  }, []);
 
   return (
     <DashboardContainer>
@@ -47,6 +48,8 @@ const Dashboard: React.FC = () => {
       <CombinedSmallCharts />
     </DashboardContainer>
   );
-};
+});
+
+Dashboard.displayName = 'Dashboard';
 
 export default Dashboard;

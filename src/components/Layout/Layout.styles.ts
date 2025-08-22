@@ -9,7 +9,7 @@ export const LayoutContainer = styled(AntLayout)`
   min-height: 100vh;
 `;
 
-// 侧边栏容器
+// 侧边栏容器 - 移除默认折叠功能
 export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   position: fixed;
   top: 0;
@@ -17,7 +17,12 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   z-index: ${theme.zIndex.sider};
   overflow: hidden;
   left: ${({ $collapsed }) => ($collapsed ? '-200px' : '0')};
-  transition: all 0.3s ease;
+  transition: all 0.2s ease; /* 减少过渡时间，减少白底闪烁 */
+  
+  /* 隐藏默认的折叠触发器 */
+  .ant-layout-sider-trigger {
+    display: none !important;
+  }
   
   .ant-layout-sider-children {
     display: flex;
@@ -43,7 +48,7 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
 
 // 主内容布局
 export const MainLayout = styled(AntLayout)<{ $collapsed: boolean }>`
-  transition: margin-left ${theme.transitions.default};
+  transition: margin-left 0.2s ease; /* 减少过渡时间，减少白底闪烁 */
   margin-left: ${({ $collapsed }) => ($collapsed ? '0' : '200px')};
   position: relative;
 `;
@@ -74,7 +79,7 @@ export const HeaderButton = styled.button<{ $collapsed: boolean; $isDashboard?: 
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease; /* 减少过渡时间 */
   color: ${({ $isDashboard }) => ($isDashboard ? '#e6f7ff' : '#333')};
 
   &:hover {
@@ -97,7 +102,7 @@ export const HeaderTitle = styled.span`
   color: ${theme.colors.layout.headerTitle};
 `;
 
-// 内容容器 - 为固定按钮留出空间
+// 内容容器 - 为固定按钮留出空间，添加页面切换动画
 export const ContentContainer = styled(AntContent)`
   margin: 0;
   padding: 0; /* 子页面内部自行控制外侧间距 */
@@ -105,6 +110,28 @@ export const ContentContainer = styled(AntContent)`
   background: transparent; /* 去掉全局白底和边框阴影，避免首页白边 */
   border-radius: 0;
   box-shadow: none;
+
+  /* 页面切换动画 */
+  animation: fadeIn 0.3s ease-in-out;
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 优化页面切换性能 */
+  will-change: opacity, transform;
+  
+  /* 确保动画流畅 */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     margin: 0;

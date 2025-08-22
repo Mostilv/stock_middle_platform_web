@@ -6,32 +6,65 @@ import {
   Button,
   Switch,
   Select,
-  InputNumber,
   message,
   Row,
   Col,
   Space,
+  Divider,
+  Popconfirm,
 } from 'antd';
 import {
   SaveOutlined,
   ReloadOutlined,
-  UserOutlined,
-  BellOutlined,
-  SecurityScanOutlined,
   SettingOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
+import {
+  SettingsContainer,
+  SettingsHeader,
+  SettingsCard,
+  SettingsForm,
+  FormInput,
+  SettingsActions,
+  CardIcon,
+  ClickableButton,
+} from './Settings.styles';
 
 const { Option } = Select;
+
+interface EmailConfig {
+  id: string;
+  email: string;
+  remark: string;
+  enabled: boolean;
+}
 
 const Settings: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([
+    {
+      id: '1',
+      email: 'admin@example.com',
+      remark: '管理员邮箱',
+      enabled: true,
+    },
+    {
+      id: '2',
+      email: 'trader@example.com',
+      remark: '交易员邮箱',
+      enabled: true,
+    },
+  ]);
 
   const onFinish = (values: any) => {
     setLoading(true);
     // 模拟保存设置
     setTimeout(() => {
       console.log('保存设置:', values);
+      console.log('邮箱配置:', emailConfigs);
       message.success('设置保存成功');
       setLoading(false);
     }, 1000);
@@ -42,252 +75,210 @@ const Settings: React.FC = () => {
     message.info('设置已重置');
   };
 
+  const addEmailConfig = () => {
+    const newConfig: EmailConfig = {
+      id: Date.now().toString(),
+      email: '',
+      remark: '',
+      enabled: true,
+    };
+    setEmailConfigs([...emailConfigs, newConfig]);
+  };
+
+  const removeEmailConfig = (id: string) => {
+    setEmailConfigs(emailConfigs.filter(config => config.id !== id));
+  };
+
+  const updateEmailConfig = (id: string, field: keyof EmailConfig, value: any) => {
+    setEmailConfigs(emailConfigs.map(config => 
+      config.id === id ? { ...config, [field]: value } : config
+    ));
+  };
+
   return (
-    <div className='space-y-6'>
-      <div className='text-center mb-6'>
-        <h1 className='text-2xl font-bold text-gray-800 mb-2'>系统设置</h1>
-        <p className='text-gray-600'>配置您的个人偏好和系统参数</p>
-      </div>
+    <SettingsContainer>
+      <SettingsHeader>
+        <h1>系统设置</h1>
+        <p>配置您的个人偏好和系统参数</p>
+      </SettingsHeader>
 
-      <Form
-        form={form}
-        layout='vertical'
-        onFinish={onFinish}
-        initialValues={{
-          username: 'admin',
-          email: 'admin@example.com',
-          theme: 'light',
-          language: 'zh-CN',
-          autoRefresh: true,
-          refreshInterval: 30,
-          notifications: true,
-          emailNotifications: false,
-          riskLevel: 'medium',
-          maxPositions: 20,
-          stopLoss: 5,
-          takeProfit: 10,
-        }}
-      >
-        {/* 个人信息设置 */}
-        <Card
-          title={
-            <Space>
-              <UserOutlined />
-              <span>个人信息</span>
-            </Space>
-          }
-          className='mb-6'
+      <SettingsForm>
+        <Form
+          form={form}
+          layout='vertical'
+          onFinish={onFinish}
+          initialValues={{
+            theme: 'light',
+            language: 'zh-CN',
+            rebalanceNotifications: true,
+          }}
         >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name='username'
-                label='用户名'
-                rules={[{ required: true, message: '请输入用户名' }]}
-              >
-                <Input placeholder='请输入用户名' />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='email'
-                label='邮箱'
-                rules={[
-                  { required: true, message: '请输入邮箱' },
-                  { type: 'email', message: '请输入有效的邮箱地址' },
-                ]}
-              >
-                <Input placeholder='请输入邮箱' />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* 界面设置 */}
-        <Card
-          title={
-            <Space>
-              <SettingOutlined />
-              <span>界面设置</span>
-            </Space>
-          }
-          className='mb-6'
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name='theme' label='主题'>
-                <Select>
-                  <Option value='light'>浅色主题</Option>
-                  <Option value='dark'>深色主题</Option>
-                  <Option value='auto'>跟随系统</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name='language' label='语言'>
-                <Select>
-                  <Option value='zh-CN'>简体中文</Option>
-                  <Option value='en-US'>English</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* 数据设置 */}
-        <Card
-          title={
-            <Space>
-              <ReloadOutlined />
-              <span>数据设置</span>
-            </Space>
-          }
-          className='mb-6'
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name='autoRefresh'
-                label='自动刷新'
-                valuePropName='checked'
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='refreshInterval'
-                label='刷新间隔(秒)'
-                rules={[{ required: true, message: '请输入刷新间隔' }]}
-              >
-                <InputNumber
-                  min={10}
-                  max={300}
-                  placeholder='刷新间隔'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* 通知设置 */}
-        <Card
-          title={
-            <Space>
-              <BellOutlined />
-              <span>通知设置</span>
-            </Space>
-          }
-          className='mb-6'
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name='notifications'
-                label='系统通知'
-                valuePropName='checked'
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='emailNotifications'
-                label='邮件通知'
-                valuePropName='checked'
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* 风控设置 */}
-        <Card
-          title={
-            <Space>
-              <SecurityScanOutlined />
-              <span>风控设置</span>
-            </Space>
-          }
-          className='mb-6'
-        >
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name='riskLevel' label='风险等级'>
-                <Select>
-                  <Option value='low'>低风险</Option>
-                  <Option value='medium'>中风险</Option>
-                  <Option value='high'>高风险</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='maxPositions'
-                label='最大持仓数'
-                rules={[{ required: true, message: '请输入最大持仓数' }]}
-              >
-                <InputNumber
-                  min={1}
-                  max={100}
-                  placeholder='最大持仓数'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='stopLoss'
-                label='止损比例(%)'
-                rules={[{ required: true, message: '请输入止损比例' }]}
-              >
-                <InputNumber
-                  min={1}
-                  max={50}
-                  placeholder='止损比例'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item
-                name='takeProfit'
-                label='止盈比例(%)'
-                rules={[{ required: true, message: '请输入止盈比例' }]}
-              >
-                <InputNumber
-                  min={1}
-                  max={100}
-                  placeholder='止盈比例'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* 操作按钮 */}
-        <Card>
-          <Space>
-            <Button
-              type='primary'
-              icon={<SaveOutlined />}
-              htmlType='submit'
-              loading={loading}
+          {/* 主题设置 */}
+          <SettingsCard>
+            <Card
+              title={
+                <Space>
+                  <CardIcon>
+                    <SettingOutlined />
+                  </CardIcon>
+                  <span>主题设置</span>
+                </Space>
+              }
             >
-              保存设置
-            </Button>
-            <Button icon={<ReloadOutlined />} onClick={handleReset}>
-              重置
-            </Button>
-          </Space>
-        </Card>
-      </Form>
-    </div>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item name='theme' label='主题'>
+                    <Select>
+                      <Option value='light'>浅色主题</Option>
+                      <Option value='dark'>深色主题</Option>
+                      <Option value='auto'>跟随系统</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Card>
+          </SettingsCard>
+
+          {/* 语言设置 */}
+          <SettingsCard>
+            <Card
+              title={
+                <Space>
+                  <CardIcon>
+                    <SettingOutlined />
+                  </CardIcon>
+                  <span>语言设置</span>
+                </Space>
+              }
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item name='language' label='界面语言'>
+                    <Select>
+                      <Option value='zh-CN'>简体中文</Option>
+                      <Option value='en-US'>English</Option>
+                      <Option value='zh-TW'>繁體中文</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Card>
+          </SettingsCard>
+
+          {/* 调仓通知设置 */}
+          <SettingsCard>
+            <Card
+              title={
+                <Space>
+                  <CardIcon>
+                    <MailOutlined />
+                  </CardIcon>
+                  <span>调仓通知设置</span>
+                </Space>
+              }
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name='rebalanceNotifications'
+                    label='调仓通知'
+                    valuePropName='checked'
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+              </Row>
+              
+              <Divider orientation="left">邮箱配置</Divider>
+              
+              <div style={{ marginBottom: 16 }}>
+                {emailConfigs.map((config) => (
+                  <Card key={config.id} size="small" style={{ marginBottom: 12, backgroundColor: '#f9fafb' }}>
+                    <Row gutter={16} align="middle">
+                      <Col span={8}>
+                        <div style={{ marginBottom: 8 }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>邮箱地址</label>
+                        </div>
+                        <Input
+                          placeholder='请输入邮箱地址'
+                          value={config.email}
+                          onChange={(e) => updateEmailConfig(config.id, 'email', e.target.value)}
+                          prefix={<MailOutlined />}
+                        />
+                      </Col>
+                      <Col span={8}>
+                        <div style={{ marginBottom: 8 }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>邮箱备注</label>
+                        </div>
+                        <Input
+                          placeholder='请输入备注'
+                          value={config.remark}
+                          onChange={(e) => updateEmailConfig(config.id, 'remark', e.target.value)}
+                        />
+                      </Col>
+                      <Col span={4}>
+                        <div style={{ marginBottom: 8 }}>
+                          <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>启用状态</label>
+                        </div>
+                        <Switch
+                          checked={config.enabled}
+                          onChange={(checked) => updateEmailConfig(config.id, 'enabled', checked)}
+                        />
+                      </Col>
+                      <Col span={4}>
+                        <Popconfirm
+                          title="确定要删除这个邮箱配置吗？"
+                          onConfirm={() => removeEmailConfig(config.id)}
+                          okText="确定"
+                          cancelText="取消"
+                        >
+                          <ClickableButton 
+                            type="text" 
+                            danger 
+                            icon={<DeleteOutlined />}
+                            disabled={emailConfigs.length <= 1}
+                          >
+                            删除
+                          </ClickableButton>
+                        </Popconfirm>
+                      </Col>
+                    </Row>
+                  </Card>
+                ))}
+                
+                <ClickableButton 
+                  type="dashed" 
+                  icon={<PlusOutlined />} 
+                  onClick={addEmailConfig}
+                  style={{ width: '100%' }}
+                >
+                  添加邮箱配置
+                </ClickableButton>
+              </div>
+            </Card>
+          </SettingsCard>
+
+          {/* 操作按钮 */}
+          <SettingsCard>
+            <Card>
+              <SettingsActions>
+                <ClickableButton
+                  type='primary'
+                  icon={<SaveOutlined />}
+                  htmlType='submit'
+                  loading={loading}
+                >
+                  保存设置
+                </ClickableButton>
+                <ClickableButton icon={<ReloadOutlined />} onClick={handleReset}>
+                  重置
+                </ClickableButton>
+              </SettingsActions>
+            </Card>
+          </SettingsCard>
+        </Form>
+      </SettingsForm>
+    </SettingsContainer>
   );
 };
 

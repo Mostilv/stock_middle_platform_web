@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import EChart from '../../../components/EChart';
 import { ChartCard } from './IndustryWidthChart.styles';
 
@@ -6,9 +6,9 @@ interface IndustryWidthChartProps {
   selectedDate: Date | null;
 }
 
-const IndustryWidthChart: React.FC<IndustryWidthChartProps> = ({ selectedDate }) => {
+const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(({ selectedDate }) => {
   // 生成最近N天日期，最后一天为选择的日期或今天
-  const generateRecentDates = (days: number) => {
+  const generateRecentDates = useCallback((days: number) => {
     const result: string[] = [];
     const endDate = selectedDate ? new Date(selectedDate) : new Date();
     const startDate = new Date(endDate);
@@ -22,9 +22,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = ({ selectedDate })
       result.push(`${mm}-${dd}`);
     }
     return result;
-  };
+  }, [selectedDate]);
 
-  // 生成行业宽度数据
+  // 生成行业宽度数据 - 优化依赖项
   const chartData = useMemo(() => {
     // 根据选择的日期计算可用的天数范围
     const today = new Date();
@@ -50,13 +50,14 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = ({ selectedDate })
     }
 
     return { dateLabels, industries, widthData };
-  }, [selectedDate]);
+  }, [selectedDate, generateRecentDates]);
 
   // 计算默认显示最近10天的起始位置
   const defaultStart = Math.max(0, chartData.dateLabels.length - 10);
   const defaultEnd = 100;
 
-  const industryWidthOption = {
+  // 使用useMemo缓存图表配置，避免重复计算
+  const industryWidthOption = useMemo(() => ({
     backgroundColor: 'transparent',
     grid: { left: 60, right: 10, top: 10, bottom: 30 },
     tooltip: { 
@@ -143,14 +144,16 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = ({ selectedDate })
         }
       },
     ],
-  };
+  }), [chartData, defaultStart, defaultEnd]);
 
   return (
     <ChartCard $transparent>
       <h3>行业宽度</h3>
-      <EChart height={200} option={industryWidthOption} />
+      <EChart height={200} option={industryWidthOption} lazy={true} />
     </ChartCard>
   );
-};
+});
+
+IndustryWidthChart.displayName = 'IndustryWidthChart';
 
 export default IndustryWidthChart;

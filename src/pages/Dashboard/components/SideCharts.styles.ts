@@ -5,7 +5,7 @@ export const SideChartsContainer = styled.div<{ $type: 'left' | 'right' }>`
   flex-direction: column;
   gap: 8px;
   height: 100%;
-  flex: 1 1 0%;
+  flex: 0.94 1 0%;
   min-width: 0;
   overflow: hidden;
 

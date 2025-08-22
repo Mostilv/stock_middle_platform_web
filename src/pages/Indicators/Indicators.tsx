@@ -17,6 +17,15 @@ import {
   DeleteOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
+import {
+  IndicatorsContainer,
+  IndicatorsHeader,
+  IndicatorsCard,
+  ActionButton,
+  StatusTag,
+  TypeTag,
+  ClickableButton,
+} from './Indicators.styles';
 
 const { Option } = Select;
 
@@ -107,28 +116,28 @@ const Indicators: React.FC = () => {
       key: 'action',
       render: (_: any, record: Indicator) => (
         <Space size='middle'>
-          <Button
+          <ClickableButton
             type='text'
             icon={<EyeOutlined />}
             onClick={() => handleView(record)}
           >
             查看
-          </Button>
-          <Button
+          </ClickableButton>
+          <ClickableButton
             type='text'
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
             编辑
-          </Button>
-          <Button
+          </ClickableButton>
+          <ClickableButton
             type='text'
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.key)}
           >
             删除
-          </Button>
+          </ClickableButton>
         </Space>
       ),
     },
@@ -213,19 +222,20 @@ const Indicators: React.FC = () => {
   };
 
   return (
-    <div className='space-y-6'>
-      <div className='text-center mb-6'>
-        <h1 className='text-2xl font-bold text-gray-800 mb-2'>自定义指标</h1>
-        <p className='text-gray-600'>管理和创建您的自定义技术指标</p>
-      </div>
-      
-      <div className='flex justify-end mb-6'>
-        <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
-          新建指标
-        </Button>
-      </div>
+    <IndicatorsContainer>
+      <IndicatorsHeader>
+        <div className='header-content'>
+          <h1>自定义指标</h1>
+          <p>管理和创建您的自定义技术指标</p>
+        </div>
+        <div className='header-actions'>
+          <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
+            新建指标
+          </Button>
+        </div>
+      </IndicatorsHeader>
 
-      <Card>
+      <IndicatorsCard>
         <Table
           columns={columns}
           dataSource={indicators}
@@ -236,7 +246,7 @@ const Indicators: React.FC = () => {
             showTotal: total => `共 ${total} 条记录`,
           }}
         />
-      </Card>
+      </IndicatorsCard>
 
       <Modal
         title={editingIndicator ? '编辑指标' : '新建指标'}
@@ -297,7 +307,7 @@ const Indicators: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </IndicatorsContainer>
   );
 };
 

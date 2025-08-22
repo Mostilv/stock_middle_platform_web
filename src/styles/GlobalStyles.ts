@@ -23,6 +23,21 @@ export const GlobalStyles = createGlobalStyle`
       monospace;
   }
 
+  /* 首页特殊背景处理 - 避免菜单折叠时的白底 */
+  .ant-layout {
+    /* 当在首页时，确保背景正确 */
+    &[data-path="/"] {
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 50%, #2d3748 100%) !important;
+    }
+  }
+
+  /* 确保首页内容区域背景正确 */
+  .ant-layout-content {
+    &[data-path="/"] {
+      background: transparent !important;
+    }
+  }
+
   /* 表单组件 */
   .form-input-full-width {
     width: 100%;

@@ -8,7 +8,7 @@ interface SmallChartCardProps {
   height?: number;
 }
 
-const SmallChartCard: React.FC<SmallChartCardProps> = ({ 
+const SmallChartCard: React.FC<SmallChartCardProps> = React.memo(({ 
   title, 
   option, 
   height = 120 
@@ -16,9 +16,11 @@ const SmallChartCard: React.FC<SmallChartCardProps> = ({
   return (
     <SmallChartCardContainer>
       <h4>{title}</h4>
-      <EChart height={height} option={option} />
+      <EChart height={height} option={option} lazy={true} />
     </SmallChartCardContainer>
   );
-};
+});
+
+SmallChartCard.displayName = 'SmallChartCard';
 
 export default SmallChartCard;

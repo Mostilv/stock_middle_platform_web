@@ -1,9 +1,21 @@
 import styled from 'styled-components';
+import { Button } from 'antd';
 
 export const PortfolioContainer = styled.div`
-  padding: 16px;
+  padding: 24px;
   background-color: #f5f5f5;
   min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
 `;
 
 export const PortfolioHeader = styled.div`
@@ -177,5 +189,21 @@ export const ActionButton = styled.button`
 export const FormInput = styled.div`
   .form-input-full-width {
     width: 100%;
+  }
+`;
+
+export const ClickableButton = styled(Button)`
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #f0f0f0;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: transparent;
+    }
   }
 `;

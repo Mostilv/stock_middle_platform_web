@@ -12,7 +12,7 @@ export const DashboardContainer = styled.div`
 // 主要内容区域
 export const MainContent = styled.div`
   display: flex;
-  gap: 8px;
+  // gap: 8px;
   height: calc(100vh - 140px);
   padding: 0 12px 12px 12px;
   min-width: 0;
