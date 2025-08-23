@@ -26,13 +26,13 @@ const LayoutComponent: React.FC = React.memo(() => {
     {
       key: '/',
       icon: <DashboardOutlined />,
-      label: '仪表盘',
+      label: '首页',
     },
-    {
-      key: '/indicators',
-      icon: <BarChartOutlined />,
-      label: '指标管理',
-    },
+            {
+          key: '/limit-up-stocks',
+          icon: <BarChartOutlined />,
+          label: '梯队复盘',
+        },
     {
       key: '/portfolio',
       icon: <BarChartOutlined />,

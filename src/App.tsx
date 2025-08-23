@@ -12,7 +12,7 @@ import './App.css';
 
 // 懒加载页面组件
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const Indicators = React.lazy(() => import('./pages/Indicators/Indicators'));
+const LimitUpStocks = React.lazy(() => import('./pages/LimitUpStocks/LimitUpStocks'));
 const Portfolio = React.lazy(() => import('./pages/Portfolio/Portfolio'));
 const Settings = React.lazy(() => import('./pages/Settings/Settings'));
 
@@ -46,7 +46,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path='/' element={<MainLayout />}>
                 <Route index element={<Dashboard />} />
-                <Route path='indicators' element={<Indicators />} />
+                <Route path='limit-up-stocks' element={<LimitUpStocks />} />
                 <Route path='portfolio' element={<Portfolio />} />
                 <Route path='settings' element={<Settings />} />
                 <Route path='*' element={<Navigate to='/' replace />} />

@@ -1,16 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Card,
-  Button,
   Table,
   Tag,
-  Space,
   Modal,
-  Form,
-  Input,
-  Select,
-  InputNumber,
-  message,
   Row,
   Col,
   Statistic,
@@ -21,9 +14,6 @@ import {
   Descriptions,
 } from 'antd';
 import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
   EyeOutlined,
   SwapOutlined,
   RiseOutlined,
@@ -42,7 +32,7 @@ import {
   ClickableButton,
 } from './Portfolio.styles';
 
-const { Option } = Select;
+// 删除未使用的导入
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
@@ -161,12 +151,9 @@ const Portfolio: React.FC = () => {
     },
   ]);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
   const [currentStockDetail, setCurrentStockDetail] =
     useState<StockDetail | null>(null);
-  const [form] = Form.useForm();
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
 
@@ -342,32 +329,15 @@ const Portfolio: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 200,
+      width: 100,
       render: (_: any, record: PortfolioItem) => (
-        <Space size='small'>
-          <ClickableButton
-            type='text'
-            icon={<EyeOutlined />}
-            onClick={() => handleViewStockDetail(record)}
-          >
-            详情
-          </ClickableButton>
-          <ClickableButton
-            type='text'
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            编辑
-          </ClickableButton>
-          <ClickableButton
-            type='text'
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.key)}
-            danger
-          >
-            删除
-          </ClickableButton>
-        </Space>
+        <ClickableButton
+          type='text'
+          icon={<EyeOutlined />}
+          onClick={() => handleViewStockDetail(record)}
+        >
+          详情
+        </ClickableButton>
       ),
     },
   ];
@@ -490,69 +460,15 @@ const Portfolio: React.FC = () => {
     };
   };
 
-  const handleEdit = (item: PortfolioItem) => {
-    setEditingItem(item);
-    form.setFieldsValue(item);
-    setIsModalVisible(true);
-  };
+  // 删除编辑功能，只保留详情查看
 
 
 
-  const handleDelete = (key: string) => {
-    Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除这个调仓记录吗？',
-      onOk: () => {
-        const updatedStrategies = strategies.map(strategy => ({
-          ...strategy,
-          items: strategy.items.filter(item => item.key !== key),
-        }));
-        setStrategies(updatedStrategies);
-        message.success('删除成功');
-      },
-    });
-  };
+  // 删除删除功能，只保留详情查看
 
-  const handleModalOk = () => {
-    form.validateFields().then(values => {
-      if (editingItem) {
-        // 编辑模式
-        const updatedStrategies = strategies.map(strategy => ({
-          ...strategy,
-          items: strategy.items.map(item =>
-            item.key === editingItem.key ? { ...item, ...values } : item,
-          ),
-        }));
-        setStrategies(updatedStrategies);
-        message.success('更新成功');
-      } else {
-        // 新增模式 - 添加到第一个策略
-        const newItem: PortfolioItem = {
-          key: Date.now().toString(),
-          ...values,
-          status: 'pending',
-          createdAt: new Date().toISOString().split('T')[0],
-          marketValue: (values.price || 0) * (values.quantity || 0),
-        };
-        const updatedStrategies = strategies.map((strategy, index) =>
-          index === 0
-            ? { ...strategy, items: [...strategy.items, newItem] }
-            : strategy,
-        );
-        setStrategies(updatedStrategies);
-        message.success('创建成功');
-      }
-      setIsModalVisible(false);
-      setEditingItem(null);
-      form.resetFields();
-    });
-  };
+  // 删除模态框相关功能，只保留详情查看
 
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-    setEditingItem(null);
-    form.resetFields();
-  };
+  // 删除模态框相关功能，只保留详情查看
 
   const toggleStrategyStatus = (strategyId: string) => {
     setStrategies(
@@ -565,6 +481,7 @@ const Portfolio: React.FC = () => {
           : strategy,
       ),
     );
+    // 不触发策略折叠样式，保持当前展开状态
   };
 
   // 统计数据
@@ -588,19 +505,6 @@ const Portfolio: React.FC = () => {
         <div className='header-content'>
           <h1>调仓管理</h1>
           <p>查看和管理您的投资组合调仓操作（中转数据库辅助功能）</p>
-        </div>
-        <div className='header-actions'>
-          <Button
-            type='primary'
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setEditingItem(null);
-              form.resetFields();
-              setIsModalVisible(true);
-            }}
-          >
-            新建调仓
-          </Button>
         </div>
       </PortfolioHeader>
 
@@ -846,123 +750,6 @@ const Portfolio: React.FC = () => {
             </Descriptions>
           </div>
         )}
-      </Modal>
-
-      <Modal
-        title={editingItem ? '编辑调仓' : '新建调仓'}
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalCancel}
-        width={600}
-      >
-        <Form
-          form={form}
-          layout='vertical'
-          initialValues={{
-            action: 'hold',
-            status: 'pending',
-            currentWeight: 0,
-            targetWeight: 0,
-            price: 0,
-            quantity: 0,
-          }}
-        >
-          <Form.Item
-            name='stock'
-            label='股票名称'
-            rules={[{ required: true, message: '请输入股票名称' }]}
-          >
-            <Input placeholder='请输入股票名称' />
-          </Form.Item>
-
-          <Form.Item
-            name='code'
-            label='股票代码'
-            rules={[{ required: true, message: '请输入股票代码' }]}
-          >
-            <Input placeholder='请输入股票代码' />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name='currentWeight'
-                label='当前权重(%)'
-                rules={[{ required: true, message: '请输入当前权重' }]}
-              >
-                <InputNumber
-                  min={0}
-                  max={100}
-                  placeholder='当前权重'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='targetWeight'
-                label='目标权重(%)'
-                rules={[{ required: true, message: '请输入目标权重' }]}
-              >
-                <InputNumber
-                  min={0}
-                  max={100}
-                  placeholder='目标权重'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            name='action'
-            label='调仓动作'
-            rules={[{ required: true, message: '请选择调仓动作' }]}
-          >
-            <Select placeholder='请选择调仓动作'>
-              <Option value='buy'>买入</Option>
-              <Option value='sell'>卖出</Option>
-              <Option value='hold'>持有</Option>
-            </Select>
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name='price'
-                label='价格'
-                rules={[{ required: true, message: '请输入价格' }]}
-              >
-                <InputNumber
-                  min={0}
-                  placeholder='价格'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='quantity'
-                label='数量'
-                rules={[{ required: true, message: '请输入数量' }]}
-              >
-                <InputNumber
-                  min={0}
-                  placeholder='数量'
-                  className='form-input-full-width'
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item name='status' label='状态'>
-            <Select>
-              <Option value='pending'>待执行</Option>
-              <Option value='completed'>已完成</Option>
-              <Option value='cancelled'>已取消</Option>
-            </Select>
-          </Form.Item>
-        </Form>
       </Modal>
     </PortfolioContainer>
   );
