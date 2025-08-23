@@ -19,7 +19,8 @@ import {
   LimitUpStocksContainer,
   LimitUpStocksHeader,
 } from './LimitUpStocks.styles';
-import EChart from '../../components/EChart';
+import StockChart from '../../components/StockChart';
+import type { StockDataPoint } from '../../components/StockChart';
 
 const { Group: CheckboxGroup } = Checkbox;
 const { TabPane } = Tabs;
@@ -530,122 +531,43 @@ const LimitUpStocks: React.FC = () => {
     return columns;
   };
 
-  // 生成走势图数据
-  const generateTrendChartOption = (stock: Stock) => {
-    const times = ['09:30', '10:00', '10:30', '11:00', '11:30', '13:00', '13:30', '14:00', '14:30', '15:00'];
-    const prices = [9.5, 9.8, 10.1, 10.3, 10.2, 10.4, 10.6, 10.8, 11.0, stock.price];
-    
-    return {
-      title: {
-        text: `${stock.name}(${stock.code}) 当日走势`,
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold' as const
-        }
-      },
-      tooltip: {
-        trigger: 'axis' as const,
-        formatter: function(params: any) {
-          return `${params[0].name}<br/>价格: ${params[0].value}`;
-        }
-      },
-      xAxis: {
-        type: 'category' as const,
-        data: times,
-        axisLabel: {
-          fontSize: 12
-        }
-      },
-      yAxis: {
-        type: 'value' as const,
-        axisLabel: {
-          fontSize: 12
-        }
-      },
-      series: [{
-        data: prices,
-        type: 'line' as const,
-        smooth: true,
-        lineStyle: {
-          color: '#1890ff',
-          width: 2
-        },
-        itemStyle: {
-          color: '#1890ff'
-        },
-        areaStyle: {
-          color: {
-            type: 'linear' as const,
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [{
-              offset: 0, color: 'rgba(24, 144, 255, 0.3)'
-            }, {
-              offset: 1, color: 'rgba(24, 144, 255, 0.1)'
-            }]
-          }
-        }
-      }]
-    };
-  };
 
-  // 生成K线图数据
-  const generateKLineChartOption = (stock: Stock) => {
+
+  // 生成股票K线数据
+  const generateStockKLineData = (stock: Stock): StockDataPoint[] => {
     const dates = ['2025-08-18', '2025-08-19', '2025-08-20', '2025-08-21', '2025-08-22'];
     const klineData = [
-      [8.5, 8.8, 8.3, 8.6],
-      [8.6, 9.0, 8.5, 8.9],
-      [8.9, 9.3, 8.7, 9.2],
-      [9.2, 9.8, 9.0, 9.7],
-      [9.7, stock.price, 9.5, stock.price]
+      { open: 8.5, high: 8.8, low: 8.3, close: 8.6, volume: 1500000 },
+      { open: 8.6, high: 9.0, low: 8.5, close: 8.9, volume: 1800000 },
+      { open: 8.9, high: 9.3, low: 8.7, close: 9.2, volume: 2200000 },
+      { open: 9.2, high: 9.8, low: 9.0, close: 9.7, volume: 2500000 },
+      { open: 9.7, high: stock.price, low: 9.5, close: stock.price, volume: 3000000 }
     ];
     
-    return {
-      title: {
-        text: `${stock.name}(${stock.code}) 日K线图`,
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold' as const
-        }
-      },
-      tooltip: {
-        trigger: 'axis' as const,
-        axisPointer: {
-          type: 'cross' as const
-        },
-        formatter: function(params: any) {
-          const data = params[0].data;
-          return `${params[0].name}<br/>开盘: ${data[1]}<br/>收盘: ${data[2]}<br/>最低: ${data[3]}<br/>最高: ${data[4]}`;
-        }
-      },
-      xAxis: {
-        type: 'category' as const,
-        data: dates,
-        axisLabel: {
-          fontSize: 12
-        }
-      },
-      yAxis: {
-        type: 'value' as const,
-        axisLabel: {
-          fontSize: 12
-        }
-      },
-      series: [{
-        type: 'candlestick' as const,
-        data: klineData.map((item, index) => [dates[index], ...item]),
-        itemStyle: {
-          color: '#ff4d4f',
-          color0: '#52c41a',
-          borderColor: '#ff4d4f',
-          borderColor0: '#52c41a'
-        }
-      }]
-    };
+    return dates.map((date, index) => ({
+      time: date,
+      ...klineData[index]
+    }));
+  };
+
+  // 生成股票走势数据
+  const generateStockTrendData = (stock: Stock): StockDataPoint[] => {
+    const times = ['09:30', '10:00', '10:30', '11:00', '11:30', '13:00', '13:30', '14:00', '14:30', '15:00'];
+    const basePrice = stock.price * 0.95;
+    
+    return times.map((time, index) => {
+      const priceChange = (Math.random() - 0.5) * 0.1 * basePrice;
+      const currentPrice = basePrice + priceChange + (index * 0.01 * basePrice);
+      
+      return {
+        time,
+        open: currentPrice,
+        high: currentPrice * 1.02,
+        low: currentPrice * 0.98,
+        close: currentPrice,
+        volume: Math.floor(Math.random() * 500000) + 100000
+      };
+    });
   };
 
   const tableData = generateTableData();
@@ -769,9 +691,16 @@ const LimitUpStocks: React.FC = () => {
                 } 
                 key="trend"
               >
-                <div style={{ height: 400 }}>
-                  <EChart option={generateTrendChartOption(selectedStock)} />
-                </div>
+                <StockChart
+                  data={generateStockTrendData(selectedStock)}
+                  chartType="line"
+                  theme="light"
+                  showVolume={true}
+                  height={400}
+                  stockCode={selectedStock.code}
+                  title={`${selectedStock.name} 当日走势`}
+                  showTimeSelector={false}
+                />
               </TabPane>
               <TabPane 
                 tab={
@@ -782,9 +711,16 @@ const LimitUpStocks: React.FC = () => {
                 } 
                 key="kline"
               >
-                <div style={{ height: 400 }}>
-                  <EChart option={generateKLineChartOption(selectedStock)} />
-                </div>
+                <StockChart
+                  data={generateStockKLineData(selectedStock)}
+                  chartType="candlestick"
+                  theme="light"
+                  showVolume={true}
+                  height={400}
+                  stockCode={selectedStock.code}
+                  title={`${selectedStock.name} 日K线图`}
+                  showTimeSelector={true}
+                />
               </TabPane>
             </Tabs>
           </div>

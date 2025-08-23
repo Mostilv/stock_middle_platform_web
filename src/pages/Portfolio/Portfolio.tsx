@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Table,
@@ -21,7 +21,8 @@ import {
   BarChartOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import * as echarts from 'echarts';
+import StockChart from '../../components/StockChart';
+import type { StockDataPoint } from '../../components/StockChart';
 import {
   PortfolioContainer,
   PortfolioHeader,
@@ -154,8 +155,7 @@ const Portfolio: React.FC = () => {
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
   const [currentStockDetail, setCurrentStockDetail] =
     useState<StockDetail | null>(null);
-  const chartRef = useRef<HTMLDivElement>(null);
-  const chartInstance = useRef<echarts.ECharts | null>(null);
+
 
   // 模拟股票详情数据
   const getStockDetail = (code: string): StockDetail => {
@@ -348,116 +348,16 @@ const Portfolio: React.FC = () => {
     setStockDetailVisible(true);
   };
 
-  // 处理图表渲染
-  useEffect(() => {
-    if (stockDetailVisible && currentStockDetail && chartRef.current) {
-      // 销毁之前的图表实例
-      if (chartInstance.current) {
-        chartInstance.current.dispose();
-      }
-
-      // 创建新的图表实例
-      const chart = echarts.init(chartRef.current);
-      chartInstance.current = chart;
-
-      // 设置图表配置
-      const option = getKlineOption(currentStockDetail);
-      chart.setOption(option);
-
-      // 监听窗口大小变化
-      const handleResize = () => {
-        chart.resize();
-      };
-      window.addEventListener('resize', handleResize);
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (chartInstance.current) {
-          chartInstance.current.dispose();
-        }
-      };
-    }
-  }, [stockDetailVisible, currentStockDetail]);
-
-  // K线图配置
-  const getKlineOption = (stockDetail: StockDetail) => {
-    const dates = stockDetail.klineData.map(item => item[0]);
-    const data = stockDetail.klineData.map(item => item.slice(1, 5)); // 只取OHLC数据
-
-    return {
-      title: {
-        text: `${stockDetail.name} (${stockDetail.code}) 最近30个交易日K线图`,
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold',
-        },
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-        },
-        formatter(params: any) {
-          if (params && params[0] && params[0].data) {
-            const data = params[0].data;
-            return `${params[0].axisValue}<br/>
-                    开盘: ¥${data[1].toFixed(2)}<br/>
-                    收盘: ¥${data[2].toFixed(2)}<br/>
-                    最低: ¥${data[3].toFixed(2)}<br/>
-                    最高: ¥${data[4].toFixed(2)}`;
-          }
-          return '';
-        },
-      },
-      grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '15%',
-      },
-      xAxis: {
-        type: 'category',
-        data: dates,
-        scale: true,
-        boundaryGap: false,
-        axisLine: { onZero: false },
-        splitLine: { show: false },
-        splitNumber: 20,
-      },
-      yAxis: {
-        scale: true,
-        splitArea: {
-          show: true,
-        },
-      },
-      dataZoom: [
-        {
-          type: 'inside',
-          start: 0,
-          end: 100,
-        },
-        {
-          show: true,
-          type: 'slider',
-          top: '90%',
-          start: 0,
-          end: 100,
-        },
-      ],
-      series: [
-        {
-          name: 'K线',
-          type: 'candlestick',
-          data,
-          itemStyle: {
-            color: '#FD1050',
-            color0: '#0CF49B',
-            borderColor: '#FD1050',
-            borderColor0: '#0CF49B',
-          },
-        },
-      ],
-    };
+  // 生成股票K线数据
+  const generateStockKLineData = (stockDetail: StockDetail): StockDataPoint[] => {
+    return stockDetail.klineData.map(item => ({
+      time: item[0],
+      open: item[1],
+      high: item[4],
+      low: item[3],
+      close: item[2],
+      volume: item[5]
+    }));
   };
 
   // 删除编辑功能，只保留详情查看
@@ -708,10 +608,16 @@ const Portfolio: React.FC = () => {
           <div>
             {/* K线图 */}
             <div style={{ marginBottom: 24 }}>
-              <div
-                ref={chartRef}
-                style={{ height: '400px', width: '100%' }}
-              ></div>
+              <StockChart
+                data={generateStockKLineData(currentStockDetail)}
+                chartType="candlestick"
+                theme="light"
+                showVolume={true}
+                height={400}
+                stockCode={currentStockDetail.code}
+                title={`${currentStockDetail.name} K线图`}
+                showTimeSelector={true}
+              />
             </div>
 
             {/* 基本面信息 */}

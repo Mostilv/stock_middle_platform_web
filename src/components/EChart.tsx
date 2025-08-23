@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as echarts from 'echarts';
 
 type EChartProps = {
@@ -8,6 +8,7 @@ type EChartProps = {
   theme?: string;
   renderer?: 'canvas' | 'svg';
   lazy?: boolean; // 是否启用懒加载
+  onChartClick?: (params: any) => void; // 图表点击事件
 };
 
 const EChart: React.FC<EChartProps> = ({
@@ -17,11 +18,12 @@ const EChart: React.FC<EChartProps> = ({
   theme,
   renderer = 'canvas',
   lazy = true,
+  onChartClick,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<echarts.ECharts | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isVisible, setIsVisible] = React.useState(!lazy);
 
   // 防抖的resize处理函数
@@ -48,9 +50,13 @@ const EChart: React.FC<EChartProps> = ({
     // 使用动画关闭以减少卡顿
     chartInstance.setOption(option, { 
       notMerge: true, 
-      lazyUpdate: true,
-      animation: false // 关闭动画以提高性能
+      lazyUpdate: true
     });
+
+    // 添加点击事件监听
+    if (onChartClick) {
+      chartInstance.on('click', onChartClick);
+    }
 
     // 使用ResizeObserver监听容器大小变化
     const resizeObserver = new ResizeObserver(() => {
@@ -111,8 +117,7 @@ const EChart: React.FC<EChartProps> = ({
       chartRef.current.setOption(option, { 
         notMerge: false, 
         lazyUpdate: true, 
-        replaceMerge: [],
-        animation: false // 关闭动画以提高性能
+        replaceMerge: []
       });
     }
   }, [option, isVisible]);
