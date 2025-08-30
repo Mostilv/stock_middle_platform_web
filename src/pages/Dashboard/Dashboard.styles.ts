@@ -3,10 +3,10 @@ import styled from 'styled-components';
 export const DashboardContainer = styled.div`
   padding: 0;
   background: linear-gradient(135deg, #0f1419 0%, #1a202c 50%, #2d3748 100%);
-  min-height: 100vh;
+  height: 100vh;
   color: #e6f7ff;
   font-family: 'Microsoft YaHei', sans-serif;
-  overflow: auto; /* 允许页面滚动，不固定，避免内容被遮挡 */
+  overflow: hidden; /* 在整页轮播模式下，避免内容溢出到其他页 */
 `;
 
 // 主要内容区域

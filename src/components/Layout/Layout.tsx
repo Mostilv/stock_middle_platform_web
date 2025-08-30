@@ -31,12 +31,12 @@ const LayoutComponent: React.FC = React.memo(() => {
             {
           key: '/limit-up-stocks',
           icon: <BarChartOutlined />,
-          label: '梯队复盘',
+          label: '复盘',
         },
     {
       key: '/portfolio',
       icon: <BarChartOutlined />,
-      label: '调仓管理',
+      label: '调仓',
     },
     {
       key: '/settings',
