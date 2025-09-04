@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Table,
@@ -23,6 +23,7 @@ import {
 } from '@ant-design/icons';
 import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
+import { fetchPortfolioOverview, PortfolioOverviewResponse } from './services/portfolio.api';
 import {
   PortfolioContainer,
   PortfolioHeader,
@@ -151,6 +152,15 @@ const Portfolio: React.FC = () => {
       createdAt: '2024-01-10',
     },
   ]);
+  const [overview, setOverview] = useState<PortfolioOverviewResponse | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchPortfolioOverview()
+      .then((data) => { if (!mounted) return; setOverview(data); setStrategies(data.strategies as any); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
   const [currentStockDetail, setCurrentStockDetail] =
@@ -394,10 +404,10 @@ const Portfolio: React.FC = () => {
   const activeStrategyHoldings = strategies
     .filter(s => s.status === 'active')
     .reduce((sum, strategy) => sum + strategy.items.length, 0);
-  const todayPnL = 12500; // 模拟当日盈亏
-  const totalPnL = 89000; // 模拟累计盈亏
-  const todayRebalance = 8; // 模拟今日调仓
-  const todayPendingRebalance = 3; // 模拟今日待调仓
+  const todayPnL = overview?.todayPnL ?? 12500;
+  const totalPnL = overview?.totalPnL ?? 89000;
+  const todayRebalance = overview?.todayRebalance ?? 8;
+  const todayPendingRebalance = overview?.todayPendingRebalance ?? 3;
 
   return (
     <PortfolioContainer>

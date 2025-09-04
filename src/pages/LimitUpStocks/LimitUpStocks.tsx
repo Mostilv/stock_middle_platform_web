@@ -11,6 +11,7 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
+import { fetchLimitUpOverview, LimitUpOverviewResponse } from './services/limitUp.api';
 import {
   LineChartOutlined,
   BarChartOutlined,
@@ -55,6 +56,7 @@ interface SectorData {
 
 const LimitUpStocks: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
+  const [remote, setRemote] = useState<LimitUpOverviewResponse | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(['行情', '个数', '时间', '分数', '成交额', '市值', '封单', '流通市值']);
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -98,8 +100,23 @@ const LimitUpStocks: React.FC = () => {
     };
   }, []);
 
-  // 板块数据
-  const sectors: SectorData[] = [
+  useEffect(() => {
+    let mounted = true;
+    fetchLimitUpOverview(selectedDate)
+      .then((resp) => {
+        if (!mounted) return;
+        setRemote(resp);
+      })
+      .catch(() => {
+        // 静默失败，继续使用内置示例
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [selectedDate]);
+
+  // 板块数据（将被 API 数据覆盖）
+  let sectors: SectorData[] = [
     { name: '芯片', count: 27, value: 21441 },
     { name: '算力', count: 29, value: 8221 },
     { name: '人工智能', count: 31, value: 7592 },
@@ -117,8 +134,8 @@ const LimitUpStocks: React.FC = () => {
     { name: '股权转让', count: 4, value: 1308 },
   ];
 
-  // 梯队数据
-  const ladderData: LadderData[] = [
+  // 梯队数据（将被 API 数据覆盖）
+  let ladderData: LadderData[] = [
     {
       level: 6,
       count: 1,
@@ -568,6 +585,91 @@ const LimitUpStocks: React.FC = () => {
         volume: Math.floor(Math.random() * 500000) + 100000
       };
     });
+  };
+
+  const sectorsToUse = remote?.sectors || sectors;
+  const ladderDataToUse = remote?.ladders || ladderData;
+
+  // 生成表格数据/列时使用远程覆盖数据
+  const generateTableData = () => {
+    const tableData = [] as any[];
+    ladderDataToUse.forEach((ladder) => {
+      if (ladder.level > 0) {
+        const rowData: any = {
+          key: `ladder-${ladder.level}`,
+          level: `${ladder.level}板`,
+          count: `${ladder.count}个`,
+        };
+        sectorsToUse.forEach((sector) => {
+          const stocksInSector = ladder.stocks.filter(stock => stock.sectors.includes(sector.name));
+          if (stocksInSector.length > 0) {
+            const stock = stocksInSector[0];
+            rowData[sector.name] = (
+              <div 
+                style={{ fontSize: '12px', lineHeight: '1.4', cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f0f0f0'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; }}
+                onClick={() => { setSelectedStock(stock); setIsModalVisible(true); }}
+              >
+                <div style={{ color: '#666' }}>{stock.time}</div>
+                <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
+                <div style={{ color: '#1890ff', fontWeight: 'bold' }}>{stock.price}</div>
+                <div style={{ color: '#52c41a' }}>{stock.changePercent}%</div>
+                <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
+                <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
+              </div>
+            );
+          } else {
+            rowData[sector.name] = null;
+          }
+        });
+        tableData.push(rowData);
+      }
+    });
+    const brokenLadder = ladderDataToUse.find(l => l.level === 0);
+    if (brokenLadder) {
+      const brokenRowData: any = { key: 'broken', level: '断板', count: `${brokenLadder.count}个` };
+      sectorsToUse.forEach((sector) => {
+        const stocksInSector = brokenLadder.stocks.filter(stock => stock.sectors.includes(sector.name));
+        if (stocksInSector.length > 0) {
+          const stock = stocksInSector[0];
+          brokenRowData[sector.name] = (
+            <div 
+              style={{ fontSize: '12px', lineHeight: '1.4', opacity: 0.7, cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'background-color 0.2s' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f0f0f0'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; }}
+              onClick={() => { setSelectedStock(stock); setIsModalVisible(true); }}
+            >
+              <div style={{ color: '#666' }}>{stock.time}</div>
+              <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
+              <div style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{stock.price}</div>
+              <div style={{ color: '#ff4d4f' }}>{stock.changePercent}%</div>
+              <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
+              <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
+            </div>
+          );
+        } else {
+          brokenRowData[sector.name] = null;
+        }
+      });
+      tableData.push(brokenRowData);
+    }
+    return tableData;
+  };
+
+  const generateColumns = () => {
+    const columns: any[] = [
+      { title: '梯队/板块', dataIndex: 'level', key: 'level', width: 100, fixed: 'left' as const, render: (text: string, record: any) => (
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
+          <div style={{ fontSize: '12px', color: '#666' }}>{record.count}</div>
+        </div>
+      ) },
+    ];
+    sectorsToUse.forEach((sector) => {
+      columns.push({ title: sector.name, dataIndex: sector.name, key: sector.name, width: 120, render: (value: any) => value });
+    });
+    return columns;
   };
 
   const tableData = generateTableData();

@@ -13,6 +13,7 @@ export const SmallChartCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100%;
 
   &::before {
     content: '';
@@ -38,6 +39,6 @@ export const SmallChartCardContainer = styled.div`
   }
 
   .echarts-for-react {
-    height: calc(100% - 24px) !important;
+    height: 100% !important;
   }
 `;

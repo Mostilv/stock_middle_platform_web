@@ -77,7 +77,9 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
   return (
     <ChartCard $transparent>
       <h3>行业动量</h3>
-      <EChart height={200} option={industryMomentumOption} lazy={true} />
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <EChart height={'100%'} option={industryMomentumOption} lazy={true} />
+      </div>
     </ChartCard>
   );
 });

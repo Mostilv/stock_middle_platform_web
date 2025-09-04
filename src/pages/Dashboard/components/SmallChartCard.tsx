@@ -5,13 +5,13 @@ import { SmallChartCardContainer } from './SmallChartCard.styles';
 interface SmallChartCardProps {
   title: string;
   option: any;
-  height?: number;
+  height?: number | string;
 }
 
 const SmallChartCard: React.FC<SmallChartCardProps> = React.memo(({ 
   title, 
   option, 
-  height = 120 
+  height = '100%'
 }) => {
   return (
     <SmallChartCardContainer>

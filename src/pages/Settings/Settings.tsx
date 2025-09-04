@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Form,
@@ -15,16 +15,8 @@ import {
   
   Typography,
 } from 'antd';
-import {
-  SaveOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  MailOutlined,
-  NotificationOutlined,
-  GlobalOutlined,
-} from '@ant-design/icons';
+import { SaveOutlined, ReloadOutlined, SettingOutlined, PlusOutlined, DeleteOutlined, MailOutlined, NotificationOutlined, GlobalOutlined } from '@ant-design/icons';
+import { fetchSettingsData, saveSettingsData, SettingsDataResponse } from './services/settings.api';
 import {
   SettingsContainer,
   SettingsHeader,
@@ -56,44 +48,33 @@ const Settings: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [previewContent, setPreviewContent] = useState<string>('');
-  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([
-    {
-      id: '1',
-      email: 'admin@example.com',
-      remark: '管理员邮箱',
-      enabled: true,
-    },
-    {
-      id: '2',
-      email: 'trader@example.com',
-      remark: '交易员邮箱',
-      enabled: true,
-    },
-  ]);
+  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([]);
 
-  const [notificationTemplates, setNotificationTemplates] = useState<NotificationTemplate[]>([
-    {
-      id: '1',
-      name: '通知模板',
-      subject: '投资组合调仓通知 - {date}',
-      content: `策略名称：{{strategyName}}
-委托时间：{{orderTime}}
-股票|委托数量|委托类型|委托价格|操作|持仓
-{{#orders}}{{stock}}|{{quantity}}|{{orderType}}|{{price}}|{{action}}|{{position}}
-{{/orders}}`,
-      enabled: true,
-    },
-  ]);
+  const [notificationTemplates, setNotificationTemplates] = useState<NotificationTemplate[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchSettingsData()
+      .then((data) => {
+        if (!mounted) return;
+        setEmailConfigs(data.emailConfigs as any);
+        setNotificationTemplates(data.notificationTemplates as any);
+      })
+      .catch(() => {
+        // 保持空数组
+      });
+    return () => { mounted = false; };
+  }, []);
 
   const onFinish = (values: any) => {
     setLoading(true);
-    // 模拟保存设置
-    setTimeout(() => {
-      console.log('保存设置:', values);
-      console.log('邮箱配置:', emailConfigs);
-      message.success('设置保存成功');
-      setLoading(false);
-    }, 1000);
+    const payload: SettingsDataResponse = {
+      emailConfigs: emailConfigs as any,
+      notificationTemplates: notificationTemplates as any,
+    };
+    saveSettingsData(payload)
+      .then(() => message.success('设置保存成功'))
+      .finally(() => setLoading(false));
   };
 
   const handleReset = () => {
@@ -193,6 +174,43 @@ const Settings: React.FC = () => {
       ],
     };
     setPreviewContent(renderTemplate(tpl, sample));
+  };
+
+  // 预览开关：再次点击关闭预览
+  const handleTogglePreview = () => {
+    if (previewContent) {
+      setPreviewContent('');
+    } else {
+      handlePreviewTemplate();
+    }
+  };
+
+  // 测试发送邮件（模拟）
+  const handleTestSendEmail = () => {
+    const key = 'test-mail';
+    const subjectTpl = notificationTemplates[0]?.subject || '';
+    const contentTpl = notificationTemplates[0]?.content || '';
+    const sample = {
+      date: '2025-08-28',
+      strategyName: '趋势增强策略',
+      orderTime: '09:35:20',
+      orders: [
+        { stock: '招商银行', quantity: 2000, orderType: '限价', price: 33.58, action: '买入', position: '20%' },
+        { stock: '中兴通讯', quantity: 1500, orderType: '市价', price: 28.40, action: '卖出', position: '10%' },
+        { stock: '宁德时代', quantity: 500, orderType: '限价', price: 176.30, action: '买入', position: '15%' },
+      ],
+    };
+    const renderedSubject = renderTemplate(subjectTpl, sample);
+    const renderedContent = renderTemplate(contentTpl, sample);
+
+    message.loading({ content: '正在发送测试邮件...', key });
+    setTimeout(() => {
+      // 这里可接入后端 API：发送到启用的邮箱列表
+      console.log('测试邮件主题:', renderedSubject);
+      console.log('测试邮件内容:', renderedContent);
+      console.log('收件人(启用):', emailConfigs.filter(e => e.enabled).map(e => e.email));
+      message.success({ content: '测试邮件已发送（模拟）', key, duration: 2 });
+    }, 800);
   };
 
   
@@ -421,11 +439,15 @@ const Settings: React.FC = () => {
                       />
                       <div style={{ marginTop: 8 }}>
                         <Space>
-                          <Button onClick={handlePreviewTemplate}>预览模板</Button>
+                          <Button onClick={handleTogglePreview}>{previewContent ? '关闭预览' : '预览模板'}</Button>
+                          <Button type="primary" onClick={handleTestSendEmail}>测试发送邮件</Button>
                           <Text type="secondary">使用示例数据渲染含多只股票的表格</Text>
                         </Space>
                         {previewContent && (
-                          <Card size="small" style={{ marginTop: 8, whiteSpace: 'pre-wrap', backgroundColor: '#0f172a', color: '#e2e8f0' }}>
+                          <Card size="small" style={{ marginTop: 8, whiteSpace: 'pre-wrap', backgroundColor: '#0f172a', color: '#e2e8f0', position: 'relative' }}>
+                            <div style={{ position: 'absolute', right: 8, top: 6 }}>
+                              <Button type="link" size="small" onClick={() => setPreviewContent('')} style={{ color: '#93c5fd' }}>关闭</Button>
+                            </div>
                             {previewContent}
                           </Card>
                         )}

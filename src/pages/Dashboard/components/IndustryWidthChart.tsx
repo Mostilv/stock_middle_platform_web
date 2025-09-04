@@ -149,7 +149,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(({ sele
   return (
     <ChartCard $transparent>
       <h3>行业宽度</h3>
-      <EChart height={200} option={industryWidthOption} lazy={true} />
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <EChart height={'100%'} option={industryWidthOption} lazy={true} />
+      </div>
     </ChartCard>
   );
 });

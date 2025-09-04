@@ -11,6 +11,8 @@ export const ChartCard = styled.div<{ $transparent?: boolean }>`
   position: relative;
   overflow: hidden;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 
   &::before {
     content: '';
@@ -49,6 +51,6 @@ export const ChartCard = styled.div<{ $transparent?: boolean }>`
   }
 
   .echarts-for-react {
-    height: calc(100% - 60px) !important;
+    height: 100% !important;
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Carousel, Row, Col } from 'antd';
 import type { EChartsOption } from 'echarts';
 import TimeDisplay from './components/TimeDisplay';
@@ -8,6 +8,7 @@ import CenterCharts from './components/CenterCharts';
 import CombinedSmallCharts from './components/CombinedSmallCharts';
 import EChart from '../../components/EChart';
 import { getMarketData } from './services/marketData';
+import { fetchMarketData } from './services/marketData.api';
 import {
   DashboardContainer,
   MainContent,
@@ -16,8 +17,21 @@ import {
 const Dashboard: React.FC = React.memo(() => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   
-  // 使用useMemo缓存市场数据，避免重复计算
-  const marketData = useMemo(() => getMarketData(), []);
+  // 市场数据：默认先用本地模拟，随后尝试远程拉取（支持 Mock）
+  const [marketData, setMarketData] = useState(() => getMarketData());
+
+  useEffect(() => {
+    let mounted = true;
+    fetchMarketData()
+      .then((data) => {
+        if (!mounted) return;
+        setMarketData(data as any);
+      })
+      .catch(() => {})
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // 使用useCallback优化事件处理函数
   const handleDateChange = useCallback((date: Date | null) => {
