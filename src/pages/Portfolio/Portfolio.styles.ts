@@ -2,19 +2,17 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 
 export const PortfolioContainer = styled.div`
-  padding: 24px;
-  background-color: #f5f5f5;
-  min-height: 100vh;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 16px;
+  background: #f5f5f5;
+  height: 100vh;
+  overflow: hidden;
   width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     padding: 16px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 12px;
   }
 `;
 
@@ -22,18 +20,22 @@ export const PortfolioHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   .header-content {
     h1 {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #1890ff;
-      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin: 0;
     }
 
     p {
-      font-size: 1rem;
+      font-size: 14px;
       color: #666;
       margin: 0;
     }

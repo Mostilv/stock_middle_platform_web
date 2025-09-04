@@ -11,7 +11,8 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
-import { fetchLimitUpOverview, LimitUpOverviewResponse } from './services/limitUp.api';
+import { fetchLimitUpOverview } from './services/limitUp.api';
+import type { LimitUpOverviewResponse } from './services/limitUp.api';
 import {
   LineChartOutlined,
   BarChartOutlined,
@@ -24,7 +25,6 @@ import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
 
 const { Group: CheckboxGroup } = Checkbox;
-const { TabPane } = Tabs;
 
 interface Stock {
   name: string;
@@ -400,153 +400,7 @@ const LimitUpStocks: React.FC = () => {
     },
   ];
 
-  // 生成表格数据
-  const generateTableData = () => {
-    const tableData = [];
-    
-    // 添加连板数据
-    ladderData.forEach((ladder) => {
-      if (ladder.level > 0) { // 排除断板
-        const rowData: any = {
-          key: `ladder-${ladder.level}`,
-          level: `${ladder.level}板`,
-          count: `${ladder.count}个`,
-        };
-
-        // 为每个板块添加股票数据
-        sectors.forEach((sector) => {
-          const stocksInSector = ladder.stocks.filter(stock => 
-            stock.sectors.includes(sector.name)
-          );
-          
-          if (stocksInSector.length > 0) {
-            const stock = stocksInSector[0]; // 取第一个股票
-            rowData[sector.name] = (
-              <div 
-                style={{ 
-                  fontSize: '12px', 
-                  lineHeight: '1.4',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  borderRadius: '4px',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f0f0f0';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-                onClick={() => {
-                  setSelectedStock(stock);
-                  setIsModalVisible(true);
-                }}
-              >
-                <div style={{ color: '#666' }}>{stock.time}</div>
-                <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
-                <div style={{ color: '#1890ff', fontWeight: 'bold' }}>{stock.price}</div>
-                <div style={{ color: '#52c41a' }}>{stock.changePercent}%</div>
-                <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
-                <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
-              </div>
-            );
-          } else {
-            rowData[sector.name] = null;
-          }
-        });
-
-        tableData.push(rowData);
-      }
-    });
-
-    // 添加断板数据（放在最下侧）
-    const brokenLadder = ladderData.find(l => l.level === 0);
-    if (brokenLadder) {
-      const brokenRowData: any = {
-        key: 'broken',
-        level: '断板',
-        count: `${brokenLadder.count}个`,
-      };
-
-      sectors.forEach((sector) => {
-        const stocksInSector = brokenLadder.stocks.filter(stock => 
-          stock.sectors.includes(sector.name)
-        );
-        
-        if (stocksInSector.length > 0) {
-          const stock = stocksInSector[0];
-          brokenRowData[sector.name] = (
-            <div 
-              style={{ 
-                fontSize: '12px', 
-                lineHeight: '1.4', 
-                opacity: 0.7,
-                cursor: 'pointer',
-                padding: '4px',
-                borderRadius: '4px',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f0f0f0';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-              onClick={() => {
-                setSelectedStock(stock);
-                setIsModalVisible(true);
-              }}
-            >
-              <div style={{ color: '#666' }}>{stock.time}</div>
-              <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
-              <div style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{stock.price}</div>
-              <div style={{ color: '#ff4d4f' }}>{stock.changePercent}%</div>
-              <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
-              <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
-            </div>
-          );
-        } else {
-          brokenRowData[sector.name] = null;
-        }
-      });
-
-      tableData.push(brokenRowData);
-    }
-
-    return tableData;
-  };
-
-  // 生成表格列配置
-  const generateColumns = () => {
-    const columns: any[] = [
-      {
-        title: '梯队/板块',
-        dataIndex: 'level',
-        key: 'level',
-        width: 100,
-        fixed: 'left' as const,
-        render: (text: string, record: any) => (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>{record.count}</div>
-          </div>
-        ),
-      },
-    ];
-
-    // 添加板块列
-    sectors.forEach((sector) => {
-      columns.push({
-        title: sector.name,
-        dataIndex: sector.name,
-        key: sector.name,
-        width: 120,
-        render: (value: any) => value,
-      });
-    });
-
-    return columns;
-  };
+  
 
 
 
@@ -713,11 +567,13 @@ const LimitUpStocks: React.FC = () => {
       {/* 梯队复盘表格 */}
       <Card 
         size="small" 
-        bodyStyle={{ 
-          padding: 12,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column'
+        styles={{
+          body: {
+            padding: 12,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column'
+          }
         }}
         style={{ 
           flex: 1,
@@ -754,7 +610,7 @@ const LimitUpStocks: React.FC = () => {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         width={1000}
-        destroyOnClose
+        destroyOnHidden
       >
         {selectedStock && (
           <div>
@@ -783,48 +639,53 @@ const LimitUpStocks: React.FC = () => {
             </div>
 
             {/* 图表 */}
-            <Tabs defaultActiveKey="trend">
-              <TabPane 
-                tab={
-                  <span>
-                    <LineChartOutlined />
-                    当日走势
-                  </span>
-                } 
-                key="trend"
-              >
-                <StockChart
-                  data={generateStockTrendData(selectedStock)}
-                  chartType="line"
-                  theme="light"
-                  showVolume={true}
-                  height={400}
-                  stockCode={selectedStock.code}
-                  title={`${selectedStock.name} 当日走势`}
-                  showTimeSelector={false}
-                />
-              </TabPane>
-              <TabPane 
-                tab={
-                  <span>
-                    <BarChartOutlined />
-                    日K线图
-                  </span>
-                } 
-                key="kline"
-              >
-                <StockChart
-                  data={generateStockKLineData(selectedStock)}
-                  chartType="candlestick"
-                  theme="light"
-                  showVolume={true}
-                  height={400}
-                  stockCode={selectedStock.code}
-                  title={`${selectedStock.name} 日K线图`}
-                  showTimeSelector={true}
-                />
-              </TabPane>
-            </Tabs>
+            <Tabs
+              defaultActiveKey="trend"
+              items={[
+                {
+                  key: 'trend',
+                  label: (
+                    <span>
+                      <LineChartOutlined />
+                      当日走势
+                    </span>
+                  ),
+                  children: (
+                    <StockChart
+                      data={generateStockTrendData(selectedStock)}
+                      chartType="line"
+                      theme="light"
+                      showVolume={true}
+                      height={400}
+                      stockCode={selectedStock.code}
+                      title={`${selectedStock.name} 当日走势`}
+                      showTimeSelector={false}
+                    />
+                  ),
+                },
+                {
+                  key: 'kline',
+                  label: (
+                    <span>
+                      <BarChartOutlined />
+                      日K线图
+                    </span>
+                  ),
+                  children: (
+                    <StockChart
+                      data={generateStockKLineData(selectedStock)}
+                      chartType="candlestick"
+                      theme="light"
+                      showVolume={true}
+                      height={400}
+                      stockCode={selectedStock.code}
+                      title={`${selectedStock.name} 日K线图`}
+                      showTimeSelector={true}
+                    />
+                  ),
+                },
+              ]}
+            />
           </div>
         )}
       </Modal>

@@ -23,7 +23,8 @@ import {
 } from '@ant-design/icons';
 import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
-import { fetchPortfolioOverview, PortfolioOverviewResponse } from './services/portfolio.api';
+import { fetchPortfolioOverview } from './services/portfolio.api';
+import type { PortfolioOverviewResponse } from './services/portfolio.api';
 import {
   PortfolioContainer,
   PortfolioHeader,

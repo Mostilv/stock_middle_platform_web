@@ -16,7 +16,8 @@ import {
   Typography,
 } from 'antd';
 import { SaveOutlined, ReloadOutlined, SettingOutlined, PlusOutlined, DeleteOutlined, MailOutlined, NotificationOutlined, GlobalOutlined } from '@ant-design/icons';
-import { fetchSettingsData, saveSettingsData, SettingsDataResponse } from './services/settings.api';
+import { fetchSettingsData, saveSettingsData } from './services/settings.api';
+import type { SettingsDataResponse } from './services/settings.api';
 import {
   SettingsContainer,
   SettingsHeader,
