@@ -83,7 +83,7 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
       {
         type: 'category' as const,
         data: times,
-        boundaryGap: false,
+        boundaryGap: true,
         axisLine: { 
           onZero: false,
           lineStyle: {
@@ -100,7 +100,7 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
         type: 'category' as const,
         gridIndex: 1,
         data: times,
-        boundaryGap: false,
+        boundaryGap: true,
         axisLine: { 
           onZero: false,
           lineStyle: {

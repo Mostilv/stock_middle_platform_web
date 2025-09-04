@@ -48,9 +48,10 @@ const EChart: React.FC<EChartProps> = ({
     chartRef.current = chartInstance;
     
     // 使用动画关闭以减少卡顿
-    chartInstance.setOption(option, { 
-      notMerge: true, 
-      lazyUpdate: true
+    chartInstance.setOption(option, {
+      notMerge: true,
+      lazyUpdate: true,
+      replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom']
     });
 
     // 添加点击事件监听
@@ -71,7 +72,7 @@ const EChart: React.FC<EChartProps> = ({
         clearTimeout(resizeTimeoutRef.current);
       }
     };
-  }, [theme, renderer, option, debouncedResize]);
+  }, [theme, renderer, debouncedResize]);
 
   // 懒加载逻辑
   useEffect(() => {
@@ -114,10 +115,10 @@ const EChart: React.FC<EChartProps> = ({
   // 响应option变更
   useEffect(() => {
     if (chartRef.current && isVisible) {
-      chartRef.current.setOption(option, { 
-        notMerge: false, 
-        lazyUpdate: true, 
-        replaceMerge: []
+      chartRef.current.setOption(option, {
+        notMerge: true,
+        lazyUpdate: true,
+        replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom']
       });
     }
   }, [option, isVisible]);
@@ -160,7 +161,6 @@ const EChart: React.FC<EChartProps> = ({
         minWidth: 0,
         height: typeof height === 'number' ? `${height}px` : height,
         opacity: isVisible ? 1 : 0,
-        transition: 'opacity 0.3s ease-in-out',
       }}
     />
   );
