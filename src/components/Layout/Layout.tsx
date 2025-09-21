@@ -80,14 +80,16 @@ const LayoutComponent: React.FC = React.memo(() => {
         />
       </SiderContainer>
       <MainLayout $collapsed={collapsed} data-path={location.pathname}>
-        {/* 固定在左上角的按钮 */}
-        <HeaderButton 
-          $collapsed={collapsed}
-          $isDashboard={location.pathname === '/'}
-          onClick={handleCollapseClick}
-        >
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </HeaderButton>
+        {/* 固定在左上角的按钮，只在首页大屏页显示 */}
+        {location.pathname === '/' && (
+          <HeaderButton 
+            $collapsed={collapsed}
+            $isDashboard={true}
+            onClick={handleCollapseClick}
+          >
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </HeaderButton>
+        )}
         <ContentContainer data-path={location.pathname}>
           <Outlet />
         </ContentContainer>

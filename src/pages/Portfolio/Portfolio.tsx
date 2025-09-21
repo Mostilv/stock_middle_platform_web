@@ -382,17 +382,33 @@ const Portfolio: React.FC = () => {
   // 删除模态框相关功能，只保留详情查看
 
   const toggleStrategyStatus = (strategyId: string) => {
+    // 获取当前策略的状态
+    const currentStrategy = strategies.find(strategy => strategy.id === strategyId);
+    const newStatus = currentStrategy?.status === 'active' ? 'inactive' : 'active';
+    
+    // 更新策略状态
     setStrategies(
       strategies.map(strategy =>
         strategy.id === strategyId
           ? {
               ...strategy,
-              status: strategy.status === 'active' ? 'inactive' : 'active',
+              status: newStatus,
             }
           : strategy,
       ),
     );
-    // 不触发策略折叠样式，保持当前展开状态
+    
+    // 如果用户需要，可以在这里添加条件，只在切换到停用状态时折叠菜单
+    // 目前完全取消折叠联动，保持当前展开状态
+    
+    // 如果需要只在切换到停用状态时折叠菜单，取消下面注释
+    /*
+    if (newStatus === 'inactive') {
+      // 获取全局折叠状态控制函数
+      const event = new CustomEvent('toggleSider', { detail: { collapsed: true } });
+      window.dispatchEvent(event);
+    }
+    */
   };
 
   // 统计数据
@@ -550,10 +566,14 @@ const Portfolio: React.FC = () => {
                       {strategy.description}
                     </Text>
                   </div>
-                  <div>
+                  <div onClick={(e) => e.stopPropagation()}>
                     <Switch
                       checked={strategy.status === 'active'}
-                      onChange={() => toggleStrategyStatus(strategy.id)}
+                      onChange={(checked, event) => {
+                        // 阻止事件冒泡，防止触发菜单折叠
+                        event?.stopPropagation();
+                        toggleStrategyStatus(strategy.id);
+                      }}
                       checkedChildren='启用'
                       unCheckedChildren='停用'
                     />
