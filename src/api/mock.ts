@@ -94,6 +94,51 @@ const routes: Record<string, MockHandler> = {
     // 回显成功
     return jsonResponse({ ok: true } as any);
   },
+  'GET /users': async () => {
+    const payload = [
+      {
+        id: 1,
+        username: 'admin',
+        email: 'admin@example.com',
+        full_name: '系统管理员',
+        is_active: true,
+        is_superuser: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+      {
+        id: 2,
+        username: 'trader',
+        email: 'trader@example.com',
+        full_name: '交易员',
+        is_active: true,
+        is_superuser: false,
+        created_at: '2024-01-02T00:00:00Z',
+        updated_at: '2024-01-02T00:00:00Z',
+      },
+      {
+        id: 3,
+        username: 'analyst',
+        email: 'analyst@example.com',
+        full_name: '分析师',
+        is_active: true,
+        is_superuser: false,
+        created_at: '2024-01-03T00:00:00Z',
+        updated_at: '2024-01-03T00:00:00Z',
+      },
+      {
+        id: 4,
+        username: 'viewer',
+        email: 'viewer@example.com',
+        full_name: '观察员',
+        is_active: false,
+        is_superuser: false,
+        created_at: '2024-01-04T00:00:00Z',
+        updated_at: '2024-01-04T00:00:00Z',
+      },
+    ];
+    return jsonResponse(payload);
+  },
 };
 
 export async function handleMock(path: string, init?: RequestInit): Promise<Response | undefined> {

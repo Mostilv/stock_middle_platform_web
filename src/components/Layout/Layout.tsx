@@ -6,6 +6,7 @@ import {
   DashboardOutlined,
   BarChartOutlined,
   SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -37,6 +38,11 @@ const LayoutComponent: React.FC = React.memo(() => {
       key: '/portfolio',
       icon: <BarChartOutlined />,
       label: '调仓',
+    },
+    {
+      key: '/user-management',
+      icon: <UserOutlined />,
+      label: '用户管理',
     },
     {
       key: '/settings',

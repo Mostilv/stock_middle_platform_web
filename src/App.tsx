@@ -15,6 +15,7 @@ const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const LimitUpStocks = React.lazy(() => import('./pages/LimitUpStocks/LimitUpStocks'));
 const Portfolio = React.lazy(() => import('./pages/Portfolio/Portfolio'));
 const Settings = React.lazy(() => import('./pages/Settings/Settings'));
+const UserManagement = React.lazy(() => import('./pages/UserManagement'));
 
 // 加载中组件
 const LoadingComponent: React.FC = () => (
@@ -48,6 +49,7 @@ const App: React.FC = () => {
                 <Route index element={<Dashboard />} />
                 <Route path='limit-up-stocks' element={<LimitUpStocks />} />
                 <Route path='portfolio' element={<Portfolio />} />
+                <Route path='user-management' element={<UserManagement />} />
                 <Route path='settings' element={<Settings />} />
                 <Route path='*' element={<Navigate to='/' replace />} />
               </Route>
