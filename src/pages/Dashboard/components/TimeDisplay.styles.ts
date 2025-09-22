@@ -6,7 +6,7 @@ export const TimeDisplayContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 12px;
-  padding: 8px 12px 0 12px;
+  padding: 8px 24px 0 24px;
   z-index: 1;
 
   span {

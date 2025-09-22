@@ -29,8 +29,12 @@ export const DashboardContainer = styled.div`
 
 // 主要内容区域
 export const MainContent = styled.div`
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 16px;
+  grid-auto-rows: minmax(0, 1fr);
+  align-items: stretch;
   height: calc(100vh - 140px);
   padding: 16px 24px 24px 24px;
   min-width: 0;

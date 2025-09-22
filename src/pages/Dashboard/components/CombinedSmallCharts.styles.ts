@@ -4,7 +4,7 @@ export const CombinedSmallChartsContainer = styled.div`
   display: none;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  padding: 0 20px 20px 20px;
+  padding: 0 24px 24px 24px;
 
   @media (max-width: 992px) {
     display: grid;

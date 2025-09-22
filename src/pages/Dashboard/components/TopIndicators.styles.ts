@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const TopIndicatorsContainer = styled.div`
-  padding: 12px 12px 4px 12px;
+  padding: 12px 24px 4px 24px;
   margin-bottom: 4px;
   margin-top: 8px;
 
