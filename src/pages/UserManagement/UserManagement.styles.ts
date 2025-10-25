@@ -2,30 +2,46 @@ import styled from 'styled-components';
 import { Card } from 'antd';
 
 export const UserManagementContainer = styled.div`
-  padding: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  overflow: hidden;
+  min-height: 100vh;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #f8fbff 0%, #e8f0ff 100%);
+  overflow-y: auto;
 
   @media (max-width: 768px) {
-    padding: 8px;
+    padding: 16px;
   }
 `;
 
 export const UserManagementHeader = styled.div`
-  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.18) 0%,
+    rgba(147, 197, 253, 0.4) 100%
+  );
   padding: 24px 32px;
-  border-bottom: 1px solid #303030;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+  color: #0f172a;
+  margin-bottom: 16px;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: inherit;
+  }
 `;
 
 export const UserManagementCard = styled(Card)`
-  margin: 24px;
+  margin: 0;
   height: calc(100vh - 140px);
-  background: #1f1f1f;
-  border: 1px solid #303030;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 25px 55px rgba(15, 23, 42, 0.12);
   overflow: hidden;
 
   .ant-card-body {
@@ -38,42 +54,42 @@ export const UserManagementCard = styled(Card)`
     background: transparent;
     
     .ant-table-thead > tr > th {
-      background: #262626;
-      border-bottom: 1px solid #303030;
-      color: #fff;
+      background: #f7faff;
+      border-bottom: 1px solid #e2e8f0;
+      color: #1f2937;
       font-weight: 600;
     }
 
     .ant-table-tbody > tr > td {
-      background: #1f1f1f;
-      border-bottom: 1px solid #303030;
-      color: #fff;
+      background: #ffffff;
+      border-bottom: 1px solid #eef2f7;
+      color: #334155;
     }
 
     .ant-table-tbody > tr:hover > td {
-      background: #262626 !important;
+      background: #eef5ff !important;
     }
 
     .ant-table-pagination {
       .ant-pagination-item {
-        background: #262626;
-        border-color: #303030;
+        background: #ffffff;
+        border-color: #e2e8f0;
         
         a {
-          color: #fff;
+          color: #475569;
         }
         
         &:hover {
-          border-color: #1890ff;
+          border-color: #4096ff;
           
           a {
-            color: #1890ff;
+            color: #1677ff;
           }
         }
         
         &.ant-pagination-item-active {
-          background: #1890ff;
-          border-color: #1890ff;
+          background: #1677ff;
+          border-color: #1677ff;
           
           a {
             color: #fff;
@@ -84,13 +100,13 @@ export const UserManagementCard = styled(Card)`
       .ant-pagination-prev,
       .ant-pagination-next {
         .ant-pagination-item-link {
-          background: #262626;
-          border-color: #303030;
-          color: #fff;
+          background: #ffffff;
+          border-color: #e2e8f0;
+          color: #64748b;
           
           &:hover {
-            border-color: #1890ff;
-            color: #1890ff;
+            border-color: #4096ff;
+            color: #1677ff;
           }
         }
       }
@@ -98,60 +114,64 @@ export const UserManagementCard = styled(Card)`
       .ant-pagination-options {
         .ant-select {
           .ant-select-selector {
-            background: #262626;
-            border-color: #303030;
-            color: #fff;
+            background: #ffffff;
+            border-color: #e2e8f0;
+            color: #0f172a;
           }
         }
       }
       
       .ant-pagination-total-text {
-        color: #fff;
+        color: #94a3b8;
       }
     }
   }
 
   .ant-modal {
     .ant-modal-content {
-      background: #1f1f1f;
-      border: 1px solid #303030;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.2);
     }
     
     .ant-modal-header {
-      background: #1f1f1f;
-      border-bottom: 1px solid #303030;
+      background: #f7faff;
+      border-bottom: 1px solid #e2e8f0;
       
       .ant-modal-title {
-        color: #fff;
+        color: #0f172a;
       }
     }
     
     .ant-modal-body {
-      background: #1f1f1f;
+      background: #ffffff;
       
       .ant-form-item-label > label {
-        color: #fff;
+        color: #1f2937;
       }
       
       .ant-input,
       .ant-input-password {
-        background: #262626;
-        border-color: #303030;
-        color: #fff;
+        background: #ffffff;
+        border-color: #d7e3ff;
+        color: #0f172a;
         
         &:hover {
-          border-color: #1890ff;
+          border-color: #7aa2ff;
         }
         
         &:focus {
-          border-color: #1890ff;
-          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+          border-color: #2b7cff;
+          box-shadow: 0 0 0 2px rgba(43, 124, 255, 0.18);
         }
       }
       
       .ant-switch {
+        background: #cbd5f5;
+
         &.ant-switch-checked {
-          background: #1890ff;
+          background: #2b7cff;
         }
       }
     }
@@ -167,36 +187,36 @@ export const UserActions = styled.div`
 export const SearchContainer = styled.div`
   .ant-input-search {
     .ant-input {
-      background: #262626;
-      border-color: #303030;
-      color: #fff;
+      background: #ffffff;
+      border-color: #d7e3ff;
+      color: #0f172a;
       
       &:hover {
-        border-color: #1890ff;
+        border-color: #7aa2ff;
       }
       
       &:focus {
-        border-color: #1890ff;
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        border-color: #2b7cff;
+        box-shadow: 0 0 0 2px rgba(43, 124, 255, 0.18);
       }
       
       &::placeholder {
-        color: #666;
+        color: #94a3b8;
       }
     }
     
     .ant-input-search-button {
-      background: #1890ff;
-      border-color: #1890ff;
+      background: #2b7cff;
+      border-color: #2b7cff;
       
       &:hover {
-        background: #40a9ff;
-        border-color: #40a9ff;
+        background: #5c9dff;
+        border-color: #5c9dff;
       }
     }
     
     .ant-input-prefix {
-      color: #666;
+      color: #94a3b8;
     }
   }
 `;
@@ -207,19 +227,19 @@ export const UserAvatar = styled.div`
   gap: 12px;
   
   .ant-avatar {
-    background: #1890ff;
+    background: linear-gradient(135deg, #93c5fd, #3b82f6);
   }
   
   .user-info {
     .username {
       font-weight: 500;
-      color: #fff;
+      color: #0f172a;
       margin-bottom: 2px;
     }
     
     .full-name {
       font-size: 12px;
-      color: #999;
+      color: #94a3b8;
     }
   }
 `;
@@ -274,17 +294,17 @@ export const ActionButtons = styled.div`
     justify-content: center;
     
     &.ant-btn-text {
-      color: #fff;
+      color: #475569;
       
       &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(59, 130, 246, 0.1);
       }
       
       &.ant-btn-dangerous {
-        color: #ff4d4f;
+        color: #e11d48;
         
         &:hover {
-          background: rgba(255, 77, 79, 0.1);
+          background: rgba(225, 29, 72, 0.1);
         }
       }
     }

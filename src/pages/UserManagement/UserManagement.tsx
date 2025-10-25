@@ -240,7 +240,7 @@ const UserManagement: React.FC = () => {
   return (
     <UserManagementContainer>
       <UserManagementHeader>
-        <Title level={2} style={{ margin: 0, color: '#fff' }}>
+        <Title level={2} style={{ margin: 0, color: '#0f172a' }}>
           <UserOutlined style={{ marginRight: 8 }} />
           用户管理
         </Title>
