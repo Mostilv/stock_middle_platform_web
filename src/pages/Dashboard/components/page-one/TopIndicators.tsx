@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'antd';
-import EChart from '../../../components/EChart';
+import EChart from '../../../../components/EChart';
 import { TopIndicatorsContainer, IndicatorCard } from './TopIndicators.styles';
 
 interface MarketData {

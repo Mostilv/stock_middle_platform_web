@@ -1,5 +1,5 @@
 import React from 'react';
-import EChart from '../../../components/EChart';
+import EChart from '../../../../components/EChart';
 import { SmallChartCardContainer } from './SmallChartCard.styles';
 
 interface SmallChartCardProps {

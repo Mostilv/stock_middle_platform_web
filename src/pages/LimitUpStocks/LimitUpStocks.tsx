@@ -11,8 +11,8 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
-import { fetchLimitUpOverview } from './services/limitUp.api';
-import type { LimitUpOverviewResponse } from './services/limitUp.api';
+import { fetchLimitUpOverview } from '../../api/modules/limitUp';
+import type { LimitUpOverviewResponse } from '../../api/modules/limitUp';
 import {
   LineChartOutlined,
   BarChartOutlined,

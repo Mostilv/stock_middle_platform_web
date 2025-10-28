@@ -1,4 +1,4 @@
-import { apiClient } from '../../../api';
+import { http } from '../httpClient';
 
 export interface SectorData {
   name: string;
@@ -34,11 +34,7 @@ export interface LimitUpOverviewResponse {
   ladders: LadderGroup[];
 }
 
-export async function fetchLimitUpOverview(date?: string): Promise<LimitUpOverviewResponse> {
-  const { data } = await apiClient.get<LimitUpOverviewResponse>('/limitup/overview', {
+export const fetchLimitUpOverview = (date?: string): Promise<LimitUpOverviewResponse> =>
+  http.get<LimitUpOverviewResponse>('/limitup/overview', {
     query: date ? { date } : undefined,
   });
-  return data;
-}
-
-

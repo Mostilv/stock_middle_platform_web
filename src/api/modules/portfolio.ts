@@ -1,4 +1,4 @@
-import { apiClient } from '../../../api';
+import { http } from '../httpClient';
 
 export interface PortfolioItemDTO {
   key: string;
@@ -33,9 +33,5 @@ export interface PortfolioOverviewResponse {
   todayPendingRebalance: number;
 }
 
-export async function fetchPortfolioOverview(): Promise<PortfolioOverviewResponse> {
-  const { data } = await apiClient.get<PortfolioOverviewResponse>('/portfolio/overview');
-  return data;
-}
-
-
+export const fetchPortfolioOverview = (): Promise<PortfolioOverviewResponse> =>
+  http.get<PortfolioOverviewResponse>('/portfolio/overview');

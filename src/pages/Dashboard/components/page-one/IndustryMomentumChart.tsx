@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import EChart from '../../../components/EChart';
+import EChart from '../../../../components/EChart';
 import { ChartCard } from './IndustryMomentumChart.styles';
 
 const IndustryMomentumChart: React.FC = React.memo(() => {

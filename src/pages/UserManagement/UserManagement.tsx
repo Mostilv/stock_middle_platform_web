@@ -28,8 +28,13 @@ import {
   CrownOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { fetchUsers, createUser, updateUser, deleteUser } from './services/user.api';
-import type { User, UserCreate, UserUpdate } from './services/user.api';
+import {
+  fetchUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from '../../api/modules/users';
+import type { User, UserCreate, UserUpdate } from '../../api/modules/users';
 import {
   UserManagementContainer,
   UserManagementHeader,

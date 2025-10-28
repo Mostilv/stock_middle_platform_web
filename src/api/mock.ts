@@ -1,13 +1,22 @@
+import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { API_CONFIG } from './config';
 
-type MockHandler = (path: string, init?: RequestInit) => Promise<Response | undefined>;
+interface MockResult<T = unknown> {
+  status?: number;
+  statusText?: string;
+  headers?: Record<string, string>;
+  data: T;
+}
 
-const jsonResponse = (data: unknown, init?: ResponseInit): Response =>
-  new Response(JSON.stringify(data), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-    ...(init || {}),
-  });
+type MockHandler = (request: { path: string; config: AxiosRequestConfig }) => Promise<MockResult | undefined> | MockResult | undefined;
+
+const jsonResponse = (data: unknown, init?: Partial<MockResult>): MockResult => ({
+  status: 200,
+  statusText: 'OK',
+  headers: { 'Content-Type': 'application/json' },
+  data,
+  ...(init || {}),
+});
 
 // 这里集中定义 Mock 路由
 const routes: Record<string, MockHandler> = {
@@ -20,7 +29,7 @@ const routes: Record<string, MockHandler> = {
     };
     return jsonResponse(payload);
   },
-  'GET /limitup/overview': async (path) => {
+  'GET /limitup/overview': async () => {
     // 可根据查询参数生成不同日期，但这里简单返回固定集
     const payload = {
       date: '2025-08-28',
@@ -32,12 +41,207 @@ const routes: Record<string, MockHandler> = {
         { name: '证券', count: 2, value: 4187 },
       ],
       ladders: [
-        { level: 6, count: 1, stocks: [ { name: '科森科技', code: '603626', time: '09:43', price: 10.02, changePercent: 28.44, volume1: 84.67, volume2: 84.67, ratio1: 0.43, ratio2: 1.9, sectors: ['机器人概念'], marketCap: 45.6, pe: 25.3, pb: 2.1 } ] },
-        { level: 5, count: 1, stocks: [ { name: '园林股份', code: '605303', time: '09:30', price: 9.99, changePercent: 0.49, volume1: 32.31, volume2: 32.31, ratio1: 4.31, ratio2: 4.35, sectors: ['人工智能', '数字经济'], marketCap: 32.8, pe: 18.7, pb: 1.8 } ] },
-        { level: 4, count: 1, stocks: [ { name: '伟隆股', code: '002871', time: '13:02', price: 10.03, changePercent: 5.49, volume1: 46.42, volume2: 28.25, ratio1: 1.07, ratio2: 3.41, sectors: ['人工智能', '数字经济', '基础建设', '军工'], marketCap: 28.5, pe: 22.1, pb: 1.6 } ] },
-        { level: 3, count: 3, stocks: [ { name: '御银股', code: '002177', time: '09:33', price: 10.01, changePercent: 23.12, volume1: 76.12, volume2: 67.49, ratio1: 1.11, ratio2: 4.15, sectors: ['通信', '证券'], marketCap: 56.2, pe: 31.5, pb: 2.8 }, { name: '汇嘉时代', code: '603101', time: '09:31', price: 9.99, changePercent: 1.68, volume1: 53.86, volume2: 53.86, ratio1: 1.1, ratio2: 2.23, sectors: ['有色金属'], marketCap: 23.4, pe: 15.2, pb: 1.3 }, { name: '成飞集成', code: '002190', time: '09:32', price: 10.01, changePercent: 45.52, volume1: 175.02, volume2: 175.02, ratio1: 1.32, ratio2: 6.01, sectors: ['军工'], marketCap: 67.3, pe: 28.9, pb: 2.4 } ] },
-        { level: 2, count: 3, stocks: [ { name: '万通发展', code: '600246', time: '09:30', price: 10.05, changePercent: 1.12, volume1: 219.48, volume2: 219.48, ratio1: 3.74, ratio2: 12.46, sectors: ['芯片', '人工智能'], marketCap: 78.9, pe: 35.6, pb: 2.9 }, { name: '天融信', code: '002212', time: '09:30', price: 9.97, changePercent: 10.09, volume1: 119.71, volume2: 118.44, ratio1: 1.72, ratio2: 5.51, sectors: ['算力', '数字经济', '基础建设', '机器人概念'], marketCap: 45.2, pe: 26.8, pb: 2.1 }, { name: '合力泰', code: '002217', time: '09:37', price: 10.04, changePercent: 5.57, volume1: 229.62, volume2: 174.39, ratio1: 1.49, ratio2: 12.26, sectors: ['通信', '云游戏', '化工'], marketCap: 34.7, pe: 19.3, pb: 1.7 } ] },
-        { level: 0, count: 2, stocks: [ { name: '断板股票1', code: '000001', time: '14:30', price: 9.85, changePercent: -1.5, volume1: 45.23, volume2: 45.23, ratio1: 0.85, ratio2: 2.1, sectors: ['芯片'], marketCap: 52.1, pe: 29.3, pb: 2.3 }, { name: '断板股票2', code: '000002', time: '14:25', price: 8.92, changePercent: -2.1, volume1: 32.15, volume2: 32.15, ratio1: 0.72, ratio2: 1.8, sectors: ['人工智能'], marketCap: 41.8, pe: 23.6, pb: 1.9 } ] },
+        {
+          level: 6,
+          count: 1,
+          stocks: [
+            {
+              name: '科森科技',
+              code: '603626',
+              time: '09:43',
+              price: 10.02,
+              changePercent: 28.44,
+              volume1: 84.67,
+              volume2: 84.67,
+              ratio1: 0.43,
+              ratio2: 1.9,
+              sectors: ['机器人概念'],
+              marketCap: 45.6,
+              pe: 25.3,
+              pb: 2.1,
+            },
+          ],
+        },
+        {
+          level: 5,
+          count: 1,
+          stocks: [
+            {
+              name: '园林股份',
+              code: '605303',
+              time: '09:30',
+              price: 9.99,
+              changePercent: 0.49,
+              volume1: 32.31,
+              volume2: 32.31,
+              ratio1: 4.31,
+              ratio2: 4.35,
+              sectors: ['人工智能', '数字经济'],
+              marketCap: 32.8,
+              pe: 18.7,
+              pb: 1.8,
+            },
+          ],
+        },
+        {
+          level: 4,
+          count: 1,
+          stocks: [
+            {
+              name: '伟隆股份',
+              code: '002871',
+              time: '13:02',
+              price: 10.03,
+              changePercent: 5.49,
+              volume1: 46.42,
+              volume2: 28.25,
+              ratio1: 1.07,
+              ratio2: 3.41,
+              sectors: ['人工智能', '数字经济', '基础建设', '军工'],
+              marketCap: 28.5,
+              pe: 22.1,
+              pb: 1.6,
+            },
+          ],
+        },
+        {
+          level: 3,
+          count: 3,
+          stocks: [
+            {
+              name: '御银科技',
+              code: '002177',
+              time: '09:33',
+              price: 10.01,
+              changePercent: 23.12,
+              volume1: 76.12,
+              volume2: 67.49,
+              ratio1: 1.11,
+              ratio2: 4.15,
+              sectors: ['通信', '证券'],
+              marketCap: 56.2,
+              pe: 31.5,
+              pb: 2.8,
+            },
+            {
+              name: '汇嘉时代',
+              code: '603101',
+              time: '09:31',
+              price: 9.99,
+              changePercent: 1.68,
+              volume1: 53.86,
+              volume2: 53.86,
+              ratio1: 1.1,
+              ratio2: 2.23,
+              sectors: ['有色金属'],
+              marketCap: 23.4,
+              pe: 15.2,
+              pb: 1.3,
+            },
+            {
+              name: '成飞集成',
+              code: '002190',
+              time: '09:32',
+              price: 10.01,
+              changePercent: 45.52,
+              volume1: 175.02,
+              volume2: 175.02,
+              ratio1: 1.32,
+              ratio2: 6.01,
+              sectors: ['军工'],
+              marketCap: 67.3,
+              pe: 28.9,
+              pb: 2.4,
+            },
+          ],
+        },
+        {
+          level: 2,
+          count: 3,
+          stocks: [
+            {
+              name: '万通发展',
+              code: '600246',
+              time: '09:30',
+              price: 10.05,
+              changePercent: 1.12,
+              volume1: 219.48,
+              volume2: 219.48,
+              ratio1: 3.74,
+              ratio2: 12.46,
+              sectors: ['芯片', '人工智能'],
+              marketCap: 78.9,
+              pe: 35.6,
+              pb: 2.9,
+            },
+            {
+              name: '天融信',
+              code: '002212',
+              time: '09:30',
+              price: 9.97,
+              changePercent: 10.09,
+              volume1: 119.71,
+              volume2: 118.44,
+              ratio1: 1.72,
+              ratio2: 5.51,
+              sectors: ['算力', '数字经济', '基础建设', '机器人概念'],
+              marketCap: 45.2,
+              pe: 26.8,
+              pb: 2.1,
+            },
+            {
+              name: '合力泰',
+              code: '002217',
+              time: '09:37',
+              price: 10.04,
+              changePercent: 5.57,
+              volume1: 229.62,
+              volume2: 174.39,
+              ratio1: 1.49,
+              ratio2: 12.26,
+              sectors: ['通信', '云游戏', '化工'],
+              marketCap: 34.7,
+              pe: 19.3,
+              pb: 1.7,
+            },
+          ],
+        },
+        {
+          level: 0,
+          count: 2,
+          stocks: [
+            {
+              name: '断板股票1',
+              code: '000001',
+              time: '14:30',
+              price: 9.85,
+              changePercent: -1.5,
+              volume1: 45.23,
+              volume2: 45.23,
+              ratio1: 0.85,
+              ratio2: 2.1,
+              sectors: ['芯片'],
+              marketCap: 52.1,
+              pe: 29.3,
+              pb: 2.3,
+            },
+            {
+              name: '断板股票2',
+              code: '000002',
+              time: '14:25',
+              price: 8.92,
+              changePercent: -2.1,
+              volume1: 32.15,
+              volume2: 32.15,
+              ratio1: 0.72,
+              ratio2: 1.8,
+              sectors: ['人工智能'],
+              marketCap: 41.8,
+              pe: 23.6,
+              pb: 1.9,
+            },
+          ],
+        },
       ],
     };
     return jsonResponse(payload);
@@ -85,7 +289,14 @@ const routes: Record<string, MockHandler> = {
         { id: '2', email: 'trader@example.com', remark: '交易员邮箱', enabled: true },
       ],
       notificationTemplates: [
-        { id: '1', name: '通知模板', subject: '投资组合调仓通知 - {date}', content: '策略名称：{{strategyName}}\n委托时间：{{orderTime}}\n股票|委托数量|委托类型|委托价格|操作|持仓\n{{#orders}}{{stock}}|{{quantity}}|{{orderType}}|{{price}}|{{action}}|{{position}}\n{{/orders}}', enabled: true },
+        {
+          id: '1',
+          name: '通知模板',
+          subject: '投资组合调仓通知 - {date}',
+          content:
+            '策略名称：{{strategyName}}\n委托时间：{{orderTime}}\n股票|委托数量|委托类型|委托价格|操作|持仓\n{{#orders}}{{stock}}|{{quantity}}|{{orderType}}|{{price}}|{{action}}|{{position}}\n{{/orders}}',
+          enabled: true,
+        },
       ],
     };
     return jsonResponse(payload);
@@ -130,7 +341,7 @@ const routes: Record<string, MockHandler> = {
         id: 4,
         username: 'viewer',
         email: 'viewer@example.com',
-        full_name: '观察员',
+        full_name: '观察者',
         is_active: false,
         is_superuser: false,
         created_at: '2024-01-04T00:00:00Z',
@@ -141,15 +352,22 @@ const routes: Record<string, MockHandler> = {
   },
 };
 
-export async function handleMock(path: string, init?: RequestInit): Promise<Response | undefined> {
+export async function resolveMockResponse<T = unknown>(config: AxiosRequestConfig): Promise<AxiosResponse<T> | undefined> {
   if (!API_CONFIG.enableMock) return undefined;
-  const method = (init?.method || 'GET').toUpperCase();
-  const key = `${method} ${path}`;
+  const method = (config.method || 'GET').toUpperCase();
+  const rawUrl = config.url || '';
+  const [pathPart] = rawUrl.split('?');
+  const normalizedPath = pathPart.startsWith('/') ? pathPart : `/${pathPart}`;
+  const key = `${method} ${normalizedPath}`;
   const handler = routes[key];
-  if (handler) {
-    return handler(path, init);
-  }
-  return undefined;
+  if (!handler) return undefined;
+  const result = await handler({ path: normalizedPath, config });
+  if (!result) return undefined;
+  return {
+    data: result.data as T,
+    status: result.status ?? 200,
+    statusText: result.statusText ?? 'OK',
+    headers: result.headers ?? { 'Content-Type': 'application/json' },
+    config,
+  } as AxiosResponse<T>;
 }
-
-

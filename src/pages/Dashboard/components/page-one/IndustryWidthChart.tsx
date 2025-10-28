@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import EChart from '../../../components/EChart';
+import EChart from '../../../../components/EChart';
 import { ChartCard } from './IndustryWidthChart.styles';
 
 interface IndustryWidthChartProps {

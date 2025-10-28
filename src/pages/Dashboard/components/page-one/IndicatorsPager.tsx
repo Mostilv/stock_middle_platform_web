@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useCallback } from 'react';
 import type { EChartsOption } from 'echarts';
 import { Row, Col, Carousel } from 'antd';
-import EChart from '../../../components/EChart';
+import EChart from '../../../../components/EChart';
 import TopIndicators from './TopIndicators';
 import { IndicatorCard } from './TopIndicators.styles';
 
