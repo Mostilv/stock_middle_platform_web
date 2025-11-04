@@ -7,7 +7,10 @@ export const API_CONFIG = {
     !(import.meta as any).env?.VITE_API_BASE_URL,
 };
 
-export type QueryParams = Record<string, string | number | boolean | undefined | null>;
+export type QueryParams = Record<
+  string,
+  string | number | boolean | undefined | null
+>;
 
 export function buildQueryString(params?: QueryParams): string {
   if (!params) return '';
@@ -19,5 +22,3 @@ export function buildQueryString(params?: QueryParams): string {
   const qs = search.toString();
   return qs ? `?${qs}` : '';
 }
-
-

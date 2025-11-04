@@ -7,7 +7,9 @@ export const PortfolioContainer = styled.div`
   height: 100vh;
   overflow: hidden;
   width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
   display: flex;
   flex-direction: column;
 
@@ -75,7 +77,7 @@ export const StatisticsRow = styled.div`
             margin-bottom: 8px;
             color: #666;
           }
-          
+
           .ant-statistic-content {
             font-size: 18px;
             font-weight: 600;
@@ -143,7 +145,9 @@ export const ActionTag = styled.span<{ $action: 'buy' | 'sell' | 'hold' }>`
   }
 `;
 
-export const StatusTag = styled.span<{ $status: 'pending' | 'completed' | 'cancelled' }>`
+export const StatusTag = styled.span<{
+  $status: 'pending' | 'completed' | 'cancelled';
+}>`
   &.ant-tag {
     background-color: ${props => {
       switch (props.$status) {
@@ -190,7 +194,7 @@ export const ActionButton = styled.button`
     height: auto;
     border: none;
     background: transparent;
-    
+
     &:hover {
       background-color: #f0f0f0;
     }
@@ -198,7 +202,7 @@ export const ActionButton = styled.button`
     &:disabled {
       color: #d9d9d9;
       cursor: not-allowed;
-      
+
       &:hover {
         background-color: transparent;
       }
@@ -214,14 +218,14 @@ export const FormInput = styled.div`
 
 export const ClickableButton = styled(Button)`
   cursor: pointer;
-  
+
   &:hover {
     background-color: #f0f0f0;
   }
-  
+
   &:disabled {
     cursor: not-allowed;
-    
+
     &:hover {
       background-color: transparent;
     }

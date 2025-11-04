@@ -5,7 +5,9 @@ export const LimitUpStocksContainer = styled.div`
   background: #f5f5f5;
   height: 100vh;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
   display: flex;
   flex-direction: column;
 `;
@@ -238,7 +240,7 @@ export const StockCell = styled.div`
 
 export const FilterSection = styled.div`
   margin-bottom: 24px;
-  
+
   .ant-card {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -247,12 +249,12 @@ export const FilterSection = styled.div`
 
 export const StatsGrid = styled.div`
   margin-bottom: 24px;
-  
+
   .ant-card {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -285,7 +287,9 @@ export const ClickableButton = styled.button`
   }
 `;
 
-export const StatusTag = styled.span<{ $status: 'active' | 'cooling' | 'ended' }>`
+export const StatusTag = styled.span<{
+  $status: 'active' | 'cooling' | 'ended';
+}>`
   display: inline-block;
   padding: 2px 8px;
   border-radius: 4px;
@@ -315,18 +319,19 @@ export const StatusTag = styled.span<{ $status: 'active' | 'cooling' | 'ended' }
         return '#666';
     }
   }};
-  border: 1px solid ${props => {
-    switch (props.$status) {
-      case 'active':
-        return '#b7eb8f';
-      case 'cooling':
-        return '#ffd591';
-      case 'ended':
-        return '#ffccc7';
-      default:
-        return '#d9d9d9';
-    }
-  }};
+  border: 1px solid
+    ${props => {
+      switch (props.$status) {
+        case 'active':
+          return '#b7eb8f';
+        case 'cooling':
+          return '#ffd591';
+        case 'ended':
+          return '#ffccc7';
+        default:
+          return '#d9d9d9';
+      }
+    }};
 `;
 
 export const ConceptTag = styled.span`

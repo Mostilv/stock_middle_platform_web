@@ -12,21 +12,25 @@ import './App.css';
 
 // 懒加载页面组件
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const LimitUpStocks = React.lazy(() => import('./pages/LimitUpStocks/LimitUpStocks'));
+const LimitUpStocks = React.lazy(
+  () => import('./pages/LimitUpStocks/LimitUpStocks'),
+);
 const Portfolio = React.lazy(() => import('./pages/Portfolio/Portfolio'));
 const Settings = React.lazy(() => import('./pages/Settings/Settings'));
 const UserManagement = React.lazy(() => import('./pages/UserManagement'));
 
 // 加载中组件
 const LoadingComponent: React.FC = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    height: '100vh',
-    background: '#1a1a1a'
-  }}>
-    <Spin size="large" />
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      background: '#1a1a1a',
+    }}
+  >
+    <Spin size='large' />
   </div>
 );
 

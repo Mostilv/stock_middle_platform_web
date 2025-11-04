@@ -19,18 +19,18 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   left: ${({ $collapsed }) => ($collapsed ? '-200px' : '0')};
   transition: all 0.2s ease; /* 减少过渡时间，减少白底闪烁 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
+
   /* 隐藏默认的折叠触发器 */
   .ant-layout-sider-trigger {
     display: none !important;
   }
-  
+
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  
+
   .ant-menu {
     border-right: none;
   }
@@ -70,7 +70,10 @@ export const HeaderContainer = styled(AntHeader)`
 `;
 
 // 头部按钮 - 固定在子页面左上角
-export const HeaderButton = styled.button<{ $collapsed: boolean; $isDashboard?: boolean }>`
+export const HeaderButton = styled.button<{
+  $collapsed: boolean;
+  $isDashboard?: boolean;
+}>`
   position: fixed;
   top: 10px;
   left: ${({ $collapsed }) => ($collapsed ? '10px' : '210px')};
@@ -79,7 +82,8 @@ export const HeaderButton = styled.button<{ $collapsed: boolean; $isDashboard?: 
   width: 36px;
   height: 36px;
   border: none;
-  background: ${({ $isDashboard }) => ($isDashboard ? 'rgba(255,255,255,0.1)' : 'transparent')};
+  background: ${({ $isDashboard }) =>
+    $isDashboard ? 'rgba(255,255,255,0.1)' : 'transparent'};
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -89,7 +93,8 @@ export const HeaderButton = styled.button<{ $collapsed: boolean; $isDashboard?: 
   color: ${({ $isDashboard }) => ($isDashboard ? '#e6f7ff' : '#333')};
 
   &:hover {
-    background: ${({ $isDashboard }) => ($isDashboard ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.04)')};
+    background: ${({ $isDashboard }) =>
+      $isDashboard ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.04)'};
   }
 
   @media (max-width: 768px) {
@@ -119,7 +124,7 @@ export const ContentContainer = styled(AntContent)`
 
   /* 页面切换动画 */
   animation: fadeIn 0.3s ease-in-out;
-  
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -133,7 +138,7 @@ export const ContentContainer = styled(AntContent)`
 
   /* 优化页面切换性能 */
   will-change: opacity, transform;
-  
+
   /* 确保动画流畅 */
   backface-visibility: hidden;
   perspective: 1000px;

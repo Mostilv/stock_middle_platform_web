@@ -22,7 +22,7 @@ interface IndicatorsPagerProps {
 
 const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
   const carouselRef = useRef<any>(null);
-  const [current, setCurrent] = useState(0);
+  const [, setCurrent] = useState(0);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
     if (!carouselRef.current) return;
@@ -35,13 +35,34 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
 
   const lineOption = useMemo(() => {
     const makeSeries = (len: number, seed: number) =>
-      Array.from({ length: len }, (_, i) => Math.round(50 + 20 * Math.sin((i + seed) / 3) + Math.random() * 10));
+      Array.from({ length: len }, (_, i) =>
+        Math.round(50 + 20 * Math.sin((i + seed) / 3) + Math.random() * 10),
+      );
 
     const baseOption = (data: number[], color: string): EChartsOption => ({
       grid: { left: 20, right: 10, top: 10, bottom: 20 },
-      xAxis: { type: 'category', data: data.map((_, i) => i), axisLine: { lineStyle: { color: '#556' } }, axisLabel: { color: '#889' } },
-      yAxis: { type: 'value', axisLine: { lineStyle: { color: '#556' } }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }, axisLabel: { color: '#889' } },
-      series: [{ type: 'line', data, smooth: true, symbol: 'none', lineStyle: { color, width: 2 }, areaStyle: { color: color + '1A' } }],
+      xAxis: {
+        type: 'category',
+        data: data.map((_, i) => i),
+        axisLine: { lineStyle: { color: '#556' } },
+        axisLabel: { color: '#889' },
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { lineStyle: { color: '#556' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+        axisLabel: { color: '#889' },
+      },
+      series: [
+        {
+          type: 'line',
+          data,
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { color, width: 2 },
+          areaStyle: { color: `${color}1A` },
+        },
+      ],
       animation: false,
     });
 
@@ -69,32 +90,32 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <IndicatorCard>
-                <div className="indicator-content">
-                  <div className="indicator-title">各行业走势</div>
+                <div className='indicator-content'>
+                  <div className='indicator-title'>各行业走势</div>
                   <EChart height={140} option={lineOption.industryTrend} />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
-                <div className="indicator-content">
-                  <div className="indicator-title">涨停数</div>
+                <div className='indicator-content'>
+                  <div className='indicator-title'>涨停数</div>
                   <EChart height={140} option={lineOption.limitUpCount} />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
-                <div className="indicator-content">
-                  <div className="indicator-title">空</div>
+                <div className='indicator-content'>
+                  <div className='indicator-title'>空</div>
                   <EChart height={140} option={lineOption.placeholder1} />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
-                <div className="indicator-content">
-                  <div className="indicator-title">空</div>
+                <div className='indicator-content'>
+                  <div className='indicator-title'>空</div>
                   <EChart height={140} option={lineOption.placeholder2} />
                 </div>
               </IndicatorCard>
@@ -107,5 +128,3 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
 };
 
 export default IndicatorsPager;
-
-

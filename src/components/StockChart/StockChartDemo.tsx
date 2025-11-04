@@ -12,7 +12,7 @@ const generateMockData = (days: number): StockDataPoint[] => {
   for (let i = 0; i < days; i++) {
     const date = new Date();
     date.setDate(date.getDate() - (days - i - 1));
-    
+
     const change = (Math.random() - 0.5) * 10;
     const open = basePrice;
     const close = basePrice + change;
@@ -48,26 +48,35 @@ const StockChartDemo: React.FC = () => {
   const mockData = generateMockData(dataDays);
 
   return (
-    <div style={{ padding: '24px', background: theme === 'dark' ? '#1f1f1f' : '#f5f5f5', minHeight: '100vh' }}>
-      <Card 
-        title="股票图表组件演示" 
+    <div
+      style={{
+        padding: '24px',
+        background: theme === 'dark' ? '#1f1f1f' : '#f5f5f5',
+        minHeight: '100vh',
+      }}
+    >
+      <Card
+        title='股票图表组件演示'
         style={{ marginBottom: '24px' }}
         bodyStyle={{ background: theme === 'dark' ? '#2a2a2a' : '#ffffff' }}
       >
         <Space wrap>
           <div>
             <span style={{ marginRight: '8px' }}>图表类型：</span>
-            <Radio.Group value={chartType} onChange={(e) => setChartType(e.target.value)}>
-              <Radio.Button value="line">折线图</Radio.Button>
-              <Radio.Button value="candlestick">K线图</Radio.Button>
+            <Radio.Group
+              value={chartType}
+              onChange={e => setChartType(e.target.value)}
+            >
+              <Radio.Button value='line'>折线图</Radio.Button>
+              <Radio.Button value='candlestick'>K线图</Radio.Button>
             </Radio.Group>
           </div>
-          
+
           <div>
             <span style={{ marginRight: '8px' }}>主题：</span>
-            <Radio.Group value={theme} onChange={(e) => setTheme(e.target.value)}>
-              <Radio.Button value="light">亮色</Radio.Button>
-              <Radio.Button value="dark">暗色</Radio.Button>
+            <Radio.Group value={theme} onChange={e => setTheme(e.target.value)}>
+              <Radio.Button value='light'>亮色</Radio.Button>
+              <Radio.Button value='dark'>暗色</Radio.Button>
             </Radio.Group>
           </div>
 
@@ -93,8 +102,8 @@ const StockChartDemo: React.FC = () => {
 
           <div>
             <span style={{ marginRight: '8px' }}>数据天数：</span>
-            <Select 
-              value={dataDays} 
+            <Select
+              value={dataDays}
               onChange={setDataDays}
               style={{ width: 100 }}
               options={[
@@ -108,9 +117,12 @@ const StockChartDemo: React.FC = () => {
         </Space>
       </Card>
 
-      <Card 
-        title="股票图表" 
-        bodyStyle={{ padding: 0, background: theme === 'dark' ? '#2a2a2a' : '#ffffff' }}
+      <Card
+        title='股票图表'
+        bodyStyle={{
+          padding: 0,
+          background: theme === 'dark' ? '#2a2a2a' : '#ffffff',
+        }}
       >
         <StockChart
           data={mockData}
@@ -118,19 +130,19 @@ const StockChartDemo: React.FC = () => {
           theme={theme}
           showVolume={showVolume}
           height={500}
-          stockCode="000001.SZ"
+          stockCode='000001.SZ'
           title={`${chartType === 'line' ? '折线图' : 'K线图'} - 平安银行`}
           showGrid={showGrid}
           showDataLabel={showDataLabel}
           showTimeSelector={showTimeSelector}
-          onChartClick={(params) => {
+          onChartClick={params => {
             console.log('图表点击事件：', params);
           }}
         />
       </Card>
 
-      <Card 
-        title="组件特性说明" 
+      <Card
+        title='组件特性说明'
         style={{ marginTop: '24px' }}
         bodyStyle={{ background: theme === 'dark' ? '#2a2a2a' : '#ffffff' }}
       >

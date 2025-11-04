@@ -29,11 +29,11 @@ const LayoutComponent: React.FC = React.memo(() => {
       icon: <DashboardOutlined />,
       label: '首页',
     },
-            {
-          key: '/limit-up-stocks',
-          icon: <BarChartOutlined />,
-          label: '复盘',
-        },
+    {
+      key: '/limit-up-stocks',
+      icon: <BarChartOutlined />,
+      label: '复盘',
+    },
     {
       key: '/portfolio',
       icon: <BarChartOutlined />,
@@ -52,9 +52,12 @@ const LayoutComponent: React.FC = React.memo(() => {
   ];
 
   // 使用useCallback优化事件处理函数
-  const handleMenuClick = useCallback(({ key }: { key: string }): void => {
-    navigate(key);
-  }, [navigate]);
+  const handleMenuClick = useCallback(
+    ({ key }: { key: string }): void => {
+      navigate(key);
+    },
+    [navigate],
+  );
 
   // 使用useCallback优化折叠按钮点击事件
   const handleCollapseClick = useCallback(() => {
@@ -88,7 +91,7 @@ const LayoutComponent: React.FC = React.memo(() => {
       <MainLayout $collapsed={collapsed} data-path={location.pathname}>
         {/* 固定在左上角的按钮，只在首页大屏页显示 */}
         {location.pathname === '/' && (
-          <HeaderButton 
+          <HeaderButton
             $collapsed={collapsed}
             $isDashboard={true}
             onClick={handleCollapseClick}

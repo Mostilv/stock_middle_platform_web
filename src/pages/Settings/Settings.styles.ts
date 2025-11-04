@@ -7,7 +7,9 @@ export const SettingsContainer = styled.div`
   height: 100vh;
   overflow: hidden;
   width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
   display: flex;
   flex-direction: column;
 
@@ -48,7 +50,7 @@ export const SettingsCard = styled.div`
 
     .ant-card-head {
       border-bottom: 1px solid #f0f0f0;
-      
+
       .ant-card-head-title {
         font-weight: 600;
         color: #333;
@@ -79,11 +81,11 @@ export const SettingsForm = styled.div`
     .ant-input-number {
       border-radius: 6px;
       border: 1px solid #d9d9d9;
-      
+
       &:hover {
         border-color: #40a9ff;
       }
-      
+
       &:focus,
       &.ant-input-focused,
       &.ant-select-focused .ant-select-selector {
@@ -115,11 +117,11 @@ export const SettingsActions = styled.div`
     height: 40px;
     padding: 0 24px;
     border-radius: 6px;
-    
+
     &.ant-btn-primary {
       background-color: #1890ff;
       border-color: #1890ff;
-      
+
       &:hover {
         background-color: #40a9ff;
         border-color: #40a9ff;
@@ -135,14 +137,14 @@ export const CardIcon = styled.span`
 
 export const ClickableButton = styled(Button)`
   cursor: pointer;
-  
+
   &:hover {
     background-color: #f0f0f0;
   }
-  
+
   &:disabled {
     cursor: not-allowed;
-    
+
     &:hover {
       background-color: transparent;
     }

@@ -11,12 +11,9 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
-import { fetchLimitUpOverview } from '../../api/modules/limitUp';
-import type { LimitUpOverviewResponse } from '../../api/modules/limitUp';
-import {
-  LineChartOutlined,
-  BarChartOutlined,
-} from '@ant-design/icons';
+import { fetchLimitUpOverview } from './services/limitUp.api';
+import type { LimitUpOverviewResponse } from './services/limitUp.api';
+import { LineChartOutlined, BarChartOutlined } from '@ant-design/icons';
 import {
   LimitUpStocksContainer,
   LimitUpStocksHeader,
@@ -55,13 +52,24 @@ interface SectorData {
 }
 
 const LimitUpStocks: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
+  const [selectedDate, setSelectedDate] = useState<string>(
+    dayjs().format('YYYY-MM-DD'),
+  );
   const [remote, setRemote] = useState<LimitUpOverviewResponse | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(['行情', '个数', '时间', '分数', '成交额', '市值', '封单', '流通市值']);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([
+    '行情',
+    '个数',
+    '时间',
+    '分数',
+    '成交额',
+    '市值',
+    '封单',
+    '流通市值',
+  ]);
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tableScrollY, setTableScrollY] = useState<number>(400);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -74,26 +82,32 @@ const LimitUpStocks: React.FC = () => {
         const cardPadding = 24; // Card padding (12px * 2)
         const cardMargin = 16; // Card margin bottom
         const tablePadding = 24; // Table internal padding
-        
-        const availableHeight = containerHeight - headerHeight - containerPadding - cardPadding - cardMargin - tablePadding;
+
+        const availableHeight =
+          containerHeight -
+          headerHeight -
+          containerPadding -
+          cardPadding -
+          cardMargin -
+          tablePadding;
         const newScrollY = Math.max(300, availableHeight);
-        
+
         setTableScrollY(newScrollY);
       }
     };
 
     // 初始计算
     updateTableHeight();
-    
+
     // 添加防抖处理，避免频繁计算
     let resizeTimeout: ReturnType<typeof setTimeout>;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(updateTableHeight, 100);
     };
-    
+
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
       clearTimeout(resizeTimeout);
@@ -103,7 +117,7 @@ const LimitUpStocks: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     fetchLimitUpOverview(selectedDate)
-      .then((resp) => {
+      .then(resp => {
         if (!mounted) return;
         setRemote(resp);
       })
@@ -116,7 +130,7 @@ const LimitUpStocks: React.FC = () => {
   }, [selectedDate]);
 
   // 板块数据（将被 API 数据覆盖）
-  let sectors: SectorData[] = [
+  const sectors: SectorData[] = [
     { name: '芯片', count: 27, value: 21441 },
     { name: '算力', count: 29, value: 8221 },
     { name: '人工智能', count: 31, value: 7592 },
@@ -135,7 +149,7 @@ const LimitUpStocks: React.FC = () => {
   ];
 
   // 梯队数据（将被 API 数据覆盖）
-  let ladderData: LadderData[] = [
+  const ladderData: LadderData[] = [
     {
       level: 6,
       count: 1,
@@ -400,43 +414,62 @@ const LimitUpStocks: React.FC = () => {
     },
   ];
 
-  
-
-
-
   // 生成股票K线数据
   const generateStockKLineData = (stock: Stock): StockDataPoint[] => {
-    const dates = ['2025-08-18', '2025-08-19', '2025-08-20', '2025-08-21', '2025-08-22'];
+    const dates = [
+      '2025-08-18',
+      '2025-08-19',
+      '2025-08-20',
+      '2025-08-21',
+      '2025-08-22',
+    ];
     const klineData = [
       { open: 8.5, high: 8.8, low: 8.3, close: 8.6, volume: 1500000 },
       { open: 8.6, high: 9.0, low: 8.5, close: 8.9, volume: 1800000 },
       { open: 8.9, high: 9.3, low: 8.7, close: 9.2, volume: 2200000 },
       { open: 9.2, high: 9.8, low: 9.0, close: 9.7, volume: 2500000 },
-      { open: 9.7, high: stock.price, low: 9.5, close: stock.price, volume: 3000000 }
+      {
+        open: 9.7,
+        high: stock.price,
+        low: 9.5,
+        close: stock.price,
+        volume: 3000000,
+      },
     ];
-    
+
     return dates.map((date, index) => ({
       time: date,
-      ...klineData[index]
+      ...klineData[index],
     }));
   };
 
   // 生成股票走势数据
   const generateStockTrendData = (stock: Stock): StockDataPoint[] => {
-    const times = ['09:30', '10:00', '10:30', '11:00', '11:30', '13:00', '13:30', '14:00', '14:30', '15:00'];
+    const times = [
+      '09:30',
+      '10:00',
+      '10:30',
+      '11:00',
+      '11:30',
+      '13:00',
+      '13:30',
+      '14:00',
+      '14:30',
+      '15:00',
+    ];
     const basePrice = stock.price * 0.95;
-    
+
     return times.map((time, index) => {
       const priceChange = (Math.random() - 0.5) * 0.1 * basePrice;
-      const currentPrice = basePrice + priceChange + (index * 0.01 * basePrice);
-      
+      const currentPrice = basePrice + priceChange + index * 0.01 * basePrice;
+
       return {
         time,
         open: currentPrice,
         high: currentPrice * 1.02,
         low: currentPrice * 0.98,
         close: currentPrice,
-        volume: Math.floor(Math.random() * 500000) + 100000
+        volume: Math.floor(Math.random() * 500000) + 100000,
       };
     });
   };
@@ -447,30 +480,56 @@ const LimitUpStocks: React.FC = () => {
   // 生成表格数据/列时使用远程覆盖数据
   const generateTableData = () => {
     const tableData = [] as any[];
-    ladderDataToUse.forEach((ladder) => {
+    ladderDataToUse.forEach(ladder => {
       if (ladder.level > 0) {
         const rowData: any = {
           key: `ladder-${ladder.level}`,
           level: `${ladder.level}板`,
           count: `${ladder.count}个`,
         };
-        sectorsToUse.forEach((sector) => {
-          const stocksInSector = ladder.stocks.filter(stock => stock.sectors.includes(sector.name));
+        sectorsToUse.forEach(sector => {
+          const stocksInSector = ladder.stocks.filter(stock =>
+            stock.sectors.includes(sector.name),
+          );
           if (stocksInSector.length > 0) {
             const stock = stocksInSector[0];
             rowData[sector.name] = (
-              <div 
-                style={{ fontSize: '12px', lineHeight: '1.4', cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'background-color 0.2s' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f0f0f0'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; }}
-                onClick={() => { setSelectedStock(stock); setIsModalVisible(true); }}
+              <div
+                style={{
+                  fontSize: '12px',
+                  lineHeight: '1.4',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '4px',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                    '#f0f0f0';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                    'transparent';
+                }}
+                onClick={() => {
+                  setSelectedStock(stock);
+                  setIsModalVisible(true);
+                }}
               >
                 <div style={{ color: '#666' }}>{stock.time}</div>
-                <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
-                <div style={{ color: '#1890ff', fontWeight: 'bold' }}>{stock.price}</div>
+                <div style={{ fontWeight: 'bold', color: '#333' }}>
+                  {stock.name}
+                </div>
+                <div style={{ color: '#1890ff', fontWeight: 'bold' }}>
+                  {stock.price}
+                </div>
                 <div style={{ color: '#52c41a' }}>{stock.changePercent}%</div>
-                <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
-                <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
+                <div style={{ color: '#666', fontSize: '11px' }}>
+                  {stock.volume1}万
+                </div>
+                <div style={{ color: '#999', fontSize: '11px' }}>
+                  {stock.ratio1}/{stock.ratio2}
+                </div>
               </div>
             );
           } else {
@@ -482,24 +541,55 @@ const LimitUpStocks: React.FC = () => {
     });
     const brokenLadder = ladderDataToUse.find(l => l.level === 0);
     if (brokenLadder) {
-      const brokenRowData: any = { key: 'broken', level: '断板', count: `${brokenLadder.count}个` };
-      sectorsToUse.forEach((sector) => {
-        const stocksInSector = brokenLadder.stocks.filter(stock => stock.sectors.includes(sector.name));
+      const brokenRowData: any = {
+        key: 'broken',
+        level: '断板',
+        count: `${brokenLadder.count}个`,
+      };
+      sectorsToUse.forEach(sector => {
+        const stocksInSector = brokenLadder.stocks.filter(stock =>
+          stock.sectors.includes(sector.name),
+        );
         if (stocksInSector.length > 0) {
           const stock = stocksInSector[0];
           brokenRowData[sector.name] = (
-            <div 
-              style={{ fontSize: '12px', lineHeight: '1.4', opacity: 0.7, cursor: 'pointer', padding: '4px', borderRadius: '4px', transition: 'background-color 0.2s' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = '#f0f0f0'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; }}
-              onClick={() => { setSelectedStock(stock); setIsModalVisible(true); }}
+            <div
+              style={{
+                fontSize: '12px',
+                lineHeight: '1.4',
+                opacity: 0.7,
+                cursor: 'pointer',
+                padding: '4px',
+                borderRadius: '4px',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                  '#f0f0f0';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                  'transparent';
+              }}
+              onClick={() => {
+                setSelectedStock(stock);
+                setIsModalVisible(true);
+              }}
             >
               <div style={{ color: '#666' }}>{stock.time}</div>
-              <div style={{ fontWeight: 'bold', color: '#333' }}>{stock.name}</div>
-              <div style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{stock.price}</div>
+              <div style={{ fontWeight: 'bold', color: '#333' }}>
+                {stock.name}
+              </div>
+              <div style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
+                {stock.price}
+              </div>
               <div style={{ color: '#ff4d4f' }}>{stock.changePercent}%</div>
-              <div style={{ color: '#666', fontSize: '11px' }}>{stock.volume1}万</div>
-              <div style={{ color: '#999', fontSize: '11px' }}>{stock.ratio1}/{stock.ratio2}</div>
+              <div style={{ color: '#666', fontSize: '11px' }}>
+                {stock.volume1}万
+              </div>
+              <div style={{ color: '#999', fontSize: '11px' }}>
+                {stock.ratio1}/{stock.ratio2}
+              </div>
             </div>
           );
         } else {
@@ -513,15 +603,30 @@ const LimitUpStocks: React.FC = () => {
 
   const generateColumns = () => {
     const columns: any[] = [
-      { title: '梯队/板块', dataIndex: 'level', key: 'level', width: 100, fixed: 'left' as const, render: (text: string, record: any) => (
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
-          <div style={{ fontSize: '12px', color: '#666' }}>{record.count}</div>
-        </div>
-      ) },
+      {
+        title: '梯队/板块',
+        dataIndex: 'level',
+        key: 'level',
+        width: 100,
+        fixed: 'left' as const,
+        render: (text: string, record: any) => (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              {record.count}
+            </div>
+          </div>
+        ),
+      },
     ];
-    sectorsToUse.forEach((sector) => {
-      columns.push({ title: sector.name, dataIndex: sector.name, key: sector.name, width: 120, render: (value: any) => value });
+    sectorsToUse.forEach(sector => {
+      columns.push({
+        title: sector.name,
+        dataIndex: sector.name,
+        key: sector.name,
+        width: 120,
+        render: (value: any) => value,
+      });
     });
     return columns;
   };
@@ -533,11 +638,13 @@ const LimitUpStocks: React.FC = () => {
     <LimitUpStocksContainer ref={containerRef}>
       {/* 顶部标题栏 */}
       <LimitUpStocksHeader ref={headerRef}>
-        <div className="header-left">
-          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>梯队复盘</h2>
+        <div className='header-left'>
+          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>
+            梯队复盘
+          </h2>
         </div>
-        <div className="header-right">
-          <Space size="large">
+        <div className='header-right'>
+          <Space size='large'>
             <CheckboxGroup
               options={[
                 { label: '行情', value: '行情' },
@@ -554,9 +661,13 @@ const LimitUpStocks: React.FC = () => {
             />
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '14px', color: '#666' }}>日期：</span>
-              <DatePicker 
+              <DatePicker
                 value={dayjs(selectedDate)}
-                onChange={(date) => setSelectedDate(date?.format('YYYY-MM-DD') || dayjs().format('YYYY-MM-DD'))}
+                onChange={date =>
+                  setSelectedDate(
+                    date?.format('YYYY-MM-DD') || dayjs().format('YYYY-MM-DD'),
+                  )
+                }
                 style={{ width: 150 }}
               />
             </div>
@@ -565,40 +676,40 @@ const LimitUpStocks: React.FC = () => {
       </LimitUpStocksHeader>
 
       {/* 梯队复盘表格 */}
-      <Card 
-        size="small" 
+      <Card
+        size='small'
         styles={{
           body: {
             padding: 12,
             height: '100%',
             display: 'flex',
-            flexDirection: 'column'
-          }
+            flexDirection: 'column',
+          },
         }}
-        style={{ 
+        style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <Table
           columns={columns}
           dataSource={tableData}
           pagination={false}
-          size="small"
-          scroll={{ 
+          size='small'
+          scroll={{
             x: 'max-content',
-            y: tableScrollY
+            y: tableScrollY,
           }}
           bordered
-          rowClassName={(record) => {
+          rowClassName={record => {
             if (record.key === 'broken') return 'broken-row';
             return '';
           }}
-          style={{ 
+          style={{
             flex: 1,
-            width: '100%'
+            width: '100%',
           }}
         />
       </Card>
@@ -615,17 +726,42 @@ const LimitUpStocks: React.FC = () => {
         {selectedStock && (
           <div>
             {/* 基本信息 */}
-            <Descriptions title="基本信息" bordered size="small" style={{ marginBottom: 16 }}>
-              <Descriptions.Item label="股票名称">{selectedStock.name}</Descriptions.Item>
-              <Descriptions.Item label="股票代码">{selectedStock.code}</Descriptions.Item>
-              <Descriptions.Item label="当前价格">{selectedStock.price}</Descriptions.Item>
-              <Descriptions.Item label="涨跌幅">{selectedStock.changePercent}%</Descriptions.Item>
-              <Descriptions.Item label="涨停时间">{selectedStock.time}</Descriptions.Item>
-              <Descriptions.Item label="成交量">{selectedStock.volume1}万</Descriptions.Item>
-              <Descriptions.Item label="成交额">{selectedStock.volume2}万</Descriptions.Item>
-              <Descriptions.Item label="市值">{selectedStock.marketCap}亿</Descriptions.Item>
-              <Descriptions.Item label="市盈率">{selectedStock.pe}</Descriptions.Item>
-              <Descriptions.Item label="市净率">{selectedStock.pb}</Descriptions.Item>
+            <Descriptions
+              title='基本信息'
+              bordered
+              size='small'
+              style={{ marginBottom: 16 }}
+            >
+              <Descriptions.Item label='股票名称'>
+                {selectedStock.name}
+              </Descriptions.Item>
+              <Descriptions.Item label='股票代码'>
+                {selectedStock.code}
+              </Descriptions.Item>
+              <Descriptions.Item label='当前价格'>
+                {selectedStock.price}
+              </Descriptions.Item>
+              <Descriptions.Item label='涨跌幅'>
+                {selectedStock.changePercent}%
+              </Descriptions.Item>
+              <Descriptions.Item label='涨停时间'>
+                {selectedStock.time}
+              </Descriptions.Item>
+              <Descriptions.Item label='成交量'>
+                {selectedStock.volume1}万
+              </Descriptions.Item>
+              <Descriptions.Item label='成交额'>
+                {selectedStock.volume2}万
+              </Descriptions.Item>
+              <Descriptions.Item label='市值'>
+                {selectedStock.marketCap}亿
+              </Descriptions.Item>
+              <Descriptions.Item label='市盈率'>
+                {selectedStock.pe}
+              </Descriptions.Item>
+              <Descriptions.Item label='市净率'>
+                {selectedStock.pb}
+              </Descriptions.Item>
             </Descriptions>
 
             {/* 概念标签 */}
@@ -633,14 +769,16 @@ const LimitUpStocks: React.FC = () => {
               <h4>概念标签：</h4>
               <Space wrap>
                 {selectedStock.sectors.map((sector, index) => (
-                  <Tag key={index} color="blue">{sector}</Tag>
+                  <Tag key={index} color='blue'>
+                    {sector}
+                  </Tag>
                 ))}
               </Space>
             </div>
 
             {/* 图表 */}
             <Tabs
-              defaultActiveKey="trend"
+              defaultActiveKey='trend'
               items={[
                 {
                   key: 'trend',
@@ -653,8 +791,8 @@ const LimitUpStocks: React.FC = () => {
                   children: (
                     <StockChart
                       data={generateStockTrendData(selectedStock)}
-                      chartType="line"
-                      theme="light"
+                      chartType='line'
+                      theme='light'
                       showVolume={true}
                       height={400}
                       stockCode={selectedStock.code}
@@ -674,8 +812,8 @@ const LimitUpStocks: React.FC = () => {
                   children: (
                     <StockChart
                       data={generateStockKLineData(selectedStock)}
-                      chartType="candlestick"
-                      theme="light"
+                      chartType='candlestick'
+                      theme='light'
                       showVolume={true}
                       height={400}
                       stockCode={selectedStock.code}

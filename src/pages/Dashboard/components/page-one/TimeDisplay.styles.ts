@@ -24,11 +24,11 @@ export const TimeDisplayContainer = styled.div`
   .ant-picker {
     background: rgba(0, 0, 0, 0.3) !important;
     border: 1px solid #1890ff !important;
-    
+
     .ant-picker-input > input {
       color: #e6f7ff !important;
     }
-    
+
     .ant-picker-suffix {
       color: #1890ff !important;
     }

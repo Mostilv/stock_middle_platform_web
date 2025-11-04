@@ -17,23 +17,23 @@ export const getMarketData = (): MarketDataState => ({
   shanghaiIndex: {
     current: 3700.25,
     change: 1.25,
-    history: [3680.50, 3695.20, 3710.80, 3698.45, 3700.25]
+    history: [3680.5, 3695.2, 3710.8, 3698.45, 3700.25],
   },
   nasdaqIndex: {
     current: 16543.67,
     change: -0.85,
-    history: [16680.30, 16620.15, 16580.90, 16560.25, 16543.67]
+    history: [16680.3, 16620.15, 16580.9, 16560.25, 16543.67],
   },
   goldIndex: {
     current: 2345.89,
     change: 2.15,
-    history: [2295.60, 2310.25, 2325.80, 2335.45, 2345.89]
+    history: [2295.6, 2310.25, 2325.8, 2335.45, 2345.89],
   },
   zhongzheng2000Index: {
     current: 1245.67,
     change: 0.75,
-    history: [1235.20, 1240.80, 1242.50, 1243.90, 1245.67]
-  }
+    history: [1235.2, 1240.8, 1242.5, 1243.9, 1245.67],
+  },
 });
 
 // 模拟更多市场数据
@@ -45,5 +45,5 @@ export const getAdditionalMarketData = () => ({
   flatCount: 156,
   marketCap: '89.2T',
   peRatio: 15.6,
-  pbRatio: 1.8
+  pbRatio: 1.8,
 });

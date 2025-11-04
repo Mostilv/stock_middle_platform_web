@@ -46,12 +46,12 @@ const EChart: React.FC<EChartProps> = ({
       renderer,
     });
     chartRef.current = chartInstance;
-    
+
     // 使用动画关闭以减少卡顿
     chartInstance.setOption(option, {
       notMerge: true,
       lazyUpdate: true,
-      replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom']
+      replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom'],
     });
 
     // 添加点击事件监听
@@ -84,15 +84,15 @@ const EChart: React.FC<EChartProps> = ({
     if (!containerRef.current) return;
 
     observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsVisible(true);
             observerRef.current?.disconnect();
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observerRef.current.observe(containerRef.current);
@@ -118,7 +118,7 @@ const EChart: React.FC<EChartProps> = ({
       chartRef.current.setOption(option, {
         notMerge: true,
         lazyUpdate: true,
-        replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom']
+        replaceMerge: ['series', 'xAxis', 'yAxis', 'grid', 'dataZoom'],
       });
     }
   }, [option, isVisible]);
@@ -144,9 +144,9 @@ const EChart: React.FC<EChartProps> = ({
     const handleWindowResize = () => {
       debouncedResize();
     };
-    
+
     window.addEventListener('resize', handleWindowResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleWindowResize);
     };

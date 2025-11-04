@@ -13,7 +13,7 @@ export const TopIndicatorsContainer = styled.div`
         font-weight: 500;
         margin-bottom: 2px;
       }
-      
+
       .ant-statistic-content {
         color: #e6f7ff !important;
         font-size: 20px;
@@ -100,11 +100,11 @@ export const IndicatorCard = styled.div`
     font-size: 14px;
     font-weight: 600;
     line-height: 1.2;
-    
+
     &.positive {
       color: #52c41a;
     }
-    
+
     &.negative {
       color: #ff4d4f;
     }

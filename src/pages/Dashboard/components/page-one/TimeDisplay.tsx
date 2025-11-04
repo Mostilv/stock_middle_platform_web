@@ -8,7 +8,10 @@ interface TimeDisplayProps {
   onDateChange: (date: Date | null) => void;
 }
 
-const TimeDisplay: React.FC<TimeDisplayProps> = ({ selectedDate, onDateChange }) => {
+const TimeDisplay: React.FC<TimeDisplayProps> = ({
+  selectedDate,
+  onDateChange,
+}) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -56,27 +59,27 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({ selectedDate, onDateChange })
         <span onClick={handleTimeClick}>{formatTime(displayTime)}</span>
       </Space>
       {showDatePicker && (
-        <DatePicker 
+        <DatePicker
           autoFocus
           open={showDatePicker}
-          onOpenChange={(open) => setShowDatePicker(open)}
-          getPopupContainer={(trigger) => trigger.parentElement as HTMLElement}
+          onOpenChange={open => setShowDatePicker(open)}
+          getPopupContainer={trigger => trigger.parentElement as HTMLElement}
           onChange={handleDateChange}
           allowClear={true}
-          placeholder="选择日期时间"
+          placeholder='选择日期时间'
           showTime={true}
-          disabledDate={(current) => {
+          disabledDate={current => {
             // 限制只能选择30天前至今天的数据
             const today = new Date();
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(today.getDate() - 30);
-            
+
             return current && (current > today || current < thirtyDaysAgo);
           }}
-          style={{ 
+          style={{
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
             border: '1px solid #1890ff',
-            color: '#e6f7ff'
+            color: '#e6f7ff',
           }}
         />
       )}

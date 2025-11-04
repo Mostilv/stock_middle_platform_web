@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 
 export const ChartCard = styled.div<{ $transparent?: boolean }>`
-  background: ${({ $transparent }) => ($transparent ? 'transparent' : 'rgba(0, 0, 0, 0.28)')};
-  border: ${({ $transparent }) => ($transparent ? 'none' : '1px solid rgba(42, 59, 77, 0.8)')};
+  background: ${({ $transparent }) =>
+    $transparent ? 'transparent' : 'rgba(0, 0, 0, 0.28)'};
+  border: ${({ $transparent }) =>
+    $transparent ? 'none' : '1px solid rgba(42, 59, 77, 0.8)'};
   border-radius: 12px;
   padding: 14px;
   backdrop-filter: blur(10px);
@@ -26,7 +28,8 @@ export const ChartCard = styled.div<{ $transparent?: boolean }>`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: ${({ $transparent }) => ($transparent ? 'none' : '0 8px 25px rgba(0, 0, 0, 0.25)')};
+    box-shadow: ${({ $transparent }) =>
+      $transparent ? 'none' : '0 8px 25px rgba(0, 0, 0, 0.25)'};
   }
 
   h3 {
@@ -36,7 +39,7 @@ export const ChartCard = styled.div<{ $transparent?: boolean }>`
     margin-bottom: 8px;
     text-align: center;
     position: relative;
-    
+
     &::after {
       content: '';
       position: absolute;

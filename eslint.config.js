@@ -47,10 +47,12 @@ export default tseslint.config([
       'no-var': 'error',
       'object-shorthand': 'error',
       'prefer-template': 'error',
+      // Align trailing comma rule with Prettier's setting to prevent circular fixes
       'comma-dangle': ['error', 'always-multiline'],
       'semi': ['error', 'always'],
       'quotes': ['error', 'single', { avoidEscape: true }],
-      'indent': ['error', 2],
+      // Use Prettier for indentation because the core indent rule is incompatible with TypeScript in ESLint 9
+      'indent': 'off',
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
       'no-multiple-empty-lines': ['error', { max: 1 }],

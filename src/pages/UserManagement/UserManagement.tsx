@@ -33,8 +33,8 @@ import {
   createUser,
   updateUser,
   deleteUser,
-} from '../../api/modules/users';
-import type { User, UserCreate, UserUpdate } from '../../api/modules/users';
+} from './services/user.api';
+import type { User, UserCreate, UserUpdate } from './services/user.api';
 import {
   UserManagementContainer,
   UserManagementHeader,
@@ -65,7 +65,8 @@ const UserManagement: React.FC = () => {
       // 确保数据是数组类型
       setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '获取用户列表失败';
+      const errorMessage =
+        error instanceof Error ? error.message : '获取用户列表失败';
       setError(errorMessage);
       message.error(errorMessage);
       // 发生错误时确保users是空数组
@@ -110,7 +111,12 @@ const UserManagement: React.FC = () => {
       setEditingUser(null);
       loadUsers();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : (editingUser ? '用户更新失败' : '用户创建失败');
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : editingUser
+            ? '用户更新失败'
+            : '用户创建失败';
       message.error(errorMessage);
     } finally {
       setLoading(false);
@@ -125,7 +131,8 @@ const UserManagement: React.FC = () => {
       message.success('用户删除成功');
       loadUsers();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '用户删除失败';
+      const errorMessage =
+        error instanceof Error ? error.message : '用户删除失败';
       message.error(errorMessage);
       setTableLoading(false);
     }
@@ -152,11 +159,15 @@ const UserManagement: React.FC = () => {
   };
 
   // 过滤用户数据
-  const filteredUsers = Array.isArray(users) ? users.filter(user =>
-    user.username.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchText.toLowerCase()) ||
-    (user.full_name && user.full_name.toLowerCase().includes(searchText.toLowerCase()))
-  ) : [];
+  const filteredUsers = Array.isArray(users)
+    ? users.filter(
+        user =>
+          user.username.toLowerCase().includes(searchText.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+          (user.full_name &&
+            user.full_name.toLowerCase().includes(searchText.toLowerCase())),
+      )
+    : [];
 
   // 表格列定义
   const columns: ColumnsType<User> = [
@@ -169,7 +180,9 @@ const UserManagement: React.FC = () => {
           <Avatar icon={<UserOutlined />} />
           <div>
             <div style={{ fontWeight: 500 }}>{text}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>{record.full_name}</div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              {record.full_name}
+            </div>
           </div>
         </Space>
       ),
@@ -200,7 +213,10 @@ const UserManagement: React.FC = () => {
       dataIndex: 'is_superuser',
       key: 'is_superuser',
       render: (isSuperuser: boolean) => (
-        <Tag color={isSuperuser ? 'gold' : 'blue'} icon={isSuperuser ? <CrownOutlined /> : <UserOutlined />}>
+        <Tag
+          color={isSuperuser ? 'gold' : 'blue'}
+          icon={isSuperuser ? <CrownOutlined /> : <UserOutlined />}
+        >
           {isSuperuser ? '管理员' : '普通用户'}
         </Tag>
       ),
@@ -216,25 +232,21 @@ const UserManagement: React.FC = () => {
       key: 'actions',
       render: (_, record: User) => (
         <Space>
-          <Tooltip title="编辑用户">
+          <Tooltip title='编辑用户'>
             <Button
-              type="text"
+              type='text'
               icon={<EditOutlined />}
               onClick={() => handleEdit(record)}
             />
           </Tooltip>
           <Popconfirm
-            title="确定要删除这个用户吗？"
+            title='确定要删除这个用户吗？'
             onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
+            okText='确定'
+            cancelText='取消'
           >
-            <Tooltip title="删除用户">
-              <Button
-                type="text"
-                danger
-                icon={<DeleteOutlined />}
-              />
+            <Tooltip title='删除用户'>
+              <Button type='text' danger icon={<DeleteOutlined />} />
             </Tooltip>
           </Popconfirm>
         </Space>
@@ -252,14 +264,18 @@ const UserManagement: React.FC = () => {
       </UserManagementHeader>
 
       <UserManagementCard>
-        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+        <Row
+          justify='space-between'
+          align='middle'
+          style={{ marginBottom: 16 }}
+        >
           <Col>
             <SearchContainer>
               <Search
-                placeholder="搜索用户名、邮箱或姓名"
+                placeholder='搜索用户名、邮箱或姓名'
                 allowClear
                 style={{ width: 300 }}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={e => setSearchText(e.target.value)}
                 prefix={<SearchOutlined />}
               />
             </SearchContainer>
@@ -274,7 +290,7 @@ const UserManagement: React.FC = () => {
                 刷新
               </Button>
               <Button
-                type="primary"
+                type='primary'
                 icon={<PlusOutlined />}
                 onClick={handleAdd}
               >
@@ -286,13 +302,13 @@ const UserManagement: React.FC = () => {
 
         {error && (
           <Alert
-            message="数据加载失败"
+            message='数据加载失败'
             description={error}
-            type="error"
+            type='error'
             showIcon
             style={{ marginBottom: 16 }}
             action={
-              <Button size="small" onClick={loadUsers}>
+              <Button size='small' onClick={loadUsers}>
                 重试
               </Button>
             }
@@ -301,14 +317,15 @@ const UserManagement: React.FC = () => {
         <Table
           columns={columns}
           dataSource={filteredUsers}
-          rowKey="id"
+          rowKey='id'
           loading={tableLoading}
           pagination={{
             total: filteredUsers.length,
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+            showTotal: (total, range) =>
+              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
           }}
         />
       </UserManagementCard>
@@ -326,95 +343,84 @@ const UserManagement: React.FC = () => {
         width={600}
         confirmLoading={loading}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout='vertical' onFinish={handleSubmit}>
           <Form.Item
-            label="用户名"
-            name="username"
+            label='用户名'
+            name='username'
             rules={[
               { required: true, message: '请输入用户名' },
               { min: 3, message: '用户名至少3个字符' },
               { max: 50, message: '用户名最多50个字符' },
             ]}
           >
-            <Input placeholder="请输入用户名" />
+            <Input placeholder='请输入用户名' />
           </Form.Item>
 
           <Form.Item
-            label="邮箱"
-            name="email"
+            label='邮箱'
+            name='email'
             rules={[
               { required: true, message: '请输入邮箱' },
               { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
           >
-            <Input placeholder="请输入邮箱" />
+            <Input placeholder='请输入邮箱' />
           </Form.Item>
 
-          <Form.Item
-            label="姓名"
-            name="full_name"
-          >
-            <Input placeholder="请输入姓名" />
+          <Form.Item label='姓名' name='full_name'>
+            <Input placeholder='请输入姓名' />
           </Form.Item>
 
           {!editingUser && (
             <Form.Item
-              label="密码"
-              name="password"
+              label='密码'
+              name='password'
               rules={[
                 { required: true, message: '请输入密码' },
                 { min: 6, message: '密码至少6个字符' },
               ]}
             >
-              <Input.Password placeholder="请输入密码" />
+              <Input.Password placeholder='请输入密码' />
             </Form.Item>
           )}
 
           {editingUser && (
             <>
               <Form.Item
-                label="账户状态"
-                name="is_active"
-                valuePropName="checked"
+                label='账户状态'
+                name='is_active'
+                valuePropName='checked'
               >
-                <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+                <Switch checkedChildren='启用' unCheckedChildren='禁用' />
               </Form.Item>
 
               <Form.Item
-                label="管理员权限"
-                name="is_superuser"
-                valuePropName="checked"
+                label='管理员权限'
+                name='is_superuser'
+                valuePropName='checked'
               >
-                <Switch checkedChildren="是" unCheckedChildren="否" />
+                <Switch checkedChildren='是' unCheckedChildren='否' />
               </Form.Item>
             </>
           )}
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
-              <Space>
-                <Button 
-                  onClick={() => {
-                    setIsModalVisible(false);
-                    setEditingUser(null);
-                    form.resetFields();
-                  }}
-                  disabled={loading}
-                >
-                  取消
-                </Button>
-                <Button 
-                  type="primary" 
-                  htmlType="submit"
-                  loading={loading}
-                >
-                  {editingUser ? '更新' : '创建'}
-                </Button>
-              </Space>
-            </Form.Item>
+            <Space>
+              <Button
+                onClick={() => {
+                  setIsModalVisible(false);
+                  setEditingUser(null);
+                  form.resetFields();
+                }}
+                disabled={loading}
+              >
+                取消
+              </Button>
+              <Button type='primary' htmlType='submit' loading={loading}>
+                {editingUser ? '更新' : '创建'}
+              </Button>
+            </Space>
+          </Form.Item>
         </Form>
       </Modal>
     </UserManagementContainer>

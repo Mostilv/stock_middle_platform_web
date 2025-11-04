@@ -19,10 +19,24 @@ export interface ChartConfigOptions {
 }
 
 // 生成K线图配置
-export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChartsOption => {
-  const { processedData, showVolume, chartColors, theme, showGrid, showTimeSelector } = options;
+export const getCandlestickOption = (
+  options: ChartConfigOptions,
+): echarts.EChartsOption => {
+  const {
+    processedData,
+    showVolume,
+    chartColors,
+    theme,
+    showGrid,
+    showTimeSelector,
+  } = options;
   const times = processedData.map(item => item.time);
-  const prices = processedData.map(item => [item.open, item.close, item.low, item.high]);
+  const prices = processedData.map(item => [
+    item.open,
+    item.close,
+    item.low,
+    item.high,
+  ]);
   const volumes = processedData.map(item => item.volume);
 
   const series: echarts.SeriesOption[] = [
@@ -70,21 +84,25 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
         show: showGrid,
         borderColor: chartColors.grid,
       },
-      ...(showVolume ? [{
-        left: '10%',
-        right: '10%',
-        top: '80%',
-        height: '15%',
-        show: showGrid,
-        borderColor: chartColors.grid,
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              left: '10%',
+              right: '10%',
+              top: '80%',
+              height: '15%',
+              show: showGrid,
+              borderColor: chartColors.grid,
+            },
+          ]
+        : []),
     ],
     xAxis: [
       {
         type: 'category' as const,
         data: times,
         boundaryGap: true,
-        axisLine: { 
+        axisLine: {
           onZero: false,
           lineStyle: {
             color: chartColors.grid,
@@ -96,20 +114,24 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
           fontSize: 10,
         },
       },
-      ...(showVolume ? [{
-        type: 'category' as const,
-        gridIndex: 1,
-        data: times,
-        boundaryGap: true,
-        axisLine: { 
-          onZero: false,
-          lineStyle: {
-            color: chartColors.grid,
-          },
-        },
-        splitLine: { show: false },
-        axisLabel: { show: false },
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              type: 'category' as const,
+              gridIndex: 1,
+              data: times,
+              boundaryGap: true,
+              axisLine: {
+                onZero: false,
+                lineStyle: {
+                  color: chartColors.grid,
+                },
+              },
+              splitLine: { show: false },
+              axisLabel: { show: false },
+            },
+          ]
+        : []),
     ],
     yAxis: [
       {
@@ -117,7 +139,9 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
         splitArea: {
           show: true,
           areaStyle: {
-            color: (theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)') as any,
+            color: (theme === 'dark'
+              ? 'rgba(255,255,255,0.02)'
+              : 'rgba(0,0,0,0.02)') as any,
           },
         },
         axisLabel: {
@@ -136,14 +160,18 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
           },
         },
       },
-      ...(showVolume ? [{
-        scale: true,
-        gridIndex: 1,
-        axisLabel: { show: false },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitLine: { show: false },
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              scale: true,
+              gridIndex: 1,
+              axisLabel: { show: false },
+              axisLine: { show: false },
+              axisTick: { show: false },
+              splitLine: { show: false },
+            },
+          ]
+        : []),
     ],
     dataZoom: [
       {
@@ -152,20 +180,25 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
         start: 0,
         end: 100,
       },
-      ...(showTimeSelector ? [{
-        show: true,
-        xAxisIndex: [0, showVolume ? 1 : 0],
-        type: 'slider',
-        top: '85%',
-        start: 0,
-        end: 100,
-        height: 20,
-        borderColor: chartColors.grid,
-        fillerColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-        handleStyle: {
-          color: chartColors.volume,
-        },
-      }] : []),
+      ...(showTimeSelector
+        ? [
+            {
+              show: true,
+              xAxisIndex: [0, showVolume ? 1 : 0],
+              type: 'slider',
+              top: '85%',
+              start: 0,
+              end: 100,
+              height: 20,
+              borderColor: chartColors.grid,
+              fillerColor:
+                theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              handleStyle: {
+                color: chartColors.volume,
+              },
+            },
+          ]
+        : []),
     ],
     series,
     tooltip: {
@@ -209,12 +242,16 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
             <span style="color: #999;">涨跌：</span>
             <span style="color: ${isUp ? chartColors.up : chartColors.down};">${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent}%)</span>
           </div>
-          ${showVolume ? `
+          ${
+            showVolume
+              ? `
           <div style="display: flex; justify-content: space-between; margin: 4px 0;">
             <span style="color: #999;">成交量：</span>
             <span style="color: ${chartColors.text};">${(data.volume / 10000).toFixed(2)}万</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         `;
       },
     },
@@ -222,8 +259,18 @@ export const getCandlestickOption = (options: ChartConfigOptions): echarts.EChar
 };
 
 // 生成折线图配置
-export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOption => {
-  const { processedData, showVolume, chartColors, theme, showGrid, showDataLabel, showTimeSelector } = options;
+export const getLineOption = (
+  options: ChartConfigOptions,
+): echarts.EChartsOption => {
+  const {
+    processedData,
+    showVolume,
+    chartColors,
+    theme,
+    showGrid,
+    showDataLabel,
+    showTimeSelector,
+  } = options;
   const times = processedData.map(item => item.time);
   const prices = processedData.map(item => item.close);
   const volumes = processedData.map(item => item.volume);
@@ -253,11 +300,17 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
           colorStops: [
             {
               offset: 0,
-              color: theme === 'dark' ? 'rgba(24, 144, 255, 0.3)' : 'rgba(24, 144, 255, 0.1)',
+              color:
+                theme === 'dark'
+                  ? 'rgba(24, 144, 255, 0.3)'
+                  : 'rgba(24, 144, 255, 0.1)',
             },
             {
               offset: 1,
-              color: theme === 'dark' ? 'rgba(24, 144, 255, 0.05)' : 'rgba(24, 144, 255, 0.02)',
+              color:
+                theme === 'dark'
+                  ? 'rgba(24, 144, 255, 0.05)'
+                  : 'rgba(24, 144, 255, 0.02)',
             },
           ],
         },
@@ -291,21 +344,25 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
         show: showGrid,
         borderColor: chartColors.grid,
       },
-      ...(showVolume ? [{
-        left: '10%',
-        right: '10%',
-        top: '80%',
-        height: '15%',
-        show: showGrid,
-        borderColor: chartColors.grid,
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              left: '10%',
+              right: '10%',
+              top: '80%',
+              height: '15%',
+              show: showGrid,
+              borderColor: chartColors.grid,
+            },
+          ]
+        : []),
     ],
     xAxis: [
       {
         type: 'category' as const,
         data: times,
         boundaryGap: false,
-        axisLine: { 
+        axisLine: {
           onZero: false,
           lineStyle: {
             color: chartColors.grid,
@@ -317,20 +374,24 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
           fontSize: 10,
         },
       },
-      ...(showVolume ? [{
-        type: 'category' as const,
-        gridIndex: 1,
-        data: times,
-        boundaryGap: false,
-        axisLine: { 
-          onZero: false,
-          lineStyle: {
-            color: chartColors.grid,
-          },
-        },
-        splitLine: { show: false },
-        axisLabel: { show: false },
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              type: 'category' as const,
+              gridIndex: 1,
+              data: times,
+              boundaryGap: false,
+              axisLine: {
+                onZero: false,
+                lineStyle: {
+                  color: chartColors.grid,
+                },
+              },
+              splitLine: { show: false },
+              axisLabel: { show: false },
+            },
+          ]
+        : []),
     ],
     yAxis: [
       {
@@ -338,7 +399,9 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
         splitArea: {
           show: true,
           areaStyle: {
-            color: (theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)') as any,
+            color: (theme === 'dark'
+              ? 'rgba(255,255,255,0.02)'
+              : 'rgba(0,0,0,0.02)') as any,
           },
         },
         axisLabel: {
@@ -357,14 +420,18 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
           },
         },
       },
-      ...(showVolume ? [{
-        scale: true,
-        gridIndex: 1,
-        axisLabel: { show: false },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitLine: { show: false },
-      }] : []),
+      ...(showVolume
+        ? [
+            {
+              scale: true,
+              gridIndex: 1,
+              axisLabel: { show: false },
+              axisLine: { show: false },
+              axisTick: { show: false },
+              splitLine: { show: false },
+            },
+          ]
+        : []),
     ],
     dataZoom: [
       {
@@ -373,20 +440,25 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
         start: 0,
         end: 100,
       },
-      ...(showTimeSelector ? [{
-        show: true,
-        xAxisIndex: [0, showVolume ? 1 : 0],
-        type: 'slider',
-        top: '85%',
-        start: 0,
-        end: 100,
-        height: 20,
-        borderColor: chartColors.grid,
-        fillerColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-        handleStyle: {
-          color: chartColors.volume,
-        },
-      }] : []),
+      ...(showTimeSelector
+        ? [
+            {
+              show: true,
+              xAxisIndex: [0, showVolume ? 1 : 0],
+              type: 'slider',
+              top: '85%',
+              start: 0,
+              end: 100,
+              height: 20,
+              borderColor: chartColors.grid,
+              fillerColor:
+                theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              handleStyle: {
+                color: chartColors.volume,
+              },
+            },
+          ]
+        : []),
     ],
     series,
     tooltip: {
@@ -410,12 +482,16 @@ export const getLineOption = (options: ChartConfigOptions): echarts.EChartsOptio
             <span style="color: #999;">价格：</span>
             <span style="color: ${chartColors.text};">${data.close.toFixed(2)}</span>
           </div>
-          ${showVolume ? `
+          ${
+            showVolume
+              ? `
           <div style="display: flex; justify-content: space-between; margin: 4px 0;">
             <span style="color: #999;">成交量：</span>
             <span style="color: ${chartColors.text};">${(data.volume / 10000).toFixed(2)}万</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         `;
       },
     },

@@ -9,7 +9,7 @@ export const DashboardContainer = styled.div`
   font-family: ${theme.typography.fontFamily};
   overflow: hidden; /* 在整页轮播模式下，避免内容溢出到其他页 */
   position: relative;
-  
+
   /* 添加微妙的背景图案，增加深度感 */
   &::before {
     content: '';
@@ -18,9 +18,17 @@ export const DashboardContainer = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.02) 1%, transparent 1%),
-      radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.02) 1%, transparent 1%);
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 255, 255, 0.02) 1%,
+        transparent 1%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(255, 255, 255, 0.02) 1%,
+        transparent 1%
+      );
     background-size: 60px 60px;
     opacity: 0.4;
     pointer-events: none;
@@ -44,7 +52,7 @@ export const MainContent = styled.div`
   @media (max-width: 1200px) {
     height: auto;
   }
-  
+
   @media (max-width: 992px) {
     display: block;
     padding: 12px 16px 16px 16px;
@@ -57,7 +65,7 @@ export const StatisticsGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-bottom: 24px;
-  
+
   @media (max-width: 768px) {
     gap: 16px;
   }
@@ -71,7 +79,7 @@ export const StatisticCard = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
@@ -153,7 +161,10 @@ export const TableContainer = styled.div`
 `;
 
 export const StockChange = styled.span<{ $isPositive: boolean }>`
-  color: ${props => (props.$isPositive ? theme.colors.stockChange.positive : theme.colors.stockChange.negative)};
+  color: ${props =>
+    props.$isPositive
+      ? theme.colors.stockChange.positive
+      : theme.colors.stockChange.negative};
   font-weight: ${theme.typography.fontWeights.medium};
   display: flex;
   align-items: center;

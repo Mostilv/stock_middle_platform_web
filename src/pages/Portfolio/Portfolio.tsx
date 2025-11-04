@@ -23,8 +23,8 @@ import {
 } from '@ant-design/icons';
 import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
-import { fetchPortfolioOverview } from '../../api/modules/portfolio';
-import type { PortfolioOverviewResponse } from '../../api/modules/portfolio';
+import { fetchPortfolioOverview } from './services/portfolio.api';
+import type { PortfolioOverviewResponse } from './services/portfolio.api';
 import {
   PortfolioContainer,
   PortfolioHeader,
@@ -153,27 +153,34 @@ const Portfolio: React.FC = () => {
       createdAt: '2024-01-10',
     },
   ]);
-  const [overview, setOverview] = useState<PortfolioOverviewResponse | null>(null);
+  const [overview, setOverview] = useState<PortfolioOverviewResponse | null>(
+    null,
+  );
 
   useEffect(() => {
     let mounted = true;
     fetchPortfolioOverview()
-      .then((data) => { if (!mounted) return; setOverview(data); setStrategies(data.strategies as any); })
+      .then(data => {
+        if (!mounted) return;
+        setOverview(data);
+        setStrategies(data.strategies as any);
+      })
       .catch(() => {});
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
   const [currentStockDetail, setCurrentStockDetail] =
     useState<StockDetail | null>(null);
 
-
   // 模拟股票详情数据
   const getStockDetail = (code: string): StockDetail => {
     // 生成最近30个交易日的K线数据
     const generateKlineData = (
       basePrice: number,
-      volatility: number = 0.03
+      volatility: number = 0.03,
     ) => {
       const data: Array<[string, number, number, number, number, number]> = [];
       let currentPrice = basePrice;
@@ -360,20 +367,20 @@ const Portfolio: React.FC = () => {
   };
 
   // 生成股票K线数据
-  const generateStockKLineData = (stockDetail: StockDetail): StockDataPoint[] => {
+  const generateStockKLineData = (
+    stockDetail: StockDetail,
+  ): StockDataPoint[] => {
     return stockDetail.klineData.map(item => ({
       time: item[0],
       open: item[1],
       high: item[4],
       low: item[3],
       close: item[2],
-      volume: item[5]
+      volume: item[5],
     }));
   };
 
   // 删除编辑功能，只保留详情查看
-
-
 
   // 删除删除功能，只保留详情查看
 
@@ -383,9 +390,12 @@ const Portfolio: React.FC = () => {
 
   const toggleStrategyStatus = (strategyId: string) => {
     // 获取当前策略的状态
-    const currentStrategy = strategies.find(strategy => strategy.id === strategyId);
-    const newStatus = currentStrategy?.status === 'active' ? 'inactive' : 'active';
-    
+    const currentStrategy = strategies.find(
+      strategy => strategy.id === strategyId,
+    );
+    const newStatus =
+      currentStrategy?.status === 'active' ? 'inactive' : 'active';
+
     // 更新策略状态
     setStrategies(
       strategies.map(strategy =>
@@ -397,10 +407,10 @@ const Portfolio: React.FC = () => {
           : strategy,
       ),
     );
-    
+
     // 如果用户需要，可以在这里添加条件，只在切换到停用状态时折叠菜单
     // 目前完全取消折叠联动，保持当前展开状态
-    
+
     // 如果需要只在切换到停用状态时折叠菜单，取消下面注释
     /*
     if (newStatus === 'inactive') {
@@ -416,7 +426,7 @@ const Portfolio: React.FC = () => {
   const activeStrategies = strategies.filter(s => s.status === 'active').length;
   const totalHoldings = strategies.reduce(
     (sum, strategy) => sum + strategy.items.length,
-    0
+    0,
   );
   const activeStrategyHoldings = strategies
     .filter(s => s.status === 'active')
@@ -566,7 +576,7 @@ const Portfolio: React.FC = () => {
                       {strategy.description}
                     </Text>
                   </div>
-                  <div onClick={(e) => e.stopPropagation()}>
+                  <div onClick={e => e.stopPropagation()}>
                     <Switch
                       checked={strategy.status === 'active'}
                       onChange={(checked, event) => {
@@ -641,8 +651,8 @@ const Portfolio: React.FC = () => {
             <div style={{ marginBottom: 24 }}>
               <StockChart
                 data={generateStockKLineData(currentStockDetail)}
-                chartType="candlestick"
-                theme="light"
+                chartType='candlestick'
+                theme='light'
                 showVolume={true}
                 height={400}
                 stockCode={currentStockDetail.code}
