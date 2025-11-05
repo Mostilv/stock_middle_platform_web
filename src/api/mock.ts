@@ -337,8 +337,18 @@ const portfolioOverviewMock = {
 
 const settingsDataMock = {
   emailConfigs: [
-    { id: '1', email: 'admin@example.com', remark: '管理员邮箱', enabled: true },
-    { id: '2', email: 'trader@example.com', remark: '交易员邮箱', enabled: true },
+    {
+      id: '1',
+      email: 'admin@example.com',
+      remark: '管理员邮箱',
+      enabled: true,
+    },
+    {
+      id: '2',
+      email: 'trader@example.com',
+      remark: '交易员邮箱',
+      enabled: true,
+    },
   ],
   notificationTemplates: [
     {
