@@ -59,6 +59,44 @@ export const MainContent = styled.div`
   }
 `;
 
+const chartsStackBase = `
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  & > * {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+`;
+
+export const LeftChartsStack = styled.div`
+  ${chartsStackBase}
+  grid-column: 1 / span 1;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+export const CenterChartsStack = styled.div`
+  ${chartsStackBase}
+  grid-column: 2 / span 2;
+`;
+
+export const RightChartsStack = styled.div`
+  ${chartsStackBase}
+  grid-column: 4 / span 1;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
 // 保留原有的样式组件以兼容性
 export const StatisticsGrid = styled.div`
   display: grid;

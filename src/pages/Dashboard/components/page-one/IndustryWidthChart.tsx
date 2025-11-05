@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import EChart from '../../../../components/EChart';
-import { ChartCard } from './IndustryWidthChart.styles';
+import Box from '../Box';
 
 interface IndustryWidthChartProps {
   selectedDate: Date | null;
@@ -176,12 +176,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
     );
 
     return (
-      <ChartCard>
-        <h3>行业宽度</h3>
-        <div style={{ flex: 1, minHeight: 0 }}>
-          <EChart height={'100%'} option={industryWidthOption} lazy={true} />
-        </div>
-      </ChartCard>
+      <Box title='行业宽度' padding='14px' underlineTitle>
+        <EChart height='100%' option={industryWidthOption} lazy={true} />
+      </Box>
     );
   },
 );

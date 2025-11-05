@@ -1,6 +1,6 @@
 import React from 'react';
 import EChart from '../../../../components/EChart';
-import { SmallChartCardContainer } from './SmallChartCard.styles';
+import Box from '../Box';
 
 interface SmallChartCardProps {
   title: string;
@@ -11,10 +11,9 @@ interface SmallChartCardProps {
 const SmallChartCard: React.FC<SmallChartCardProps> = React.memo(
   ({ title, option, height = '100%' }) => {
     return (
-      <SmallChartCardContainer>
-        <h4>{title}</h4>
+      <Box title={title} padding='10px' titleSize='sm'>
         <EChart height={height} option={option} lazy={true} />
-      </SmallChartCardContainer>
+      </Box>
     );
   },
 );

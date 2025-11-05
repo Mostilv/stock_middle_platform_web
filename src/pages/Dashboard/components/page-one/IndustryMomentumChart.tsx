@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import EChart from '../../../../components/EChart';
-import { ChartCard } from './IndustryMomentumChart.styles';
+import Box from '../Box';
 
 const IndustryMomentumChart: React.FC = React.memo(() => {
   // 使用useMemo缓存图表配置，避免重复计算
@@ -89,12 +89,9 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
   );
 
   return (
-    <ChartCard>
-      <h3>行业动量</h3>
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <EChart height={'100%'} option={industryMomentumOption} lazy={true} />
-      </div>
-    </ChartCard>
+    <Box title='行业动量' padding='14px' underlineTitle>
+      <EChart height='100%' option={industryMomentumOption} lazy={true} />
+    </Box>
   );
 });
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import { DatePicker, Space } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { TimeDisplayContainer } from './TimeDisplay.styles';
@@ -67,14 +68,15 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
           onChange={handleDateChange}
           allowClear={true}
           placeholder='选择日期时间'
-          showTime={true}
           disabledDate={current => {
             // 限制只能选择30天前至今天的数据
-            const today = new Date();
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(today.getDate() - 30);
+            const today = dayjs();
+            const thirtyDaysAgo = dayjs().subtract(30, 'days');
 
-            return current && (current > today || current < thirtyDaysAgo);
+            return (
+              current &&
+              (current.isAfter(today) || current.isBefore(thirtyDaysAgo))
+            );
           }}
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
