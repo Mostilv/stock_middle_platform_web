@@ -40,9 +40,7 @@ const Dashboard: React.FC = React.memo(() => {
 
   const makeSeries = (len: number, seed: number) =>
     Array.from({ length: len }, (_, index) =>
-      Math.round(
-        50 + 20 * Math.sin((index + seed) / 3) + Math.random() * 10,
-      ),
+      Math.round(50 + 20 * Math.sin((index + seed) / 3) + Math.random() * 10),
     );
 
   const baseOption = (data: number[], color: string): EChartsOption => ({
@@ -194,10 +192,7 @@ const Dashboard: React.FC = React.memo(() => {
                     各行业走势
                   </div>
                   <div style={{ flex: 1, minHeight: 0 }}>
-                    <EChart
-                      height='100%'
-                      option={page2Options.industryTrend}
-                    />
+                    <EChart height='100%' option={page2Options.industryTrend} />
                   </div>
                 </div>
               </Col>
@@ -224,10 +219,7 @@ const Dashboard: React.FC = React.memo(() => {
                     涨停数量
                   </div>
                   <div style={{ flex: 1, minHeight: 0 }}>
-                    <EChart
-                      height='100%'
-                      option={page2Options.limitUpCount}
-                    />
+                    <EChart height='100%' option={page2Options.limitUpCount} />
                   </div>
                 </div>
               </Col>
@@ -254,10 +246,7 @@ const Dashboard: React.FC = React.memo(() => {
                     占位指标一
                   </div>
                   <div style={{ flex: 1, minHeight: 0 }}>
-                    <EChart
-                      height='100%'
-                      option={page2Options.placeholder1}
-                    />
+                    <EChart height='100%' option={page2Options.placeholder1} />
                   </div>
                 </div>
               </Col>
@@ -284,10 +273,7 @@ const Dashboard: React.FC = React.memo(() => {
                     占位指标二
                   </div>
                   <div style={{ flex: 1, minHeight: 0 }}>
-                    <EChart
-                      height='100%'
-                      option={page2Options.placeholder2}
-                    />
+                    <EChart height='100%' option={page2Options.placeholder2} />
                   </div>
                 </div>
               </Col>
