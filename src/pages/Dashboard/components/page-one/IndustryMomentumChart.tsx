@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import EChart from '../../../../components/EChart';
 import Box from '../Box';
+import { useEChart } from '../../../../hooks/useEChart';
 
 const IndustryMomentumChart: React.FC = React.memo(() => {
   // 使用useMemo缓存图表配置，避免重复计算
@@ -88,9 +88,22 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
     [],
   );
 
+  const { containerRef, isVisible } = useEChart({
+    option: industryMomentumOption,
+    lazy: true,
+  });
+
   return (
     <Box title='行业动量' padding='14px' underlineTitle>
-      <EChart height='100%' option={industryMomentumOption} lazy={true} />
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          minWidth: 0,
+          opacity: isVisible ? 1 : 0,
+        }}
+      />
     </Box>
   );
 });

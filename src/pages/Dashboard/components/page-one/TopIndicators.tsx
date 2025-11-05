@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Row, Col } from 'antd';
-import EChart from '../../../../components/EChart';
 import { TopIndicatorsContainer, IndicatorCard } from './TopIndicators.styles';
+import { useEChart } from '../../../../hooks/useEChart';
 
 interface MarketData {
   current: number;
@@ -64,62 +64,121 @@ const TopIndicators: React.FC<TopIndicatorsProps> = ({ marketData }) => {
     ],
   });
 
-  const indicators = [
-    {
-      title: '上证指数',
-      data: marketData.shanghaiIndex,
-      color: marketData.shanghaiIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
-    },
-    {
-      title: '纳指',
-      data: marketData.nasdaqIndex,
-      color: marketData.nasdaqIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
-    },
-    {
-      title: '黄金',
-      data: marketData.goldIndex,
-      color: marketData.goldIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
-    },
-    {
-      title: '中证2000',
-      data: marketData.zhongzheng2000Index,
-      color: marketData.zhongzheng2000Index.change >= 0 ? '#52c41a' : '#ff4d4f',
-    },
+  const indicatorConfigs = useMemo(
+    () =>
+      [
+        {
+          title: '上证指数',
+          data: marketData.shanghaiIndex,
+          color: marketData.shanghaiIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+          option: createSimpleChartOption(
+            marketData.shanghaiIndex.history,
+            marketData.shanghaiIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+            marketData.shanghaiIndex.change >= 0,
+          ),
+        },
+        {
+          title: '纳指',
+          data: marketData.nasdaqIndex,
+          color: marketData.nasdaqIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+          option: createSimpleChartOption(
+            marketData.nasdaqIndex.history,
+            marketData.nasdaqIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+            marketData.nasdaqIndex.change >= 0,
+          ),
+        },
+        {
+          title: '黄金',
+          data: marketData.goldIndex,
+          color: marketData.goldIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+          option: createSimpleChartOption(
+            marketData.goldIndex.history,
+            marketData.goldIndex.change >= 0 ? '#52c41a' : '#ff4d4f',
+            marketData.goldIndex.change >= 0,
+          ),
+        },
+        {
+          title: '中证2000',
+          data: marketData.zhongzheng2000Index,
+          color:
+            marketData.zhongzheng2000Index.change >= 0 ? '#52c41a' : '#ff4d4f',
+          option: createSimpleChartOption(
+            marketData.zhongzheng2000Index.history,
+            marketData.zhongzheng2000Index.change >= 0 ? '#52c41a' : '#ff4d4f',
+            marketData.zhongzheng2000Index.change >= 0,
+          ),
+        },
+      ] as const,
+    [marketData],
+  );
+
+  const [
+    shanghaiConfig,
+    nasdaqConfig,
+    goldConfig,
+    zhongzhengConfig,
+  ] = indicatorConfigs;
+
+  const shanghaiChart = useEChart({
+    option: shanghaiConfig.option,
+    lazy: true,
+  });
+  const nasdaqChart = useEChart({
+    option: nasdaqConfig.option,
+    lazy: true,
+  });
+  const goldChart = useEChart({
+    option: goldConfig.option,
+    lazy: true,
+  });
+  const zhongzhengChart = useEChart({
+    option: zhongzhengConfig.option,
+    lazy: true,
+  });
+  const chartStates = [
+    shanghaiChart,
+    nasdaqChart,
+    goldChart,
+    zhongzhengChart,
   ];
 
   return (
     <TopIndicatorsContainer>
       <Row gutter={[16, 16]}>
-        {indicators.map((indicator, index) => (
-          <Col span={6} key={index}>
-            <IndicatorCard>
-              <div className='indicator-content-horizontal'>
-                <div className='indicator-title'>{indicator.title}</div>
-                <div className='indicator-chart'>
-                  <EChart
-                    height={40}
-                    option={createSimpleChartOption(
-                      indicator.data.history,
-                      indicator.color,
-                      indicator.data.change >= 0,
-                    )}
-                  />
-                </div>
-                <div className='indicator-value'>
-                  <div className='value'>
-                    {indicator.data.current.toFixed(2)}
+        {indicatorConfigs.map((indicator, index) => {
+          const state = chartStates[index];
+          return (
+            <Col span={6} key={index}>
+              <IndicatorCard>
+                <div className='indicator-content-horizontal'>
+                  <div className='indicator-title'>{indicator.title}</div>
+                  <div className='indicator-chart'>
+                    <div
+                      ref={state.containerRef}
+                      style={{
+                        width: '100%',
+                        height: '40px',
+                        minWidth: 0,
+                        opacity: state.isVisible ? 1 : 0,
+                      }}
+                    />
                   </div>
-                  <div
-                    className={`change ${indicator.data.change >= 0 ? 'positive' : 'negative'}`}
-                  >
-                    {indicator.data.change >= 0 ? '+' : ''}
-                    {indicator.data.change}%
+                  <div className='indicator-value'>
+                    <div className='value'>
+                      {indicator.data.current.toFixed(2)}
+                    </div>
+                    <div
+                      className={`change ${indicator.data.change >= 0 ? 'positive' : 'negative'}`}
+                    >
+                      {indicator.data.change >= 0 ? '+' : ''}
+                      {indicator.data.change}%
+                    </div>
                   </div>
                 </div>
-              </div>
-            </IndicatorCard>
-          </Col>
-        ))}
+              </IndicatorCard>
+            </Col>
+          );
+        })}
       </Row>
     </TopIndicatorsContainer>
   );

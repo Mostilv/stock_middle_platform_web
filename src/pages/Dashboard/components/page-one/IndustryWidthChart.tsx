@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import EChart from '../../../../components/EChart';
 import Box from '../Box';
+import { useEChart } from '../../../../hooks/useEChart';
 
 interface IndustryWidthChartProps {
   selectedDate: Date | null;
@@ -175,9 +175,22 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       [chartData, defaultStart, defaultEnd],
     );
 
+    const { containerRef, isVisible } = useEChart({
+      option: industryWidthOption,
+      lazy: true,
+    });
+
     return (
       <Box title='行业宽度' padding='14px' underlineTitle>
-        <EChart height='100%' option={industryWidthOption} lazy={true} />
+        <div
+          ref={containerRef}
+          style={{
+            width: '100%',
+            height: '100%',
+            minWidth: 0,
+            opacity: isVisible ? 1 : 0,
+          }}
+        />
       </Box>
     );
   },

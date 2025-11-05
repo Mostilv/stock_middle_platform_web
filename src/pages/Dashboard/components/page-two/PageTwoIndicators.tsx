@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Row, Col } from 'antd';
 import type { EChartsOption } from 'echarts';
-import EChart from '../../../../components/EChart';
 import Box from '../Box';
+import { useEChart } from '../../../../hooks/useEChart';
 
 type PanelKey = 'industryTrend' | 'limitUpCount' | 'placeholder1' | 'placeholder2';
 
@@ -87,15 +87,50 @@ const PageTwoIndicators: React.FC = () => {
     };
   }, []);
 
+  const industryTrendChart = useEChart({
+    option: chartOptions.industryTrend,
+    lazy: true,
+  });
+  const limitUpCountChart = useEChart({
+    option: chartOptions.limitUpCount,
+    lazy: true,
+  });
+  const placeholder1Chart = useEChart({
+    option: chartOptions.placeholder1,
+    lazy: true,
+  });
+  const placeholder2Chart = useEChart({
+    option: chartOptions.placeholder2,
+    lazy: true,
+  });
+
+  const chartMap: Record<PanelKey, ReturnType<typeof useEChart>> = {
+    industryTrend: industryTrendChart,
+    limitUpCount: limitUpCountChart,
+    placeholder1: placeholder1Chart,
+    placeholder2: placeholder2Chart,
+  };
+
   return (
     <Row gutter={[16, 16]} style={{ padding: '12px 12px 20px', height: '100%' }}>
-      {panelMeta.map(panel => (
-        <Col span={12} style={{ height: 'calc(50% - 16px)' }} key={panel.key}>
-          <Box title={panel.title} padding='12px' titleAlign='left'>
-            <EChart height='100%' option={chartOptions[panel.key]} />
-          </Box>
-        </Col>
-      ))}
+      {panelMeta.map(panel => {
+        const state = chartMap[panel.key];
+        return (
+          <Col span={12} style={{ height: 'calc(50% - 16px)' }} key={panel.key}>
+            <Box title={panel.title} padding='12px' titleAlign='left'>
+              <div
+                ref={state.containerRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  minWidth: 0,
+                  opacity: state.isVisible ? 1 : 0,
+                }}
+              />
+            </Box>
+          </Col>
+        );
+      })}
     </Row>
   );
 };

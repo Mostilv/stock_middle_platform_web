@@ -1,9 +1,9 @@
-import React, { useMemo, useRef, useState, useCallback } from 'react';
+﻿import React, { useMemo, useRef, useState, useCallback } from 'react';
 import type { EChartsOption } from 'echarts';
 import { Row, Col, Carousel } from 'antd';
-import EChart from '../../../../components/EChart';
 import TopIndicators from './TopIndicators';
 import { IndicatorCard } from './TopIndicators.styles';
+import { useEChart } from '../../../../hooks/useEChart';
 
 interface MarketData {
   current: number;
@@ -74,6 +74,23 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
     };
   }, []);
 
+  const industryTrendChart = useEChart({
+    option: lineOption.industryTrend,
+    lazy: true,
+  });
+  const limitUpChart = useEChart({
+    option: lineOption.limitUpCount,
+    lazy: true,
+  });
+  const placeholder1Chart = useEChart({
+    option: lineOption.placeholder1,
+    lazy: true,
+  });
+  const placeholder2Chart = useEChart({
+    option: lineOption.placeholder2,
+    lazy: true,
+  });
+
   return (
     <div onWheel={handleWheel} style={{ marginBottom: 8 }}>
       <Carousel
@@ -92,31 +109,63 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
               <IndicatorCard>
                 <div className='indicator-content'>
                   <div className='indicator-title'>各行业走势</div>
-                  <EChart height={140} option={lineOption.industryTrend} />
+                  <div
+                    ref={industryTrendChart.containerRef}
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                      minWidth: 0,
+                      opacity: industryTrendChart.isVisible ? 1 : 0,
+                    }}
+                  />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
                 <div className='indicator-content'>
-                  <div className='indicator-title'>涨停数</div>
-                  <EChart height={140} option={lineOption.limitUpCount} />
+                  <div className='indicator-title'>涨停数量</div>
+                  <div
+                    ref={limitUpChart.containerRef}
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                      minWidth: 0,
+                      opacity: limitUpChart.isVisible ? 1 : 0,
+                    }}
+                  />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
                 <div className='indicator-content'>
-                  <div className='indicator-title'>空</div>
-                  <EChart height={140} option={lineOption.placeholder1} />
+                  <div className='indicator-title'>预留指标 1</div>
+                  <div
+                    ref={placeholder1Chart.containerRef}
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                      minWidth: 0,
+                      opacity: placeholder1Chart.isVisible ? 1 : 0,
+                    }}
+                  />
                 </div>
               </IndicatorCard>
             </Col>
             <Col span={12}>
               <IndicatorCard>
                 <div className='indicator-content'>
-                  <div className='indicator-title'>空</div>
-                  <EChart height={140} option={lineOption.placeholder2} />
+                  <div className='indicator-title'>预留指标 2</div>
+                  <div
+                    ref={placeholder2Chart.containerRef}
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                      minWidth: 0,
+                      opacity: placeholder2Chart.isVisible ? 1 : 0,
+                    }}
+                  />
                 </div>
               </IndicatorCard>
             </Col>

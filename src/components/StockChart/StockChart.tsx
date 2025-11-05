@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 
 import { Spin } from 'antd';
 import { LineChartOutlined } from '@ant-design/icons';
-import EChart from '../EChart';
 import {
   StockChartContainer,
   ChartHeader,
@@ -12,6 +11,7 @@ import {
 } from './StockChart.styles';
 import type { StockChartProps } from './types';
 import { getCandlestickOption, getLineOption } from './chartConfigs';
+import { useEChart } from '../../hooks/useEChart';
 
 const StockChart: React.FC<StockChartProps> = ({
   data,
@@ -101,6 +101,18 @@ const StockChart: React.FC<StockChartProps> = ({
     [onChartClick],
   );
 
+  const chartHeight =
+    typeof height === 'number'
+      ? Math.max(height - (title ? 60 : 0), 0)
+      : height ?? '100%';
+  const resolvedHeight =
+    typeof chartHeight === 'number' ? `${chartHeight}px` : chartHeight || '100%';
+  const { containerRef, isVisible } = useEChart({
+    option: chartOption,
+    theme: theme === 'dark' ? 'dark' : undefined,
+    onChartClick: handleChartClick,
+  });
+
   // 数据为空时显示空状态
   if (!data || data.length === 0) {
     return (
@@ -138,13 +150,14 @@ const StockChart: React.FC<StockChartProps> = ({
         </ChartHeader>
       )}
       <ChartContent>
-        <EChart
-          option={chartOption}
-          height={
-            typeof height === 'number' ? height - (title ? 60 : 0) : height
-          }
-          theme={theme === 'dark' ? 'dark' : undefined}
-          onChartClick={handleChartClick}
+        <div
+          ref={containerRef}
+          style={{
+            width: '100%',
+            height: resolvedHeight,
+            minWidth: 0,
+            opacity: isVisible ? 1 : 0,
+          }}
         />
         {loading && (
           <LoadingOverlay $theme={theme}>
