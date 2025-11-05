@@ -40,7 +40,11 @@ const Box: React.FC<BoxProps> = ({
       $hoverable={hoverable}
     >
       {title ? (
-        <BoxHeader $align={titleAlign} $size={titleSize} $underline={underlineTitle}>
+        <BoxHeader
+          $align={titleAlign}
+          $size={titleSize}
+          $underline={underlineTitle}
+        >
           {title}
           {headerExtra}
         </BoxHeader>
@@ -51,4 +55,3 @@ const Box: React.FC<BoxProps> = ({
 };
 
 export default React.memo(Box);
-
