@@ -25,21 +25,24 @@ export default tseslint.config([
     rules: {
       // Prettier 规则
       'prettier/prettier': 'error',
-      
+
       // TypeScript 规则
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-var-requires': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'warn',
-      
+
       // React 规则
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
-      
+
       // 通用规则
       'no-console': 'warn',
       'no-debugger': 'error',
@@ -49,10 +52,10 @@ export default tseslint.config([
       'prefer-template': 'error',
       // Align trailing comma rule with Prettier's setting to prevent circular fixes
       'comma-dangle': ['error', 'always-multiline'],
-      'semi': ['error', 'always'],
-      'quotes': ['error', 'single', { avoidEscape: true }],
+      semi: ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
       // Use Prettier for indentation because the core indent rule is incompatible with TypeScript in ESLint 9
-      'indent': 'off',
+      indent: 'off',
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
       'no-multiple-empty-lines': ['error', { max: 1 }],

@@ -20,7 +20,10 @@ export const httpClient: AxiosInstance = axios.create({
 });
 
 export interface RequestConfig<TBody = unknown>
-  extends Omit<AxiosRequestConfig<TBody>, 'url' | 'method' | 'params' | 'data'> {
+  extends Omit<
+    AxiosRequestConfig<TBody>,
+    'url' | 'method' | 'params' | 'data'
+  > {
   url: string;
   method?: HttpMethod;
   query?: QueryParams;
@@ -66,23 +69,44 @@ export const http = {
   request: executeRequest,
   get: <TData>(url: string, options?: ReadOnlyOptions) =>
     executeRequest<TData, never>({ ...(options || {}), url, method: 'GET' }),
-  delete: <TData, TBody = unknown>(url: string, options?: RequestOptions<TBody>) =>
+  delete: <TData, TBody = unknown>(
+    url: string,
+    options?: RequestOptions<TBody>,
+  ) =>
     executeRequest<TData, TBody>({ ...(options || {}), url, method: 'DELETE' }),
   post: <TData, TBody = unknown>(
     url: string,
     data?: TBody,
     options?: RequestOptions<TBody>,
-  ) => executeRequest<TData, TBody>({ ...(options || {}), url, method: 'POST', data }),
+  ) =>
+    executeRequest<TData, TBody>({
+      ...(options || {}),
+      url,
+      method: 'POST',
+      data,
+    }),
   put: <TData, TBody = unknown>(
     url: string,
     data?: TBody,
     options?: RequestOptions<TBody>,
-  ) => executeRequest<TData, TBody>({ ...(options || {}), url, method: 'PUT', data }),
+  ) =>
+    executeRequest<TData, TBody>({
+      ...(options || {}),
+      url,
+      method: 'PUT',
+      data,
+    }),
   patch: <TData, TBody = unknown>(
     url: string,
     data?: TBody,
     options?: RequestOptions<TBody>,
-  ) => executeRequest<TData, TBody>({ ...(options || {}), url, method: 'PATCH', data }),
+  ) =>
+    executeRequest<TData, TBody>({
+      ...(options || {}),
+      url,
+      method: 'PATCH',
+      data,
+    }),
 };
 
 export interface HttpResponse<TData = unknown> {
@@ -105,12 +129,12 @@ const toHeaderRecord = (
 ): Record<string, string> => {
   if (!headers) return {};
   return Object.fromEntries(
-    Object.entries(
-      headers as Record<string, string | number | string[]>,
-    ).map(([key, value]) => [
-      key,
-      Array.isArray(value) ? value.join(', ') : String(value),
-    ]),
+    Object.entries(headers as Record<string, string | number | string[]>).map(
+      ([key, value]) => [
+        key,
+        Array.isArray(value) ? value.join(', ') : String(value),
+      ],
+    ),
   );
 };
 
@@ -148,8 +172,7 @@ export class HttpClient {
     config: AxiosRequestConfig<TBody>,
   ): Promise<HttpResponse<TData>> {
     const mockResponse = await resolveMockResponse<TData>(config);
-    const response =
-      mockResponse ?? (await this.client.request<TData>(config));
+    const response = mockResponse ?? (await this.client.request<TData>(config));
     return {
       data: response.data,
       status: response.status,

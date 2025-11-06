@@ -23,5 +23,7 @@ export interface SettingsDataResponse {
 export const fetchSettingsData = (): Promise<SettingsDataResponse> =>
   http.get<SettingsDataResponse>('/settings/data');
 
-export const saveSettingsData = (payload: SettingsDataResponse): Promise<void> =>
+export const saveSettingsData = (
+  payload: SettingsDataResponse,
+): Promise<void> =>
   http.post<void, SettingsDataResponse>('/settings/data', payload);

@@ -51,8 +51,10 @@ export const fetchUserById = (userId: number): Promise<User> =>
 export const createUser = (userData: UserCreate): Promise<User> =>
   http.post<User, UserCreate>('/users', userData);
 
-export const updateUser = (userId: number, userData: UserUpdate): Promise<User> =>
-  http.put<User, UserUpdate>(`/users/${userId}`, userData);
+export const updateUser = (
+  userId: number,
+  userData: UserUpdate,
+): Promise<User> => http.put<User, UserUpdate>(`/users/${userId}`, userData);
 
 export const deleteUser = (userId: number): Promise<void> =>
   http.delete<void>(`/users/${userId}`);
@@ -60,15 +62,24 @@ export const deleteUser = (userId: number): Promise<void> =>
 export const addUserRoles = (userId: number, roles: string[]): Promise<User> =>
   http.post<User>(`/users/${userId}/roles`, { roles });
 
-export const removeUserRoles = (userId: number, roles: string[]): Promise<User> =>
+export const removeUserRoles = (
+  userId: number,
+  roles: string[],
+): Promise<User> =>
   http.delete<User, { roles: string[] }>(`/users/${userId}/roles`, {
     data: { roles },
   });
 
-export const addUserPermissions = (userId: number, permissions: string[]): Promise<User> =>
+export const addUserPermissions = (
+  userId: number,
+  permissions: string[],
+): Promise<User> =>
   http.post<User>(`/users/${userId}/permissions`, { permissions });
 
-export const removeUserPermissions = (userId: number, permissions: string[]): Promise<User> =>
+export const removeUserPermissions = (
+  userId: number,
+  permissions: string[],
+): Promise<User> =>
   http.delete<User, { permissions: string[] }>(`/users/${userId}/permissions`, {
     data: { permissions },
   });

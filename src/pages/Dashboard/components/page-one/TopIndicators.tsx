@@ -112,12 +112,8 @@ const TopIndicators: React.FC<TopIndicatorsProps> = ({ marketData }) => {
     [marketData],
   );
 
-  const [
-    shanghaiConfig,
-    nasdaqConfig,
-    goldConfig,
-    zhongzhengConfig,
-  ] = indicatorConfigs;
+  const [shanghaiConfig, nasdaqConfig, goldConfig, zhongzhengConfig] =
+    indicatorConfigs;
 
   const shanghaiChart = useEChart({
     option: shanghaiConfig.option,
@@ -135,12 +131,7 @@ const TopIndicators: React.FC<TopIndicatorsProps> = ({ marketData }) => {
     option: zhongzhengConfig.option,
     lazy: true,
   });
-  const chartStates = [
-    shanghaiChart,
-    nasdaqChart,
-    goldChart,
-    zhongzhengChart,
-  ];
+  const chartStates = [shanghaiChart, nasdaqChart, goldChart, zhongzhengChart];
 
   return (
     <TopIndicatorsContainer>

@@ -13,4 +13,5 @@ export interface RemoteMarketDataState {
   zhongzheng2000Index: RemoteMarketData;
 }
 
-export const fetchMarketData = (): Promise<RemoteMarketDataState> => http.get<RemoteMarketDataState>('/market/data');
+export const fetchMarketData = (): Promise<RemoteMarketDataState> =>
+  http.get<RemoteMarketDataState>('/market/data');

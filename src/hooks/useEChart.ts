@@ -131,4 +131,3 @@ export const useEChart = ({
 
   return { containerRef, isVisible };
 };
-

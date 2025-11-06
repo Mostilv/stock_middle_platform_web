@@ -29,7 +29,7 @@ const data: StockDataPoint[] = [
     high: 105,
     low: 98,
     close: 103,
-    volume: 1000000
+    volume: 1000000,
   },
   // ... 更多数据
 ];
@@ -37,48 +37,48 @@ const data: StockDataPoint[] = [
 // 使用组件
 <StockChart
   data={data}
-  chartType="candlestick"
-  theme="light"
+  chartType='candlestick'
+  theme='light'
   showVolume={true}
   height={400}
-  stockCode="000001.SZ"
-  title="平安银行"
-/>
+  stockCode='000001.SZ'
+  title='平安银行'
+/>;
 ```
 
 ## API
 
 ### Props
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `data` | `StockDataPoint[]` | - | **必填** 图表数据 |
-| `chartType` | `'line' \| 'candlestick'` | - | **必填** 图表类型 |
-| `theme` | `'light' \| 'dark'` | `'light'` | 主题 |
-| `showVolume` | `boolean` | `true` | 是否显示成交量 |
-| `height` | `number \| string` | `400` | 图表高度 |
-| `width` | `number \| string` | `'100%'` | 图表宽度 |
-| `className` | `string` | - | 自定义类名 |
-| `stockCode` | `string` | - | 股票代码或名称 |
-| `loading` | `boolean` | `false` | 加载状态 |
-| `title` | `string` | - | 图表标题 |
-| `showGrid` | `boolean` | `true` | 是否显示网格线 |
-| `showDataLabel` | `boolean` | `false` | 是否显示数据标签 |
-| `showTimeSelector` | `boolean` | `true` | 是否显示时间选择器 |
-| `colors` | `object` | - | 自定义颜色配置 |
-| `onChartClick` | `function` | - | 图表点击事件 |
-| `emptyText` | `string` | `'暂无数据'` | 空数据提示文本 |
+| 参数               | 类型                      | 默认值       | 说明               |
+| ------------------ | ------------------------- | ------------ | ------------------ |
+| `data`             | `StockDataPoint[]`        | -            | **必填** 图表数据  |
+| `chartType`        | `'line' \| 'candlestick'` | -            | **必填** 图表类型  |
+| `theme`            | `'light' \| 'dark'`       | `'light'`    | 主题               |
+| `showVolume`       | `boolean`                 | `true`       | 是否显示成交量     |
+| `height`           | `number \| string`        | `400`        | 图表高度           |
+| `width`            | `number \| string`        | `'100%'`     | 图表宽度           |
+| `className`        | `string`                  | -            | 自定义类名         |
+| `stockCode`        | `string`                  | -            | 股票代码或名称     |
+| `loading`          | `boolean`                 | `false`      | 加载状态           |
+| `title`            | `string`                  | -            | 图表标题           |
+| `showGrid`         | `boolean`                 | `true`       | 是否显示网格线     |
+| `showDataLabel`    | `boolean`                 | `false`      | 是否显示数据标签   |
+| `showTimeSelector` | `boolean`                 | `true`       | 是否显示时间选择器 |
+| `colors`           | `object`                  | -            | 自定义颜色配置     |
+| `onChartClick`     | `function`                | -            | 图表点击事件       |
+| `emptyText`        | `string`                  | `'暂无数据'` | 空数据提示文本     |
 
 ### StockDataPoint 数据结构
 
 ```tsx
 interface StockDataPoint {
-  time: string | number;    // 时间
-  open: number;            // 开盘价
-  high: number;            // 最高价
-  low: number;             // 最低价
-  close: number;           // 收盘价
-  volume: number;          // 成交量
+  time: string | number; // 时间
+  open: number; // 开盘价
+  high: number; // 最高价
+  low: number; // 最低价
+  close: number; // 收盘价
+  volume: number; // 成交量
 }
 ```
 
@@ -86,12 +86,12 @@ interface StockDataPoint {
 
 ```tsx
 const colors = {
-  up: '#52c41a',        // 上涨颜色
-  down: '#ff4d4f',      // 下跌颜色
-  volume: '#1890ff',    // 成交量颜色
-  line: '#1890ff',      // 折线图颜色
-  grid: '#e8e8e8',      // 网格线颜色
-  text: '#333333'       // 文字颜色
+  up: '#52c41a', // 上涨颜色
+  down: '#ff4d4f', // 下跌颜色
+  volume: '#1890ff', // 成交量颜色
+  line: '#1890ff', // 折线图颜色
+  grid: '#e8e8e8', // 网格线颜色
+  text: '#333333', // 文字颜色
 };
 ```
 
@@ -102,12 +102,12 @@ const colors = {
 ```tsx
 <StockChart
   data={stockData}
-  chartType="candlestick"
-  theme="light"
+  chartType='candlestick'
+  theme='light'
   showVolume={true}
   height={500}
-  stockCode="000001.SZ"
-  title="平安银行K线图"
+  stockCode='000001.SZ'
+  title='平安银行K线图'
 />
 ```
 
@@ -116,12 +116,12 @@ const colors = {
 ```tsx
 <StockChart
   data={stockData}
-  chartType="line"
-  theme="dark"
+  chartType='line'
+  theme='dark'
   showVolume={false}
   height={400}
-  stockCode="000002.SZ"
-  title="万科A走势图"
+  stockCode='000002.SZ'
+  title='万科A走势图'
   showDataLabel={true}
   showTimeSelector={false}
 />
@@ -132,19 +132,19 @@ const colors = {
 ```tsx
 <StockChart
   data={stockData}
-  chartType="candlestick"
-  theme="light"
+  chartType='candlestick'
+  theme='light'
   colors={{
     up: '#00ff00',
     down: '#ff0000',
     volume: '#0000ff',
     line: '#ff6600',
     grid: '#cccccc',
-    text: '#333333'
+    text: '#333333',
   }}
   height={400}
-  stockCode="000001.SZ"
-  title="自定义颜色K线图"
+  stockCode='000001.SZ'
+  title='自定义颜色K线图'
 />
 ```
 
@@ -153,12 +153,12 @@ const colors = {
 ```tsx
 <StockChart
   data={stockData}
-  chartType="line"
-  theme="light"
+  chartType='line'
+  theme='light'
   height={400}
-  stockCode="000001.SZ"
-  title="带点击事件的图表"
-  onChartClick={(params) => {
+  stockCode='000001.SZ'
+  title='带点击事件的图表'
+  onChartClick={params => {
     console.log('点击了数据点:', params);
     // 处理点击事件
   }}
@@ -170,12 +170,12 @@ const colors = {
 ```tsx
 <StockChart
   data={stockData}
-  chartType="candlestick"
-  theme="light"
+  chartType='candlestick'
+  theme='light'
   loading={isLoading}
   height={400}
-  stockCode="000001.SZ"
-  title="加载中的图表"
+  stockCode='000001.SZ'
+  title='加载中的图表'
   showTimeSelector={true}
 />
 ```
@@ -212,6 +212,7 @@ src/components/StockChart/
 ## 更新日志
 
 ### v1.0.0
+
 - 初始版本
 - 支持K线图和折线图
 - 支持亮色和暗色主题

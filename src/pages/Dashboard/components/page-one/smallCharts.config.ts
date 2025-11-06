@@ -19,7 +19,10 @@ const TIME_SCALE = [
   '15:00',
 ];
 
-const baseSmallChartOption = (data: number[], color: string): EChartsOption => ({
+const baseSmallChartOption = (
+  data: number[],
+  color: string,
+): EChartsOption => ({
   backgroundColor: 'transparent',
   grid: { left: 30, right: 10, top: 20, bottom: 20 },
   tooltip: {

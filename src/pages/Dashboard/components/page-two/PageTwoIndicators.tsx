@@ -4,10 +4,28 @@ import type { EChartsOption } from 'echarts';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 
-type PanelKey = 'industryTrend' | 'limitUpCount' | 'placeholder1' | 'placeholder2';
+type PanelKey =
+  | 'industryTrend'
+  | 'limitUpCount'
+  | 'placeholder1'
+  | 'placeholder2';
 
-const industryNames = ['计算机', '医药生物', '食品饮料', '银行', '非银金融', '有色金属'];
-const industryColors = ['#3ba272', '#ee6666', '#5470c6', '#91cc75', '#fac858', '#73c0de'];
+const industryNames = [
+  '计算机',
+  '医药生物',
+  '食品饮料',
+  '银行',
+  '非银金融',
+  '有色金属',
+];
+const industryColors = [
+  '#3ba272',
+  '#ee6666',
+  '#5470c6',
+  '#91cc75',
+  '#fac858',
+  '#73c0de',
+];
 
 const panelMeta: Array<{ key: PanelKey; title: string }> = [
   { key: 'industryTrend', title: '各行业走势' },
@@ -112,7 +130,10 @@ const PageTwoIndicators: React.FC = () => {
   };
 
   return (
-    <Row gutter={[16, 16]} style={{ padding: '12px 12px 20px', height: '100%' }}>
+    <Row
+      gutter={[16, 16]}
+      style={{ padding: '12px 12px 20px', height: '100%' }}
+    >
       {panelMeta.map(panel => {
         const state = chartMap[panel.key];
         return (

@@ -104,9 +104,11 @@ const StockChart: React.FC<StockChartProps> = ({
   const chartHeight =
     typeof height === 'number'
       ? Math.max(height - (title ? 60 : 0), 0)
-      : height ?? '100%';
+      : (height ?? '100%');
   const resolvedHeight =
-    typeof chartHeight === 'number' ? `${chartHeight}px` : chartHeight || '100%';
+    typeof chartHeight === 'number'
+      ? `${chartHeight}px`
+      : chartHeight || '100%';
   const { containerRef, isVisible } = useEChart({
     option: chartOption,
     theme: theme === 'dark' ? 'dark' : undefined,

@@ -6,4 +6,3 @@ export { default as IndustryWidthChart } from './page-one/IndustryWidthChart';
 export { default as IndustryMomentumChart } from './page-one/IndustryMomentumChart';
 export { default as PageTwoIndicators } from './page-two/PageTwoIndicators';
 export { default as Box } from './Box';
-
