@@ -372,6 +372,7 @@ const usersMock = [
     is_superuser: true,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
+    isReal: true,
   },
   {
     id: 2,
@@ -382,6 +383,7 @@ const usersMock = [
     is_superuser: false,
     created_at: '2024-01-02T00:00:00Z',
     updated_at: '2024-01-02T00:00:00Z',
+    isReal: true,
   },
   {
     id: 3,
@@ -392,6 +394,7 @@ const usersMock = [
     is_superuser: false,
     created_at: '2024-01-03T00:00:00Z',
     updated_at: '2024-01-03T00:00:00Z',
+    isReal: false,
   },
   {
     id: 4,
@@ -402,6 +405,7 @@ const usersMock = [
     is_superuser: false,
     created_at: '2024-01-04T00:00:00Z',
     updated_at: '2024-01-04T00:00:00Z',
+    isReal: false,
   },
 ];
 

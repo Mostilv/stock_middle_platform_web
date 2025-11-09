@@ -10,6 +10,7 @@ export interface User {
   is_superuser: boolean;
   created_at: string;
   updated_at: string;
+  isReal?: boolean;
 }
 
 export interface UserCreate {
@@ -17,6 +18,7 @@ export interface UserCreate {
   email: string;
   password: string;
   full_name?: string;
+  isReal?: boolean;
 }
 
 export interface UserUpdate {
@@ -25,6 +27,7 @@ export interface UserUpdate {
   full_name?: string;
   is_active?: boolean;
   is_superuser?: boolean;
+  isReal?: boolean;
 }
 
 export interface UserListParams {

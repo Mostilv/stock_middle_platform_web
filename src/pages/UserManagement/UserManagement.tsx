@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   Switch,
+  Radio,
   message,
   Popconfirm,
   Tag,
@@ -92,6 +93,7 @@ const UserManagement: React.FC = () => {
           full_name: values.full_name,
           is_active: values.is_active,
           is_superuser: values.is_superuser,
+          isReal: values.isReal,
         };
         await updateUser(editingUser.id, updateData);
         message.success('用户更新成功');
@@ -102,6 +104,7 @@ const UserManagement: React.FC = () => {
           email: values.email,
           password: values.password,
           full_name: values.full_name,
+          isReal: values.isReal,
         };
         await createUser(createData);
         message.success('用户创建成功');
@@ -147,6 +150,7 @@ const UserManagement: React.FC = () => {
       full_name: user.full_name,
       is_active: user.is_active,
       is_superuser: user.is_superuser,
+      isReal: user.isReal ?? true,
     });
     setIsModalVisible(true);
   };
@@ -155,6 +159,7 @@ const UserManagement: React.FC = () => {
   const handleAdd = () => {
     setEditingUser(null);
     form.resetFields();
+    form.setFieldsValue({ isReal: true });
     setIsModalVisible(true);
   };
 
@@ -207,6 +212,13 @@ const UserManagement: React.FC = () => {
           {isActive ? '活跃' : '禁用'}
         </Tag>
       ),
+    },
+    {
+      title: '测试标记',
+      dataIndex: 'isReal',
+      key: 'isReal',
+      render: (isReal?: boolean) =>
+        isReal === false ? <Tag color='magenta'>测试数据</Tag> : null,
     },
     {
       title: '角色',
@@ -343,7 +355,12 @@ const UserManagement: React.FC = () => {
         width={600}
         confirmLoading={loading}
       >
-        <Form form={form} layout='vertical' onFinish={handleSubmit}>
+        <Form
+          form={form}
+          layout='vertical'
+          onFinish={handleSubmit}
+          initialValues={{ isReal: true }}
+        >
           <Form.Item
             label='用户名'
             name='username'
@@ -369,6 +386,17 @@ const UserManagement: React.FC = () => {
 
           <Form.Item label='姓名' name='full_name'>
             <Input placeholder='请输入姓名' />
+          </Form.Item>
+
+          <Form.Item
+            label='数据类型'
+            name='isReal'
+            rules={[{ required: true, message: '请选择数据类型' }]}
+          >
+            <Radio.Group optionType='button' buttonStyle='solid'>
+              <Radio.Button value={true}>真实数据</Radio.Button>
+              <Radio.Button value={false}>测试数据</Radio.Button>
+            </Radio.Group>
           </Form.Item>
 
           {!editingUser && (
