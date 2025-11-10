@@ -45,7 +45,6 @@ export const IndicatorCard = styled.div`
   }
 
   &:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
     border-color: rgba(42, 59, 77, 0.9);
   }

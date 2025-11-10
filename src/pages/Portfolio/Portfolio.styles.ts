@@ -56,16 +56,15 @@ export const StatisticsRow = styled.div`
 
   .ant-row {
     .ant-col {
-      .ant-card {
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-        height: 100%;
+        .ant-card {
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          transition: box-shadow 0.2s ease;
+          height: 100%;
 
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
+          &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
 
         .ant-card-body {
           padding: 16px;

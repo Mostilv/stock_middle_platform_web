@@ -119,7 +119,6 @@ export const StatisticCard = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
-    transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     background: rgba(255, 255, 255, 0.12);
   }
@@ -147,7 +146,6 @@ export const ContentCard = styled.div`
   transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     background: rgba(255, 255, 255, 0.12);
   }
@@ -184,7 +182,6 @@ export const TableContainer = styled.div`
   transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     background: rgba(255, 255, 255, 0.12);
   }

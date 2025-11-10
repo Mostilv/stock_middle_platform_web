@@ -25,15 +25,12 @@ export const BoxContainer = styled.div<{
   min-height: 0;
   position: relative;
   overflow: hidden;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
 
   ${({ $hoverable }) =>
     $hoverable &&
     css`
       &:hover {
-        transform: translateY(-1px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       }
     `}

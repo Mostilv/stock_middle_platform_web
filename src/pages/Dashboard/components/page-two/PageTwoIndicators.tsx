@@ -132,7 +132,7 @@ const PageTwoIndicators: React.FC = () => {
   return (
     <Row
       gutter={[16, 16]}
-      style={{ padding: '12px 12px 20px', height: '100%' }}
+      style={{ padding: '48px 12px 20px', height: '100%' }}
     >
       {panelMeta.map(panel => {
         const state = chartMap[panel.key];

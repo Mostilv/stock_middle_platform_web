@@ -81,7 +81,6 @@ export const SectorFilterBar = styled.div`
 
     &:hover {
       background: #f0f0f0;
-      transform: translateY(-1px);
     }
 
     &.selected {
@@ -256,7 +255,6 @@ export const StatsGrid = styled.div`
     transition: all 0.3s ease;
 
     &:hover {
-      transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
   }

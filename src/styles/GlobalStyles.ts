@@ -135,13 +135,12 @@ export const GlobalStyles = createGlobalStyle`
   .ant-card {
     border-radius: ${theme.borderRadius.md};
     box-shadow: ${theme.shadows.small};
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    transition: box-shadow 0.3s ease;
     overflow: hidden;
     border: none;
     
     &:hover {
       box-shadow: ${theme.shadows.medium};
-      transform: translateY(-2px);
     }
   }
 
@@ -195,12 +194,11 @@ export const GlobalStyles = createGlobalStyle`
     transition: all 0.3s ease;
     
     &:hover {
-      transform: translateY(-1px);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
     
     &:active {
-      transform: translateY(0);
+      transform: none;
     }
   }
 
