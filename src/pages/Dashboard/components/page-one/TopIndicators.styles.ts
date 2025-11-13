@@ -1,111 +1,98 @@
 import styled from 'styled-components';
 
 export const TopIndicatorsContainer = styled.div`
-  padding: 12px 24px 4px 24px;
-  margin-bottom: 4px;
-  margin-top: 8px;
+  width: 100%;
+
+  .ant-row {
+    height: 100%;
+  }
 
   .ant-col {
-    .ant-statistic {
-      .ant-statistic-title {
-        color: #a0aec0 !important;
-        font-size: 12px;
-        font-weight: 500;
-        margin-bottom: 2px;
-      }
-
-      .ant-statistic-content {
-        color: #e6f7ff !important;
-        font-size: 20px;
-        font-weight: 700;
-      }
-    }
+    height: 100%;
   }
 `;
 
 export const IndicatorCard = styled.div`
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(42, 59, 77, 0.8);
-  border-radius: 12px;
-  padding: 8px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(55, 176, 255, 0.28), transparent 60%),
+    rgba(4, 13, 31, 0.85);
+  border: 1px solid rgba(149, 200, 255, 0.18);
+  border-radius: 18px;
+  padding: 12px 14px;
+  backdrop-filter: blur(18px);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
   position: relative;
   overflow: hidden;
-  height: 80px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
-  &::before {
+  &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 0px;
-    background: transparent;
+    inset: 1px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    pointer-events: none;
   }
 
   &:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    border-color: rgba(42, 59, 77, 0.9);
-  }
-
-  .indicator-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: space-between;
+    transform: translateY(-3px);
+    border-color: rgba(149, 200, 255, 0.4);
   }
 
   .indicator-content-horizontal {
     display: flex;
     align-items: center;
-    height: 100%;
-    gap: 8px;
+    width: 100%;
+    gap: 14px;
   }
 
   .indicator-title {
-    color: #a0aec0;
-    font-size: 16px;
+    color: rgba(230, 247, 255, 0.8);
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 4px;
-    text-align: left;
-    min-width: 60px;
+    min-width: 64px;
   }
 
   .indicator-chart {
-    flex: 1;
-    margin: 4px 0;
-    aspect-ratio: 1;
-    max-width: 40px;
-    border-radius: 4px;
-    overflow: hidden;
+    flex: 0 0 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: rgba(7, 16, 32, 0.8);
+    padding: 6px;
   }
 
   .indicator-value {
+    margin-left: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    min-width: 80px;
+    min-width: 90px;
   }
 
   .value {
-    color: #e6f7ff;
-    font-size: 18px;
+    color: #f5fbff;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: 0.3px;
   }
 
   .change {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    line-height: 1.2;
+    opacity: 0.9;
 
     &.positive {
-      color: #52c41a;
+      color: #3ccf8e;
     }
 
     &.negative {
-      color: #ff4d4f;
+      color: #ff707a;
     }
   }
 `;

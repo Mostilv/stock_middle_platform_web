@@ -1,68 +1,350 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { theme } from '../../styles/theme';
 
+const pulse = keyframes`
+  0% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+`;
+
+const metricBackground = {
+  up: 'linear-gradient(135deg, rgba(76, 202, 164, 0.25), rgba(12, 33, 30, 0.9))',
+  down: 'linear-gradient(135deg, rgba(255, 125, 125, 0.25), rgba(32, 12, 16, 0.9))',
+  flat: 'linear-gradient(135deg, rgba(119, 136, 187, 0.25), rgba(17, 20, 32, 0.9))',
+} as const;
+
 export const DashboardContainer = styled.div`
-  padding: 0;
-  background: ${theme.colors.layout.darkGradient};
+  position: relative;
+  padding: 28px clamp(16px, 4vw, 48px) 32px;
   height: 100vh;
   color: ${theme.colors.text.light};
   font-family: ${theme.typography.fontFamily};
-  overflow: hidden; /* 在整页轮播模式下，避免内容溢出到其他页 */
-  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 15% 0%, #102347 0%, #050a18 55%, #02040a 100%);
 
-  /* 添加微妙的背景图案，增加深度感 */
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-      radial-gradient(
-        circle at 25% 25%,
-        rgba(255, 255, 255, 0.02) 1%,
-        transparent 1%
+    inset: -40% -5% auto -5%;
+    height: 110%;
+    background: radial-gradient(circle at 20% 20%, rgba(48, 130, 255, 0.35), transparent 50%);
+    filter: blur(35px);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.04) 1px,
+        transparent 1px
       ),
-      radial-gradient(
-        circle at 75% 75%,
-        rgba(255, 255, 255, 0.02) 1%,
-        transparent 1%
-      );
-    background-size: 60px 60px;
-    opacity: 0.4;
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.3;
     pointer-events: none;
   }
 `;
 
-// 主要内容区域
-export const MainContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 16px;
-  row-gap: 16px;
-  grid-auto-rows: minmax(0, 1fr);
-  align-items: stretch;
-  height: calc(100vh - 140px);
-  padding: 16px 24px 24px 24px;
-  min-width: 0;
+export const HeroSection = styled.section`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+`;
+
+export const HeroCopy = styled.div`
+  max-width: min(640px, 60%);
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  h1 {
+    margin: 10px 0 8px 0;
+    font-size: clamp(28px, 3.2vw, 38px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #f7fbff;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(235, 245, 255, 0.7);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+`;
+
+export const HeroMeta = styled.div`
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+
+  @media (max-width: 1200px) {
+    width: 100%;
+    align-items: flex-start;
+  }
+`;
+
+export const HeroMetricsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  max-width: 520px;
+
+  @media (max-width: 1200px) {
+    justify-content: flex-start;
+  }
+`;
+
+export const MetricCard = styled.div<{ $trend: 'up' | 'down' | 'flat' }>`
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: ${({ $trend }) => metricBackground[$trend]};
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .value {
+    margin: 4px 0 2px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fefefe;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+`;
+
+export const TopPanel = styled.section`
+  position: relative;
+  z-index: 2;
+  margin: 24px 0 18px 0;
+  padding: 18px 22px 24px 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(140, 197, 255, 0.25);
+  background: radial-gradient(circle at 10% 0%, rgba(30, 128, 255, 0.25), transparent 45%),
+    rgba(5, 12, 29, 0.75);
+  backdrop-filter: blur(24px);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+`;
+
+export const SectionHeader = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
   position: relative;
   z-index: 1;
 
-  @media (max-width: 1200px) {
-    height: auto;
+  .eyebrow {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  @media (max-width: 992px) {
-    display: block;
-    padding: 12px 16px 16px 16px;
+  .title {
+    margin: 4px 0 0 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #f5fbff;
+    line-height: 1.2;
+  }
+
+  .meta {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  &.compact {
+    margin-bottom: 12px;
+
+    .title {
+      font-size: 15px;
+    }
+  }
+`;
+
+export const MainContent = styled.div`
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.25fr) minmax(240px, 0.9fr);
+  gap: 16px;
+  height: calc(100vh - 280px);
+  min-height: 340px;
+  max-height: calc(100vh - 240px);
+  & > * {
+    min-height: 0;
+  }
+
+  @media (max-width: 1500px) {
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+  }
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    max-height: none;
+  }
+
+  @media (max-height: 900px) {
+    height: calc(100vh - 240px);
+    max-height: calc(100vh - 210px);
+  }
+
+  @media (max-height: 760px) {
+    height: auto;
+    max-height: none;
+  }
+`;
+
+export const StackPanel = styled.section`
+  background: rgba(6, 12, 26, 0.82);
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at top, rgba(32, 78, 255, 0.14), transparent 60%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+`;
+
+export const CenterPanels = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const GlassCard = styled.section`
+  background: rgba(4, 10, 24, 0.86);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 10% 10%, rgba(19, 178, 255, 0.18), transparent 60%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &.full-span {
+    grid-column: 1 / -1;
   }
 `;
 
 const chartsStackBase = `
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   height: 100%;
   min-width: 0;
   min-height: 0;
@@ -76,132 +358,30 @@ const chartsStackBase = `
 
 export const LeftChartsStack = styled.div`
   ${chartsStackBase}
-  grid-column: 1 / span 1;
-
-  @media (max-width: 992px) {
-    display: none;
-  }
-`;
-
-export const CenterChartsStack = styled.div`
-  ${chartsStackBase}
-  grid-column: 2 / span 2;
 `;
 
 export const RightChartsStack = styled.div`
   ${chartsStackBase}
-  grid-column: 4 / span 1;
-
-  @media (max-width: 992px) {
-    display: none;
-  }
 `;
 
-// 保留原有的样式组件以兼容性
-export const StatisticsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-
-  @media (max-width: 768px) {
-    gap: 16px;
-  }
-`;
-
-export const StatisticCard = styled.div`
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: ${theme.borderRadius.lg};
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  &:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 255, 255, 0.12);
-  }
-`;
-
-export const ContentGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-`;
-
-export const ContentCard = styled.div`
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: ${theme.borderRadius.lg};
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  h3 {
-    margin-bottom: 16px;
-    color: ${theme.colors.text.light};
-    font-weight: ${theme.typography.fontWeights.semibold};
-    font-size: ${theme.typography.fontSizes.lg};
-    letter-spacing: 0.5px;
-  }
-`;
-
-export const ProgressContainer = styled.div`
-  margin-bottom: 20px;
-`;
-
-export const ProgressLabel = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: ${theme.typography.fontSizes.sm};
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: ${theme.typography.fontWeights.medium};
-`;
-
-export const TableContainer = styled.div`
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: ${theme.borderRadius.lg};
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  h3 {
-    margin-bottom: 16px;
-    color: ${theme.colors.text.light};
-    font-weight: ${theme.typography.fontWeights.semibold};
-    font-size: ${theme.typography.fontSizes.lg};
-    letter-spacing: 0.5px;
-  }
-`;
-
-export const StockChange = styled.span<{ $isPositive: boolean }>`
-  color: ${props =>
-    props.$isPositive
-      ? theme.colors.stockChange.positive
-      : theme.colors.stockChange.negative};
-  font-weight: ${theme.typography.fontWeights.medium};
+export const ScrollHint = styled.div`
+  position: absolute;
+  bottom: 20px;
+  right: clamp(16px, 5vw, 64px);
+  z-index: 2;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
+
+  &::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.4);
+    animation: ${pulse} 2s ease-in-out infinite;
+  }
 `;

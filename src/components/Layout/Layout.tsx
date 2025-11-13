@@ -13,6 +13,7 @@ import {
   LayoutContainer,
   SiderContainer,
   LogoContainer,
+  SidebarFooter,
   MainLayout,
   HeaderButton,
   ContentContainer,
@@ -75,18 +76,33 @@ const LayoutComponent: React.FC = React.memo(() => {
         collapsible={false}
         collapsed={collapsed}
         $collapsed={collapsed}
-        width={200}
+        width={240}
+        collapsedWidth={88}
       >
         <LogoContainer $collapsed={collapsed}>
-          {collapsed ? 'SOHA' : 'SOHA价投'}
+          <div className='logo-mark'>S</div>
+          <div className='logo-text'>
+            <span className='logo-subtitle'>SOHA ALPHA</span>
+            <span className='logo-title'>市场中台</span>
+          </div>
         </LogoContainer>
-        <Menu
-          theme='dark'
-          mode='inline'
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-        />
+        <div className='menu-scroll'>
+          <Menu
+            theme='dark'
+            mode='inline'
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            onClick={handleMenuClick}
+          />
+        </div>
+        <SidebarFooter $collapsed={collapsed}>
+          <div className='footer-label'>{"TODAY'S NOTE"}</div>
+          <div className='footer-value'>波动收敛 · 关注行业轮动</div>
+          <div className='footer-status'>
+            <span className='status-dot' />
+            <span>System Health · OK</span>
+          </div>
+        </SidebarFooter>
       </SiderContainer>
       <MainLayout $collapsed={collapsed} data-path={location.pathname}>
         {/* 固定在左上角的按钮，只在首页大屏页显示 */}

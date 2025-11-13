@@ -10,6 +10,7 @@ const CombinedSmallCharts: React.FC = React.memo(() => (
         key={`combined-${chart.key}`}
         title={chart.title}
         option={chart.option}
+        titleSize='sm'
       />
     ))}
   </CombinedSmallChartsContainer>
