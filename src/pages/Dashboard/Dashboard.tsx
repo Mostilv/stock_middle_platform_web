@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useLayoutEffect,
 } from 'react';
 import type { CarouselRef } from 'antd/es/carousel';
 import { PageOne, PageTwo } from './components';
@@ -41,6 +42,30 @@ const Dashboard: React.FC = React.memo(() => {
   );
   const { locale } = useLocale();
   const carouselRef = useRef<CarouselRef | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
+
+  const updateDashboardPageHeight = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const container = containerRef.current;
+    const hero = heroRef.current;
+    if (!container || !hero) return;
+
+    const styles = window.getComputedStyle(container);
+    const paddingTop = parseFloat(styles.paddingTop) || 0;
+    const paddingBottom = parseFloat(styles.paddingBottom) || 0;
+    const verticalGap = parseFloat(styles.rowGap || styles.gap || '0') || 0;
+
+    const heroHeight = hero.getBoundingClientRect().height;
+    const containerHeight = container.getBoundingClientRect().height;
+    const available =
+      containerHeight - heroHeight - paddingTop - paddingBottom - verticalGap;
+
+    container.style.setProperty(
+      '--dashboard-page-height',
+      `${Math.max(available, 0).toFixed(2)}px`,
+    );
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -126,9 +151,31 @@ const Dashboard: React.FC = React.memo(() => {
     }
   }, []);
 
+  useLayoutEffect(() => {
+    updateDashboardPageHeight();
+  }, [updateDashboardPageHeight]);
+
+  useEffect(() => {
+    updateDashboardPageHeight();
+  }, [
+    updateDashboardPageHeight,
+    heroMetrics,
+    marketNarrative,
+    dashboardCopy,
+    selectedDate,
+  ]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    window.addEventListener('resize', updateDashboardPageHeight);
+    return () => {
+      window.removeEventListener('resize', updateDashboardPageHeight);
+    };
+  }, [updateDashboardPageHeight]);
+
   return (
-    <DashboardContainer>
-      <HeroSection>
+    <DashboardContainer ref={containerRef}>
+      <HeroSection ref={heroRef}>
         <HeroCopy>
           <div className='hero-time'>
             <TimeDisplay
@@ -159,12 +206,13 @@ const Dashboard: React.FC = React.memo(() => {
           draggable
           swipeToSlide
           vertical
+          waitForAnimate
           dotPosition='right'
         >
-          <CarouselSlide key='dashboard-page-one'>
+          <CarouselSlide key='dashboard-page-one' className='dashboard-page'>
             <PageOne selectedDate={selectedDate} copy={dashboardCopy.pageOne} />
           </CarouselSlide>
-          <CarouselSlide key='dashboard-page-two'>
+          <CarouselSlide key='dashboard-page-two' className='dashboard-page'>
             <PageTwo copy={dashboardCopy.pageTwo} />
           </CarouselSlide>
         </ChartsCarousel>

@@ -30,8 +30,8 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   transform: ${({ $collapsed }) =>
     $collapsed ? 'translateX(-100%)' : 'translateX(0)'};
   transition:
-    transform 0.45s ease,
-    opacity 0.3s ease;
+    transform 0.15s ease,
+    opacity 0.1s ease;
   overflow: hidden;
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
   pointer-events: ${({ $collapsed }) => ($collapsed ? 'none' : 'auto')};
@@ -158,7 +158,7 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
 
 export const MainLayout = styled(AntLayout)<{ $collapsed: boolean }>`
   margin-left: ${({ $collapsed }) => ($collapsed ? '0px' : '240px')};
-  transition: margin-left 0.45s ease;
+  transition: margin-left 0.25s ease;
   position: relative;
   background: transparent;
 `;

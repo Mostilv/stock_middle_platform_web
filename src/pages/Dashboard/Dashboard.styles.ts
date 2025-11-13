@@ -25,6 +25,7 @@ const metricBackground = {
 
 export const DashboardContainer = styled.div`
   position: relative;
+  --dashboard-page-height: 100%;
   padding: 12px clamp(16px, 4vw, 28px) 16px;
   height: 100vh;
   color: ${theme.colors.text.light};
@@ -470,4 +471,15 @@ export const CarouselSlide = styled.div`
   min-height: 0;
   display: flex;
   flex-direction: column;
+
+  &.dashboard-page {
+    height: var(--dashboard-page-height, 100%);
+    min-height: var(--dashboard-page-height, 100%);
+    max-height: var(--dashboard-page-height, 100%);
+  }
+
+  &.dashboard-page > * {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
 `;
