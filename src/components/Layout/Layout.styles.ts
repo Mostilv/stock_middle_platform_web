@@ -171,15 +171,15 @@ export const HeaderButton = styled.button<{
 }>`
   position: fixed;
   top: 18px;
-  left: ${({ $collapsed }) => ($collapsed ? '24px' : '252px')};
+  left: ${({ $collapsed }) => ($collapsed ? '0px' : '240px')};
   z-index: 1001;
-  font-size: 16px;
-  width: 40px;
+  font-size: 14px;
+  width: 20px;
   height: 40px;
   border: none;
   background: ${({ $isDashboard }) =>
     $isDashboard ? 'rgba(255, 255, 255, 0.12)' : 'rgba(3, 12, 24, 0.6)'};
-  border-radius: 14px;
+  border-radius: 0 14px 14px 0;
   cursor: pointer;
   display: flex;
   align-items: center;

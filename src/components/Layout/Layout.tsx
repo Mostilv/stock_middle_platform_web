@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { Menu } from 'antd';
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
+  LeftOutlined,
+  RightOutlined,
   DashboardOutlined,
   BarChartOutlined,
   SettingOutlined,
@@ -103,7 +103,7 @@ const LayoutComponent: React.FC = React.memo(() => {
             $isDashboard={true}
             onClick={handleCollapseClick}
           >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </HeaderButton>
         )}
         <ContentContainer data-path={location.pathname}>
