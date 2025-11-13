@@ -61,12 +61,17 @@ const LayoutComponent: React.FC = React.memo(() => {
 
   // 使用useCallback优化折叠按钮点击事件
   const handleCollapseClick = useCallback(() => {
-    setCollapsed(!collapsed);
-    // 通知窗口变化，强制子图表重算布局，避免展开后不变窄
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 200);
-  }, [collapsed]);
+    setCollapsed(prev => {
+      const next = !prev;
+      const pulses = [0, 120, 240, 360];
+      pulses.forEach(delay => {
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, delay);
+      });
+      return next;
+    });
+  }, []);
 
   return (
     <LayoutContainer data-path={location.pathname}>

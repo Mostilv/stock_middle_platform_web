@@ -13,8 +13,10 @@ export const BoxContainer = styled.div<{
   $padding: string;
   $hoverable: boolean;
 }>`
-  background: linear-gradient(135deg, rgba(10, 24, 35, 0.9), rgba(9, 12, 28, 0.85));
-  border: 1px solid rgba(135, 206, 250, 0.15);
+  background:
+    linear-gradient(135deg, rgba(10, 24, 35, 0.9), rgba(9, 12, 28, 0.85)),
+    #050a18;
+  border: 1px solid rgba(135, 206, 250, 0.12);
   border-radius: 16px;
   padding: ${({ $padding }) => $padding};
   backdrop-filter: blur(10px);
@@ -25,7 +27,12 @@ export const BoxContainer = styled.div<{
   min-height: 0;
   position: relative;
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.45s ease,
+    border-color 0.45s ease,
+    background 0.45s ease,
+    box-shadow 0.45s ease;
+  will-change: transform, border-color, background;
 
   &::before {
     content: '';
@@ -97,4 +104,5 @@ export const BoxContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: gap 0.45s ease;
 `;

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import { Layout as AntLayout } from 'antd';
 
-const { Sider: AntSider, Header: AntHeader, Content: AntContent } =
-  AntLayout;
+const { Sider: AntSider, Header: AntHeader, Content: AntContent } = AntLayout;
 
 export const LayoutContainer = styled(AntLayout)`
   min-height: 100vh;
@@ -12,6 +11,7 @@ export const LayoutContainer = styled(AntLayout)`
     #04070f 60%,
     #020307 100%
   );
+  overflow: hidden;
 `;
 
 export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
@@ -23,13 +23,15 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   width: 240px !important;
   background: rgba(1, 6, 15, 0.85);
   border-right: ${({ $collapsed }) =>
-      $collapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)'};
+    $collapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)'};
   backdrop-filter: blur(24px);
   box-shadow: ${({ $collapsed }) =>
-      $collapsed ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.45)'};
+    $collapsed ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.45)'};
   transform: ${({ $collapsed }) =>
-      $collapsed ? 'translateX(-100%)' : 'translateX(0)'};
-  transition: transform 0.35s ease, opacity 0.3s ease;
+    $collapsed ? 'translateX(-100%)' : 'translateX(0)'};
+  transition:
+    transform 0.45s ease,
+    opacity 0.3s ease;
   overflow: hidden;
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
   pointer-events: ${({ $collapsed }) => ($collapsed ? 'none' : 'auto')};
@@ -73,7 +75,9 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
     align-items: center;
     font-size: 14px;
     letter-spacing: 0.3px;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
   }
 
   .ant-menu-item::after {
@@ -82,11 +86,10 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
 
   .ant-menu-item-selected {
     background: linear-gradient(
-        135deg,
-        rgba(24, 144, 255, 0.28),
-        rgba(11, 64, 115, 0.9)
-      )
-      !important;
+      135deg,
+      rgba(24, 144, 255, 0.28),
+      rgba(11, 64, 115, 0.9)
+    ) !important;
     color: #f7fbff !important;
     box-shadow: 0 10px 30px rgba(16, 90, 180, 0.35);
   }
@@ -135,7 +138,9 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
     line-height: 1.2;
     opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
     transform: translateX(${({ $collapsed }) => ($collapsed ? '-8px' : '0')});
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
   }
 
   .logo-subtitle {
@@ -153,8 +158,9 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
 
 export const MainLayout = styled(AntLayout)<{ $collapsed: boolean }>`
   margin-left: ${({ $collapsed }) => ($collapsed ? '0px' : '240px')};
-  transition: margin-left 0.35s ease;
+  transition: margin-left 0.45s ease;
   position: relative;
+  background: transparent;
 `;
 
 export const HeaderContainer = styled(AntHeader)`

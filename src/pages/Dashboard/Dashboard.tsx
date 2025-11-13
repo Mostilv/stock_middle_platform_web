@@ -1,11 +1,31 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Carousel } from 'antd';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import type { CarouselRef } from 'antd/es/carousel';
 import { PageOne, PageTwo } from './components';
 import { getMarketData } from './services/marketData';
 import type { MarketDataState } from './services/marketData';
 import { fetchMarketData } from './services/marketData.api';
 import type { HeroMetric, MarketNarrative } from './types';
+import { useLocale } from '../../i18n/LocaleContext';
+import { getDashboardCopy } from '../../i18n/dashboard';
+import TimeDisplay from './components/page-one/TimeDisplay';
+import {
+  DashboardContainer,
+  HeroSection,
+  HeroCopy,
+  HeroMeta,
+  HeroMetricsRow,
+  MetricCard,
+  ScrollHint,
+  CarouselViewport,
+  ChartsCarousel,
+  CarouselSlide,
+} from './Dashboard.styles';
 
 const MARKET_ORDER: (keyof MarketDataState)[] = [
   'shanghaiIndex',
@@ -19,6 +39,8 @@ const Dashboard: React.FC = React.memo(() => {
   const [marketData, setMarketData] = useState<MarketDataState>(() =>
     getMarketData(),
   );
+  const { locale } = useLocale();
+  const carouselRef = useRef<CarouselRef | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -38,27 +60,12 @@ const Dashboard: React.FC = React.memo(() => {
     setSelectedDate(date);
   }, []);
 
-  const carouselStyle: React.CSSProperties = { height: '100vh' };
-  const carouselRef = React.useRef<CarouselRef | null>(null);
+  const dashboardCopy = useMemo(() => getDashboardCopy(locale), [locale]);
 
-  const handleWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
-    if (!carouselRef.current) return;
-    if (event.deltaY > 0) {
-      carouselRef.current.next();
-    } else if (event.deltaY < 0) {
-      carouselRef.current.prev();
-    }
-  }, []);
-
-  const labelMap: Record<keyof MarketDataState, string> = useMemo(
-    () => ({
-      shanghaiIndex: '上证指数',
-      nasdaqIndex: '纳斯达克',
-      goldIndex: '黄金',
-      zhongzheng2000Index: '中证2000',
-    }),
-    [],
-  );
+  const labelMap = dashboardCopy.indexLabels as Record<
+    keyof MarketDataState,
+    string
+  >;
 
   const { heroMetrics, averageChange } = useMemo(() => {
     const orderedEntries = MARKET_ORDER.filter(key => marketData[key]).map(
@@ -90,65 +97,80 @@ const Dashboard: React.FC = React.memo(() => {
   }, [labelMap, marketData]);
 
   const marketNarrative: MarketNarrative = useMemo(() => {
+    const narratives = dashboardCopy.narratives;
     if (averageChange > 0.8) {
-      return {
-        mood: '多头控盘',
-        detail: '增量资金在核心资产中持续放大，趋势友好。',
-      };
+      return narratives.strongBull;
     }
 
     if (averageChange > 0.2) {
-      return {
-        mood: '温和上行',
-        detail: '多空力量暂时平衡，结构性机会持续被点亮。',
-      };
+      return narratives.mildBull;
     }
 
     if (averageChange < -0.8) {
-      return {
-        mood: '风险回落',
-        detail: '避险资产受追捧，需提高仓位防御等级。',
-      };
+      return narratives.strongBear;
     }
 
     if (averageChange < -0.2) {
-      return {
-        mood: '震荡回调',
-        detail: '短线波动放大，建议收敛风险敞口。',
-      };
+      return narratives.pullback;
     }
 
-    return {
-      mood: '横盘蓄势',
-      detail: '波动收敛于中性区间，择时策略优先。',
-    };
-  }, [averageChange]);
+    return narratives.range;
+  }, [averageChange, dashboardCopy]);
+
+  const handleWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
+    if (!carouselRef.current) return;
+    if (event.deltaY > 0) {
+      carouselRef.current.next?.();
+    } else if (event.deltaY < 0) {
+      carouselRef.current.prev?.();
+    }
+  }, []);
 
   return (
-    <div onWheel={handleWheel}>
-      <Carousel
-        ref={carouselRef}
-        dots
-        draggable
-        swipeToSlide
-        vertical
-        dotPosition='right'
-        style={carouselStyle}
-      >
-        <div style={{ height: '100vh' }}>
-          <PageOne
-            selectedDate={selectedDate}
-            onDateChange={handleDateChange}
-            heroMetrics={heroMetrics}
-            marketNarrative={marketNarrative}
-          />
-        </div>
+    <DashboardContainer>
+      <HeroSection>
+        <HeroCopy>
+          <div className='hero-time'>
+            <TimeDisplay
+              selectedDate={selectedDate}
+              onDateChange={handleDateChange}
+            />
+          </div>
+          <h1>{dashboardCopy.pageOne.heroTitle}</h1>
+          <p>{marketNarrative.detail}</p>
+        </HeroCopy>
+        <HeroMeta>
+          <HeroMetricsRow>
+            {heroMetrics.map(metric => (
+              <MetricCard key={metric.label} $trend={metric.trend}>
+                <div className='label'>{metric.label}</div>
+                <div className='value'>{metric.value}</div>
+                <div className='hint'>{metric.hint}</div>
+              </MetricCard>
+            ))}
+          </HeroMetricsRow>
+        </HeroMeta>
+      </HeroSection>
 
-        <div style={{ height: '100vh' }}>
-          <PageTwo />
-        </div>
-      </Carousel>
-    </div>
+      <CarouselViewport onWheel={handleWheel}>
+        <ChartsCarousel
+          ref={carouselRef}
+          dots
+          draggable
+          swipeToSlide
+          vertical
+          dotPosition='right'
+        >
+          <CarouselSlide key='dashboard-page-one'>
+            <PageOne selectedDate={selectedDate} copy={dashboardCopy.pageOne} />
+          </CarouselSlide>
+          <CarouselSlide key='dashboard-page-two'>
+            <PageTwo copy={dashboardCopy.pageTwo} />
+          </CarouselSlide>
+        </ChartsCarousel>
+      </CarouselViewport>
+      <ScrollHint>{dashboardCopy.pageOne.scrollHint}</ScrollHint>
+    </DashboardContainer>
   );
 });
 

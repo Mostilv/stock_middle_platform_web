@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { Carousel as AntCarousel } from 'antd';
 import { theme } from '../../styles/theme';
 
 const pulse = keyframes`
@@ -38,6 +39,9 @@ export const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition:
+    padding 0.45s ease,
+    gap 0.45s ease;
 
   &::before {
     content: '';
@@ -77,10 +81,14 @@ export const HeroSection = styled.section`
   gap: 12px;
   margin-bottom: 4px;
   flex: 0 0 auto;
+  transition:
+    margin 0.45s ease,
+    gap 0.45s ease;
 `;
 
 export const HeroCopy = styled.div`
   max-width: min(640px, 60%);
+  transition: max-width 0.45s ease;
 
   .hero-time {
     margin-bottom: 6px;
@@ -108,6 +116,9 @@ export const HeroMeta = styled.div`
   flex-direction: column;
   gap: 12px;
   align-items: flex-end;
+  transition:
+    min-width 0.45s ease,
+    gap 0.45s ease;
 
   @media (max-width: 1200px) {
     width: 100%;
@@ -121,6 +132,9 @@ export const HeroMetricsRow = styled.div`
   gap: 8px;
   justify-content: flex-end;
   padding-bottom: 8px;
+  transition:
+    padding 0.45s ease,
+    gap 0.45s ease;
 
   @media (max-width: 1200px) {
     justify-content: flex-start;
@@ -245,6 +259,8 @@ export const MainContent = styled.div`
   gap: 16px;
   flex: 1 1 auto;
   min-height: 0;
+  height: 100%;
+  transition: gap 0.45s ease;
   & > * {
     min-height: 0;
   }
@@ -267,8 +283,14 @@ export const StackPanel = styled.section`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100%;
   position: relative;
   overflow: hidden;
+  transition:
+    transform 0.45s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -296,6 +318,7 @@ export const CenterPanels = styled.div`
   gap: 16px;
   height: 100%;
   min-height: 0;
+  transition: gap 0.45s ease;
 
   @media (max-width: 1400px) {
     grid-template-columns: 1fr;
@@ -312,6 +335,11 @@ export const GlassCard = styled.section`
   min-height: 0;
   position: relative;
   overflow: hidden;
+  transition:
+    transform 0.45s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -354,6 +382,8 @@ const chartsStackBase = `
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  transition: transform 0.45s ease;
+  will-change: transform;
 
   & > * {
     flex: 1 1 0;
@@ -389,4 +419,55 @@ export const ScrollHint = styled.div`
     background: rgba(255, 255, 255, 0.4);
     animation: ${pulse} 2s ease-in-out infinite;
   }
+`;
+
+export const CarouselViewport = styled.div`
+  position: relative;
+  height: 100%;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ChartsCarousel = styled(AntCarousel)`
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+
+  && {
+    height: 100%;
+  }
+
+  && .slick-slider {
+    height: 100%;
+  }
+
+  .slick-list,
+  .slick-track {
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+  }
+
+  .slick-slide {
+    height: 100%;
+    width: 100%;
+
+    > div {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+`;
+
+export const CarouselSlide = styled.div`
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;
