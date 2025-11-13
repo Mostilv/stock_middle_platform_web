@@ -1,47 +1,16 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const TimeDisplayContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
+  display: inline-flex;
+  justify-content: flex-start;
   align-items: center;
-  gap: 12px;
-  padding: 8px 24px 0 24px;
-  z-index: 1;
+  gap: 10px;
+  padding: 0;
+  margin-bottom: 6px;
 
   span {
     color: #e6f7ff;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    cursor: pointer;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: #1890ff;
-    }
-  }
-
-  .ant-picker {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid #1890ff !important;
-
-    .ant-picker-input > input {
-      color: #e6f7ff !important;
-    }
-
-    .ant-picker-suffix {
-      color: #1890ff !important;
-    }
-  }
-
-  /* 隐藏触发器，仅显示弹层面板 */
-  .hidden-picker {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
   }
 `;

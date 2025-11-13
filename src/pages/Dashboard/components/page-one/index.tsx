@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { HeroMetric, MarketNarrative } from '../../types';
 import {
   DashboardContainer,
@@ -17,7 +17,6 @@ import {
   ScrollHint,
 } from '../../Dashboard.styles';
 import TimeDisplay from './TimeDisplay';
-import CombinedSmallCharts from './CombinedSmallCharts';
 import SmallChartCard from './SmallChartCard';
 import IndustryWidthChart from './IndustryWidthChart';
 import IndustryMomentumChart from './IndustryMomentumChart';
@@ -35,15 +34,16 @@ const PageOne: React.FC<PageOneProps> = React.memo(
     <DashboardContainer>
       <HeroSection>
         <HeroCopy>
-          <span className='hero-badge'>{marketNarrative.mood} · LIVE</span>
+          <div className='hero-time'>
+            <TimeDisplay
+              selectedDate={selectedDate}
+              onDateChange={onDateChange}
+            />
+          </div>
           <h1>SOHA 市场驾驶舱</h1>
           <p>{marketNarrative.detail}</p>
         </HeroCopy>
         <HeroMeta>
-          <TimeDisplay
-            selectedDate={selectedDate}
-            onDateChange={onDateChange}
-          />
           <HeroMetricsRow>
             {heroMetrics.map(metric => (
               <MetricCard key={metric.label} $trend={metric.trend}>
@@ -60,10 +60,10 @@ const PageOne: React.FC<PageOneProps> = React.memo(
         <StackPanel>
           <SectionHeader className='compact'>
             <div>
-              <p className='eyebrow'>STRATEGY</p>
-              <p className='title'>策略雷达</p>
+              <p className='eyebrow'>大小盘</p>
+              <p className='title' />
             </div>
-            <span className='meta'>多维小图</span>
+            <span className='meta' />
           </SectionHeader>
           <LeftChartsStack>
             {leftSmallCharts.map(chart => (
@@ -78,7 +78,7 @@ const PageOne: React.FC<PageOneProps> = React.memo(
         </StackPanel>
 
         <CenterPanels>
-          <GlassCard>
+          <GlassCard className='full-span'>
             <SectionHeader className='compact'>
               <div>
                 <p className='eyebrow'>BREADTH</p>
@@ -88,7 +88,7 @@ const PageOne: React.FC<PageOneProps> = React.memo(
             </SectionHeader>
             <IndustryWidthChart selectedDate={selectedDate} />
           </GlassCard>
-          <GlassCard>
+          <GlassCard className='full-span'>
             <SectionHeader className='compact'>
               <div>
                 <p className='eyebrow'>MOMENTUM</p>
@@ -97,16 +97,6 @@ const PageOne: React.FC<PageOneProps> = React.memo(
               <span className='meta'>高频更新</span>
             </SectionHeader>
             <IndustryMomentumChart />
-          </GlassCard>
-          <GlassCard className='full-span'>
-            <SectionHeader className='compact'>
-              <div>
-                <p className='eyebrow'>MULTI-FACTOR</p>
-                <p className='title'>微型图谱矩阵</p>
-              </div>
-              <span className='meta'>策略沙盘</span>
-            </SectionHeader>
-            <CombinedSmallCharts />
           </GlassCard>
         </CenterPanels>
 

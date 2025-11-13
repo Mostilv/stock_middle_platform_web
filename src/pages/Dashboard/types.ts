@@ -9,4 +9,3 @@ export interface MarketNarrative {
   mood: string;
   detail: string;
 }
-

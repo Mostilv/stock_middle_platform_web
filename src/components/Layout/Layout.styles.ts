@@ -20,13 +20,19 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
   bottom: 0;
   left: 0;
   z-index: 1000;
-  width: ${({ $collapsed }) => ($collapsed ? '88px' : '240px')} !important;
+  width: 240px !important;
   background: rgba(1, 6, 15, 0.85);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: ${({ $collapsed }) =>
+      $collapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)'};
   backdrop-filter: blur(24px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
-  transition: width 0.35s ease;
+  box-shadow: ${({ $collapsed }) =>
+      $collapsed ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.45)'};
+  transform: ${({ $collapsed }) =>
+      $collapsed ? 'translateX(-100%)' : 'translateX(0)'};
+  transition: transform 0.35s ease, opacity 0.3s ease;
   overflow: hidden;
+  opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
+  pointer-events: ${({ $collapsed }) => ($collapsed ? 'none' : 'auto')};
 
   .ant-layout-sider-children {
     display: flex;
@@ -145,52 +151,8 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
   }
 `;
 
-export const SidebarFooter = styled.div<{ $collapsed: boolean }>`
-  margin: 12px 18px 24px 18px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(233, 242, 255, 0.75);
-  font-size: 12px;
-  line-height: 1.5;
-  opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
-  pointer-events: ${({ $collapsed }) => ($collapsed ? 'none' : 'auto')};
-  transform: translateY(${({ $collapsed }) => ($collapsed ? '10px' : '0')});
-  transition: all 0.3s ease;
-
-  .footer-label {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-  }
-
-  .footer-value {
-    font-size: 14px;
-    margin: 4px 0 6px;
-    color: #ffffff;
-  }
-
-  .footer-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #3dffce;
-    box-shadow: 0 0 8px rgba(61, 255, 206, 0.9);
-  }
-`;
-
 export const MainLayout = styled(AntLayout)<{ $collapsed: boolean }>`
-  margin-left: ${({ $collapsed }) => ($collapsed ? '88px' : '240px')};
+  margin-left: ${({ $collapsed }) => ($collapsed ? '0px' : '240px')};
   transition: margin-left 0.35s ease;
   position: relative;
 `;
@@ -209,7 +171,7 @@ export const HeaderButton = styled.button<{
 }>`
   position: fixed;
   top: 18px;
-  left: ${({ $collapsed }) => ($collapsed ? '104px' : '252px')};
+  left: ${({ $collapsed }) => ($collapsed ? '24px' : '252px')};
   z-index: 1001;
   font-size: 16px;
   width: 40px;

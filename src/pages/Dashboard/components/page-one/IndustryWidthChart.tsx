@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
+import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 
 interface IndustryWidthChartProps {
   selectedDate: Date | null;
@@ -30,52 +31,51 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
 
     // 生成行业宽度数据 - 优化依赖项
     const chartData = useMemo(() => {
-      // 根据选择的日期计算可用的天数范围
+      // Build data range based on selected date
       const today = new Date();
       const endDate = selectedDate ? new Date(selectedDate) : today;
 
-      // 计算从30天前到今天的天数
       const startDate = new Date(endDate);
-      startDate.setDate(endDate.getDate() - 29); // 30天前
+      startDate.setDate(endDate.getDate() - 29); // look back 30 days
 
-      const daysDiff = Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+      const daysDiff = Math.max(
+        1,
+        Math.ceil(
+          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+        ),
       );
-      const maxDays = Math.min(30, Math.max(10, daysDiff)); // 最少10天，最多30天
-
+      const maxDays = Math.min(30, Math.max(10, daysDiff));
       const dateLabels = generateRecentDates(maxDays);
-      const industries = [
-        '银行',
-        '科技',
-        '消费',
-        '医药',
-        '金融',
-        '地产',
-        '能源',
-        '材料',
-      ];
+      const reversedDates = [...dateLabels].reverse();
+      const industries = SHENWAN_LEVEL1_INDUSTRIES;
       const widthData: [number, number, number][] = [];
 
       for (let i = 0; i < dateLabels.length; i += 1) {
+        const yIndex = reversedDates.length - 1 - i;
         for (let j = 0; j < industries.length; j += 1) {
           const base = 50 + 30 * Math.sin(i / 6 + j);
           const val = Math.max(0, Math.min(100, Math.round(base)));
-          widthData.push([i, j, val]);
+          widthData.push([j, yIndex, val]);
         }
       }
 
-      return { dateLabels, industries, widthData };
+      return { dateLabels: reversedDates, industries, widthData };
     }, [selectedDate, generateRecentDates]);
 
-    // 计算默认显示最近10天的起始位置
-    const defaultStart = Math.max(0, chartData.dateLabels.length - 10);
+    // 默认显示最近10天
+    const totalDates = chartData.dateLabels.length;
+    const visibleWindow = Math.min(10, totalDates);
+    const defaultStart =
+      totalDates > visibleWindow
+        ? ((totalDates - visibleWindow) / totalDates) * 100
+        : 0;
     const defaultEnd = 100;
 
     // 使用useMemo缓存图表配置，避免重复计算
     const industryWidthOption = useMemo(
       () => ({
         backgroundColor: 'transparent',
-        grid: { left: 60, right: 10, top: 10, bottom: 30 },
+        grid: { left: 60, right: 24, top: 10, bottom: 10 },
         tooltip: {
           show: true,
           trigger: 'item' as const,
@@ -83,8 +83,8 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           borderColor: '#1890ff',
           textStyle: { color: '#e6f7ff' },
           formatter: (params: any) => {
-            const dateIndex = params.data[0];
-            const industryIndex = params.data[1];
+            const industryIndex = params.data[0];
+            const dateIndex = params.data[1];
             const value = params.data[2];
             const date = chartData.dateLabels[dateIndex];
             const industry = chartData.industries[industryIndex];
@@ -93,15 +93,15 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
         },
         xAxis: {
           type: 'category' as const,
-          data: chartData.dateLabels,
+          data: chartData.industries,
           axisLine: { lineStyle: { color: '#4a5568' } },
-          axisLabel: { color: '#e6f7ff', fontSize: 10, rotate: 45 },
+          axisLabel: { color: '#e6f7ff', fontSize: 10 },
           axisTick: { show: false },
           splitLine: { show: false },
         },
         yAxis: {
           type: 'category' as const,
-          data: chartData.industries,
+          data: chartData.dateLabels,
           axisLine: { lineStyle: { color: '#4a5568' } },
           axisLabel: { color: '#e6f7ff', fontSize: 10 },
           axisTick: { show: false },
@@ -116,7 +116,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
         dataZoom: [
           {
             type: 'inside' as const,
-            xAxisIndex: 0,
+            yAxisIndex: 0,
             filterMode: 'weakFilter' as const,
             zoomOnMouseWheel: true,
             moveOnMouseMove: true,
@@ -126,9 +126,11 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           },
           {
             type: 'slider' as const,
-            xAxisIndex: 0,
-            bottom: 6,
-            height: 12,
+            yAxisIndex: 0,
+            right: 4,
+            top: 20,
+            bottom: 20,
+            orient: 'vertical' as const,
             brushSelect: false,
             start: defaultStart,
             end: defaultEnd,

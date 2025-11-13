@@ -13,7 +13,6 @@ import {
   LayoutContainer,
   SiderContainer,
   LogoContainer,
-  SidebarFooter,
   MainLayout,
   HeaderButton,
   ContentContainer,
@@ -77,7 +76,7 @@ const LayoutComponent: React.FC = React.memo(() => {
         collapsed={collapsed}
         $collapsed={collapsed}
         width={240}
-        collapsedWidth={88}
+        collapsedWidth={0}
       >
         <LogoContainer $collapsed={collapsed}>
           <div className='logo-mark'>S</div>
@@ -95,14 +94,6 @@ const LayoutComponent: React.FC = React.memo(() => {
             onClick={handleMenuClick}
           />
         </div>
-        <SidebarFooter $collapsed={collapsed}>
-          <div className='footer-label'>{"TODAY'S NOTE"}</div>
-          <div className='footer-value'>波动收敛 · 关注行业轮动</div>
-          <div className='footer-status'>
-            <span className='status-dot' />
-            <span>System Health · OK</span>
-          </div>
-        </SidebarFooter>
       </SiderContainer>
       <MainLayout $collapsed={collapsed} data-path={location.pathname}>
         {/* 固定在左上角的按钮，只在首页大屏页显示 */}
