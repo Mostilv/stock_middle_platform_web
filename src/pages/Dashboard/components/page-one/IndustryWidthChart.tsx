@@ -47,7 +47,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       const maxDays = Math.min(30, Math.max(10, daysDiff));
       const dateLabels = generateRecentDates(maxDays);
       const reversedDates = [...dateLabels].reverse();
-      const industries = SHENWAN_LEVEL1_INDUSTRIES;
+      const industries = [...SHENWAN_LEVEL1_INDUSTRIES];
       const widthData: [number, number, number][] = [];
 
       for (let i = 0; i < dateLabels.length; i += 1) {
@@ -72,10 +72,15 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
     const defaultEnd = 100;
 
     // 使用useMemo缓存图表配置，避免重复计算
+    const formatLabelVertical = useCallback(
+      (label: string) => (label ? label.split('').join('\n') : ''),
+      [],
+    );
+
     const industryWidthOption = useMemo(
       () => ({
         backgroundColor: 'transparent',
-        grid: { left: 60, right: 24, top: 10, bottom: 10 },
+        grid: { left: 60, right: 30, top: 10, bottom: 10 },
         tooltip: {
           show: true,
           trigger: 'item' as const,
@@ -95,7 +100,12 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           type: 'category' as const,
           data: chartData.industries,
           axisLine: { lineStyle: { color: '#4a5568' } },
-          axisLabel: { color: '#e6f7ff', fontSize: 10 },
+          axisLabel: {
+            color: '#e6f7ff',
+            fontSize: 10,
+            interval: 0,
+            formatter: formatLabelVertical,
+          },
           axisTick: { show: false },
           splitLine: { show: false },
         },
@@ -127,7 +137,8 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           {
             type: 'slider' as const,
             yAxisIndex: 0,
-            right: 4,
+            right: 8,
+            width: 12,
             top: 20,
             bottom: 20,
             orient: 'vertical' as const,
@@ -174,7 +185,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           },
         ],
       }),
-      [chartData, defaultStart, defaultEnd],
+      [chartData, defaultStart, defaultEnd, formatLabelVertical],
     );
 
     const { containerRef, isVisible } = useEChart({
