@@ -2,76 +2,68 @@ import React, { useMemo, useCallback } from 'react';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
+import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
 
 interface IndustryWidthChartProps {
-  selectedDate: Date | null;
+  data: IndustryMetricResponse | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
-  ({ selectedDate }) => {
-    // 生成最近N天日期，最后一天为选择的日期或今天
-    const generateRecentDates = useCallback(
-      (days: number) => {
-        const result: string[] = [];
-        const endDate = selectedDate ? new Date(selectedDate) : new Date();
-        const startDate = new Date(endDate);
-        startDate.setDate(endDate.getDate() - days + 1);
-
-        for (let i = 0; i < days; i += 1) {
-          const d = new Date(startDate);
-          d.setDate(startDate.getDate() + i);
-          const mm = `${d.getMonth() + 1}`.padStart(2, '0');
-          const dd = `${d.getDate()}`.padStart(2, '0');
-          result.push(`${mm}-${dd}`);
-        }
-        return result;
-      },
-      [selectedDate],
-    );
-
-    // 生成行业宽度数据 - 优化依赖项
+  ({ data, loading, error }) => {
     const chartData = useMemo(() => {
-      // Build data range based on selected date
-      const today = new Date();
-      const endDate = selectedDate ? new Date(selectedDate) : today;
-
-      const startDate = new Date(endDate);
-      startDate.setDate(endDate.getDate() - 29); // look back 30 days
-
-      const daysDiff = Math.max(
-        1,
-        Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ),
-      );
-      const maxDays = Math.min(30, Math.max(10, daysDiff));
-      const dateLabels = generateRecentDates(maxDays);
-      const reversedDates = [...dateLabels].reverse();
-      const industries = [...SHENWAN_LEVEL1_INDUSTRIES];
-      const widthData: [number, number, number][] = [];
-
-      for (let i = 0; i < dateLabels.length; i += 1) {
-        const yIndex = reversedDates.length - 1 - i;
-        for (let j = 0; j < industries.length; j += 1) {
-          const base = 50 + 30 * Math.sin(i / 6 + j);
-          const val = Math.max(0, Math.min(100, Math.round(base)));
-          widthData.push([j, yIndex, val]);
-        }
+      if (!data) {
+        return {
+          dateLabels: [] as string[],
+          industries: [] as string[],
+          widthData: [] as [number, number, number | null][],
+        };
       }
 
-      return { dateLabels: reversedDates, industries, widthData };
-    }, [selectedDate, generateRecentDates]);
+      const orderMap = new Map(
+        SHENWAN_LEVEL1_INDUSTRIES.map((name, index) => [name, index]),
+      );
+      const sortedSeries = [...data.series].sort((a, b) => {
+        const orderA = orderMap.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+        const orderB = orderMap.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+        return orderA - orderB;
+      });
 
-    // 默认显示最近10天
+      const reversedDates = [...data.dates].reverse();
+      const widthData: [number, number, number | null][] = [];
+
+      sortedSeries.forEach((seriesItem, industryIndex) => {
+        const widthMap = new Map(
+          seriesItem.points.map(point => [
+            point.date.slice(0, 10),
+            point.width ?? null,
+          ]),
+        );
+        reversedDates.forEach((dateLabel, dateIndex) => {
+          widthData.push([
+            industryIndex,
+            dateIndex,
+            widthMap.get(dateLabel) ?? null,
+          ]);
+        });
+      });
+
+      return {
+        dateLabels: reversedDates,
+        industries: sortedSeries.map(item => item.name),
+        widthData,
+      };
+    }, [data]);
+
     const totalDates = chartData.dateLabels.length;
-    const visibleWindow = Math.min(10, totalDates);
+    const visibleWindow = Math.min(10, totalDates || 10);
     const defaultStart =
       totalDates > visibleWindow
         ? ((totalDates - visibleWindow) / totalDates) * 100
         : 0;
     const defaultEnd = 100;
 
-    // 使用useMemo缓存图表配置，避免重复计算
     const formatLabelVertical = useCallback(
       (label: string) => (label ? label.split('').join('\n') : ''),
       [],
@@ -88,12 +80,12 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           borderColor: '#1890ff',
           textStyle: { color: '#e6f7ff' },
           formatter: (params: any) => {
-            const industryIndex = params.data[0];
-            const dateIndex = params.data[1];
-            const value = params.data[2];
+            const [industryIndex, dateIndex, value] = params.data;
             const date = chartData.dateLabels[dateIndex];
             const industry = chartData.industries[industryIndex];
-            return `${date}<br/>${industry}: ${value}%`;
+            const widthValue =
+              typeof value === 'number' ? `${value.toFixed(2)}%` : '-';
+            return `${date}<br/>${industry}: ${widthValue}`;
           },
         },
         xAxis: {
@@ -119,8 +111,8 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
         },
         visualMap: {
           show: false,
-          min: 0,
-          max: 100,
+          min: -20,
+          max: 40,
           inRange: { color: ['rgba(0,100,0,0.35)', 'rgba(139,0,0,0.35)'] },
         },
         dataZoom: [
@@ -159,7 +151,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
             label: {
               show: true,
               formatter: ({ value }: any) =>
-                Array.isArray(value) ? value[2] : value,
+                Array.isArray(value) && value[2] !== null
+                  ? value[2].toFixed(1)
+                  : '-',
               color: 'rgba(230,247,255,0.9)',
               fontSize: 10,
             },
@@ -193,8 +187,16 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       lazy: true,
     });
 
+    const noData = !loading && !error && chartData.widthData.length === 0;
+
     return (
       <Box title='行业宽度' padding='14px' underlineTitle>
+        {error && (
+          <p style={{ color: '#ff7875', marginBottom: 12 }}>加载失败：{error}</p>
+        )}
+        {noData && (
+          <p style={{ color: '#d1d5db', marginBottom: 12 }}>暂无数据</p>
+        )}
         <div
           ref={containerRef}
           style={{
@@ -202,6 +204,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
             height: '100%',
             minWidth: 0,
             opacity: isVisible ? 1 : 0,
+            filter: loading ? 'grayscale(0.7)' : 'none',
           }}
         />
       </Box>

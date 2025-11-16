@@ -51,6 +51,70 @@ const marketDataMock = {
   },
 };
 
+const industryMetricsMock = {
+  indicator: 'industry_metrics',
+  target: 'primary',
+  start: '2024-08-15T00:00:00Z',
+  end: '2024-08-26T00:00:00Z',
+  dates: [
+    '2024-08-15',
+    '2024-08-16',
+    '2024-08-19',
+    '2024-08-20',
+    '2024-08-21',
+    '2024-08-22',
+    '2024-08-23',
+    '2024-08-26',
+  ],
+  series: [
+    {
+      symbol: 'INDUSTRY:801010',
+      code: '801010',
+      name: '农林牧渔',
+      points: [
+        { date: '2024-08-15T00:00:00Z', momentum: 0.5, width: 12 },
+        { date: '2024-08-16T00:00:00Z', momentum: 0.8, width: 15 },
+        { date: '2024-08-19T00:00:00Z', momentum: -0.3, width: 9 },
+        { date: '2024-08-20T00:00:00Z', momentum: 1.2, width: 18 },
+        { date: '2024-08-21T00:00:00Z', momentum: 0.2, width: 11 },
+        { date: '2024-08-22T00:00:00Z', momentum: -0.6, width: 8 },
+        { date: '2024-08-23T00:00:00Z', momentum: 0.4, width: 13 },
+        { date: '2024-08-26T00:00:00Z', momentum: 0.9, width: 16 },
+      ],
+    },
+    {
+      symbol: 'INDUSTRY:801040',
+      code: '801040',
+      name: '钢铁',
+      points: [
+        { date: '2024-08-15T00:00:00Z', momentum: -0.4, width: 10 },
+        { date: '2024-08-16T00:00:00Z', momentum: -0.1, width: 12 },
+        { date: '2024-08-19T00:00:00Z', momentum: 0.3, width: 14 },
+        { date: '2024-08-20T00:00:00Z', momentum: 0.7, width: 17 },
+        { date: '2024-08-21T00:00:00Z', momentum: 1.1, width: 20 },
+        { date: '2024-08-22T00:00:00Z', momentum: 0.6, width: 16 },
+        { date: '2024-08-23T00:00:00Z', momentum: -0.2, width: 9 },
+        { date: '2024-08-26T00:00:00Z', momentum: 0.3, width: 11 },
+      ],
+    },
+    {
+      symbol: 'INDUSTRY:801150',
+      code: '801150',
+      name: '医药生物',
+      points: [
+        { date: '2024-08-15T00:00:00Z', momentum: 1.4, width: 22 },
+        { date: '2024-08-16T00:00:00Z', momentum: 1.1, width: 20 },
+        { date: '2024-08-19T00:00:00Z', momentum: 0.9, width: 18 },
+        { date: '2024-08-20T00:00:00Z', momentum: 1.0, width: 19 },
+        { date: '2024-08-21T00:00:00Z', momentum: 0.6, width: 17 },
+        { date: '2024-08-22T00:00:00Z', momentum: 0.2, width: 15 },
+        { date: '2024-08-23T00:00:00Z', momentum: -0.1, width: 13 },
+        { date: '2024-08-26T00:00:00Z', momentum: 0.5, width: 16 },
+      ],
+    },
+  ],
+};
+
 const limitUpOverviewMock = {
   date: '2025-08-28',
   sectors: [
@@ -417,6 +481,7 @@ const routes: Record<string, MockHandler> = {
   'GET /settings/data': () => jsonResponse(settingsDataMock),
   'POST /settings/data': () => jsonResponse({ ok: true }),
   'GET /users': () => jsonResponse(usersMock),
+  'GET /analytics/industry/metrics': () => jsonResponse(industryMetricsMock),
 };
 
 export async function resolveMockResponse<T = unknown>(

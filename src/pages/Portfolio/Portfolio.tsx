@@ -26,6 +26,7 @@ import type { StockDataPoint } from '../../components/StockChart';
 import { fetchPortfolioOverview } from './services/portfolio.api';
 import type { PortfolioOverviewResponse } from './services/portfolio.api';
 import {
+  PortfolioContent,
   PortfolioContainer,
   PortfolioHeader,
   StatisticsRow,
@@ -441,15 +442,16 @@ const Portfolio: React.FC = () => {
       <PortfolioHeader>
         <div className='header-content'>
           <h1>调仓管理</h1>
-          <p>查看和管理您的投资组合调仓操作（中转数据库辅助功能）</p>
+          <span>查看和管理您的投资组合调仓操作（中转数据库辅助功能）</span>
         </div>
       </PortfolioHeader>
 
-      {/* 统计卡片 */}
-      <StatisticsRow>
-        <Row gutter={[16, 16]}>
-          <Col span={6}>
-            <Card size='small'>
+      <PortfolioContent>
+        {/* 统计卡片 */}
+        <StatisticsRow>
+          <Row gutter={[16, 16]}>
+            <Col span={6}>
+              <Card size='small'>
               <Statistic
                 title='总策略数'
                 value={totalStrategies}
@@ -541,11 +543,11 @@ const Portfolio: React.FC = () => {
             </Card>
           </Col>
         </Row>
-      </StatisticsRow>
+        </StatisticsRow>
 
-      {/* 策略列表 */}
-      <PortfolioCard>
-        <Collapse defaultActiveKey={['1']} ghost>
+        {/* 策略列表 */}
+        <PortfolioCard>
+          <Collapse defaultActiveKey={['1']} ghost>
           {strategies.map(strategy => (
             <Panel
               key={strategy.id}
@@ -573,7 +575,7 @@ const Portfolio: React.FC = () => {
                       {strategy.status === 'active' ? '活跃' : '停用'}
                     </Tag>
                     <Text type='secondary' style={{ marginLeft: 16 }}>
-                      {strategy.description}
+                      创建于 {strategy.createdAt}
                     </Text>
                   </div>
                   <div onClick={e => e.stopPropagation()}>
@@ -630,7 +632,8 @@ const Portfolio: React.FC = () => {
             </Panel>
           ))}
         </Collapse>
-      </PortfolioCard>
+        </PortfolioCard>
+      </PortfolioContent>
 
       {/* 股票详情弹窗 */}
       <Modal

@@ -15,6 +15,7 @@ import { fetchLimitUpOverview } from './services/limitUp.api';
 import type { LimitUpOverviewResponse } from './services/limitUp.api';
 import { LineChartOutlined, BarChartOutlined } from '@ant-design/icons';
 import {
+  LimitUpContent,
   LimitUpStocksContainer,
   LimitUpStocksHeader,
 } from './LimitUpStocks.styles';
@@ -675,44 +676,49 @@ const LimitUpStocks: React.FC = () => {
         </div>
       </LimitUpStocksHeader>
 
-      {/* 梯队复盘表格 */}
-      <Card
-        size='small'
-        styles={{
-          body: {
-            padding: 12,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-          },
-        }}
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}
-      >
-        <Table
-          columns={columns}
-          dataSource={tableData}
-          pagination={false}
+      <LimitUpContent>
+        {/* 梯队复盘表格 */}
+        <Card
           size='small'
-          scroll={{
-            x: 'max-content',
-            y: tableScrollY,
-          }}
-          bordered
-          rowClassName={record => {
-            if (record.key === 'broken') return 'broken-row';
-            return '';
+          styles={{
+            body: {
+              padding: 12,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            },
           }}
           style={{
             flex: 1,
-            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            boxShadow: 'var(--page-panel-shadow)',
+            border: '1px solid rgba(15, 23, 42, 0.08)',
+            borderRadius: 8,
           }}
-        />
-      </Card>
+        >
+          <Table
+            columns={columns}
+            dataSource={tableData}
+            pagination={false}
+            size='small'
+            scroll={{
+              x: 'max-content',
+              y: tableScrollY,
+            }}
+            bordered
+            rowClassName={record => {
+              if (record.key === 'broken') return 'broken-row';
+              return '';
+            }}
+            style={{
+              flex: 1,
+              width: '100%',
+            }}
+          />
+        </Card>
+      </LimitUpContent>
 
       {/* 股票详情模态框 */}
       <Modal

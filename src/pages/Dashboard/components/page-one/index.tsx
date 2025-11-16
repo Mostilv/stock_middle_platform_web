@@ -13,14 +13,18 @@ import SmallChartCard from './SmallChartCard';
 import IndustryWidthChart from './IndustryWidthChart';
 import IndustryMomentumChart from './IndustryMomentumChart';
 import { leftSmallCharts, rightSmallCharts } from './smallCharts.config';
+import { useIndustryMetrics } from '../../../../hooks/useIndustryMetrics';
 
 interface PageOneProps {
   selectedDate: Date | null;
   copy: DashboardPageOneCopy;
 }
 
-const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => (
-  <MainContent>
+const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => {
+  const metricsState = useIndustryMetrics(selectedDate, 12);
+
+  return (
+    <MainContent>
     <StackPanel>
       <SectionHeader className='compact'>
         <div>
@@ -50,7 +54,11 @@ const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => (
           </div>
           <span className='meta'>{copy.sections.breadth.meta ?? ''}</span>
         </SectionHeader>
-        <IndustryWidthChart selectedDate={selectedDate} />
+        <IndustryWidthChart
+          data={metricsState.data}
+          loading={metricsState.loading}
+          error={metricsState.error}
+        />
       </GlassCard>
       <GlassCard className='full-span'>
         <SectionHeader className='compact'>
@@ -60,7 +68,11 @@ const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => (
           </div>
           <span className='meta'>{copy.sections.momentum.meta ?? ''}</span>
         </SectionHeader>
-        <IndustryMomentumChart />
+        <IndustryMomentumChart
+          data={metricsState.data}
+          loading={metricsState.loading}
+          error={metricsState.error}
+        />
       </GlassCard>
     </CenterPanels>
 
@@ -83,8 +95,9 @@ const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => (
         ))}
       </RightChartsStack>
     </StackPanel>
-  </MainContent>
-));
+    </MainContent>
+  );
+});
 
 PageOne.displayName = 'DashboardPageOne';
 

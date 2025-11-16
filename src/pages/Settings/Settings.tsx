@@ -29,6 +29,7 @@ import type { SettingsDataResponse } from './services/settings.api';
 import {
   SettingsContainer,
   SettingsHeader,
+  SettingsContent,
   SettingsCard,
   SettingsForm,
   SettingsActions,
@@ -293,21 +294,24 @@ const Settings: React.FC = () => {
   return (
     <SettingsContainer>
       <SettingsHeader>
-        <h1>系统设置</h1>
-        <p>配置您的个人偏好和系统参数</p>
+        <div>
+          <h1>系统设置</h1>
+          <span>配置您的个人偏好和系统参数</span>
+        </div>
       </SettingsHeader>
 
-      <SettingsForm>
-        <Form
-          form={form}
-          layout='vertical'
-          onFinish={onFinish}
-          initialValues={{
-            theme: 'light',
-            language: 'zh-CN',
-            rebalanceNotifications: true,
-          }}
-        >
+      <SettingsContent>
+        <SettingsForm>
+          <Form
+            form={form}
+            layout='vertical'
+            onFinish={onFinish}
+            initialValues={{
+              theme: 'light',
+              language: 'zh-CN',
+              rebalanceNotifications: true,
+            }}
+          >
           {/* 主题设置 */}
           <SettingsCard>
             <Card
@@ -666,33 +670,34 @@ const Settings: React.FC = () => {
               ))}
             </Card>
           </SettingsCard>
-        </Form>
+          </Form>
 
-        {/* 操作按钮 */}
-        <SettingsCard>
-          <Card>
-            <SettingsActions>
-              <Button
-                type='primary'
-                icon={<SaveOutlined />}
-                onClick={() => {
-                  console.log('保存设置:', {
-                    emailConfigs,
-                    notificationTemplates,
-                  });
-                  message.success('设置保存成功');
-                }}
-                loading={loading}
-              >
-                保存设置
-              </Button>
-              <Button icon={<ReloadOutlined />} onClick={handleReset}>
-                重置
-              </Button>
-            </SettingsActions>
-          </Card>
-        </SettingsCard>
-      </SettingsForm>
+          {/* 操作按钮 */}
+          <SettingsCard>
+            <Card>
+              <SettingsActions>
+                <Button
+                  type='primary'
+                  icon={<SaveOutlined />}
+                  onClick={() => {
+                    console.log('保存设置:', {
+                      emailConfigs,
+                      notificationTemplates,
+                    });
+                    message.success('设置保存成功');
+                  }}
+                  loading={loading}
+                >
+                  保存设置
+                </Button>
+                <Button icon={<ReloadOutlined />} onClick={handleReset}>
+                  重置
+                </Button>
+              </SettingsActions>
+            </Card>
+          </SettingsCard>
+        </SettingsForm>
+      </SettingsContent>
     </SettingsContainer>
   );
 };

@@ -2,52 +2,66 @@ import React, { useMemo } from 'react';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
+import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
 
-const IndustryMomentumChart: React.FC = React.memo(() => {
-  const mockMomentumSeries = useMemo(() => {
-    const dateLabels = Array.from({ length: 12 }, (_, index) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (11 - index));
-      const mm = `${date.getMonth() + 1}`.padStart(2, '0');
-      const dd = `${date.getDate()}`.padStart(2, '0');
-      return `${mm}-${dd}`;
-    });
+interface IndustryMomentumChartProps {
+  data: IndustryMetricResponse | null;
+  loading: boolean;
+  error: string | null;
+}
 
-    const series = SHENWAN_LEVEL1_INDUSTRIES.map((industry, industryIndex) => {
-      const base = 35 + (industryIndex % 6) * 8;
-      const data = dateLabels.map((_, dayIndex) => {
-        const wave = Math.sin((dayIndex + industryIndex) / 2.3) * 6;
-        const noise = (Math.random() - 0.5) * 4;
-        return Math.max(5, Math.round(base + wave * 2 + noise));
+const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
+  ({ data, loading, error }) => {
+    const chartSeries = useMemo(() => {
+      if (!data) {
+        return { dates: [] as string[], series: [] as any[] };
+      }
+
+      const orderMap = new Map(
+        SHENWAN_LEVEL1_INDUSTRIES.map((name, index) => [name, index]),
+      );
+
+      const sortedSeries = [...data.series].sort((a, b) => {
+        const orderA = orderMap.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+        const orderB = orderMap.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+        return orderA - orderB;
       });
 
-      return {
-        name: industry,
-        type: 'line' as const,
-        smooth: true,
-        data,
-        symbol: 'none',
-        lineStyle: { width: 1.5 },
-      };
-    });
+      const series = sortedSeries.map(seriesItem => {
+        const pointMap = new Map(
+          seriesItem.points.map(point => [
+            point.date.slice(0, 10),
+            point.momentum ?? null,
+          ]),
+        );
+        return {
+          name: seriesItem.name,
+          type: 'line' as const,
+          smooth: true,
+          data: data.dates.map(date => pointMap.get(date) ?? null),
+          symbol: 'none' as const,
+          lineStyle: { width: 1.5 },
+        };
+      });
 
-    return { dateLabels, series };
-  }, []);
+      return { dates: data.dates, series };
+    }, [data]);
 
-  const industryMomentumOption = useMemo(
-    () => ({
-      backgroundColor: 'transparent',
-      grid: { left: 45, right: 24, top: 40, bottom: 30 },
-      tooltip: {
-        trigger: 'axis' as const,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    const industryMomentumOption = useMemo(
+      () => ({
+        backgroundColor: 'transparent',
+        grid: { left: 45, right: 24, top: 40, bottom: 30 },
+        tooltip: {
+          trigger: 'axis' as const,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
         borderColor: '#1890ff',
         textStyle: { color: '#e6f7ff' },
         appendToBody: true,
         formatter: (params: any) => {
           if (!Array.isArray(params) || params.length === 0) return '';
 
-          const dateLabel = params[0]?.axisValueLabel ?? params[0]?.axisValue ?? '';
+          const dateLabel =
+            params[0]?.axisValueLabel ?? params[0]?.axisValue ?? '';
           const sortedItems = [...params].sort((a, b) => {
             const valueA = typeof a.data === 'number' ? a.data : Number(a.data) || 0;
             const valueB = typeof b.data === 'number' ? b.data : Number(b.data) || 0;
@@ -77,7 +91,7 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
       },
       xAxis: {
         type: 'category' as const,
-        data: mockMomentumSeries.dateLabels,
+        data: chartSeries.dates,
         axisLine: { lineStyle: { color: '#4a5568' } },
         axisLabel: { color: '#e6f7ff' },
       },
@@ -87,30 +101,40 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
         axisLabel: { color: '#e6f7ff' },
         splitLine: { lineStyle: { color: '#2d3748' } },
       },
-      series: mockMomentumSeries.series,
+      series: chartSeries.series,
     }),
-    [mockMomentumSeries],
-  );
+      [chartSeries],
+    );
 
-  const { containerRef, isVisible } = useEChart({
-    option: industryMomentumOption,
-    lazy: true,
-  });
+    const { containerRef, isVisible } = useEChart({
+      option: industryMomentumOption,
+      lazy: true,
+    });
 
-  return (
-    <Box title='行业动量' padding='14px' underlineTitle>
-      <div
-        ref={containerRef}
-        style={{
-          width: '100%',
-          height: '100%',
-          minWidth: 0,
-          opacity: isVisible ? 1 : 0,
-        }}
-      />
-    </Box>
-  );
-});
+    const noData = !loading && !error && chartSeries.series.length === 0;
+
+    return (
+      <Box title='行业动量' padding='14px' underlineTitle>
+        {error && (
+          <p style={{ color: '#ff7875', marginBottom: 12 }}>加载失败：{error}</p>
+        )}
+        {noData && (
+          <p style={{ color: '#d1d5db', marginBottom: 12 }}>暂无数据</p>
+        )}
+        <div
+          ref={containerRef}
+          style={{
+            width: '100%',
+            height: '100%',
+            minWidth: 0,
+            opacity: isVisible ? 1 : 0,
+            filter: loading ? 'grayscale(0.7)' : 'none',
+          }}
+        />
+      </Box>
+    );
+  },
+);
 
 IndustryMomentumChart.displayName = 'IndustryMomentumChart';
 

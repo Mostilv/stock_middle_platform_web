@@ -1,52 +1,42 @@
 import styled from 'styled-components';
 import { Button } from 'antd';
+import {
+  PageBody,
+  PageContainer,
+  PageHeader,
+} from '../../components/PageLayout';
 
-export const SettingsContainer = styled.div`
-  padding: 16px;
-  background: #f5f5f5;
-  height: 100vh;
-  overflow: hidden;
-  width: 100%;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
+export const SettingsContainer = styled(PageContainer)`
+  gap: 16px;
 `;
 
-export const SettingsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+export const SettingsContent = styled(PageBody)`
+  padding-bottom: 8px;
+`;
+
+export const SettingsHeader = styled(PageHeader)`
+  width: 100%;
 
   h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    color: #333;
+    color: #111827;
     margin: 0;
   }
 
-  p {
-    font-size: 14px;
-    color: #666;
-    margin: 0;
+  span {
+    font-size: 13px;
+    color: #6b7280;
   }
 `;
 
 export const SettingsCard = styled.div`
-  &.ant-card {
+  margin-bottom: 24px;
+
+  .ant-card {
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
+    box-shadow: var(--page-panel-shadow);
+    border: 1px solid rgba(15, 23, 42, 0.08);
 
     .ant-card-head {
       border-bottom: 1px solid #f0f0f0;

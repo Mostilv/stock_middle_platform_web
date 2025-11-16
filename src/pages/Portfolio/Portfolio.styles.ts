@@ -1,45 +1,33 @@
 import styled from 'styled-components';
 import { Button } from 'antd';
+import {
+  PageBody,
+  PageContainer,
+  PageHeader,
+} from '../../components/PageLayout';
 
-export const PortfolioContainer = styled.div`
-  padding: 16px;
-  background: #f5f5f5;
-  height: 100vh;
-  overflow: hidden;
-  width: 100%;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
+export const PortfolioContainer = styled(PageContainer)`
+  gap: 16px;
 `;
 
-export const PortfolioHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+export const PortfolioContent = styled(PageBody)`
+  padding-bottom: 8px;
+`;
+
+export const PortfolioHeader = styled(PageHeader)`
+  width: 100%;
 
   .header-content {
     h1 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      color: #333;
+      color: #111827;
       margin: 0;
     }
 
-    p {
-      font-size: 14px;
-      color: #666;
-      margin: 0;
+    span {
+      font-size: 13px;
+      color: #6b7280;
     }
   }
 
@@ -58,12 +46,13 @@ export const StatisticsRow = styled.div`
     .ant-col {
         .ant-card {
           border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          box-shadow: var(--page-panel-shadow);
+          border: 1px solid rgba(15, 23, 42, 0.08);
           transition: box-shadow 0.2s ease;
           height: 100%;
 
           &:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--page-panel-shadow);
           }
 
         .ant-card-body {
@@ -90,7 +79,8 @@ export const StatisticsRow = styled.div`
 export const PortfolioCard = styled.div`
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--page-panel-shadow);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   overflow: hidden;
 
   .ant-table-wrapper {

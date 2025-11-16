@@ -12,9 +12,6 @@ import {
   Popconfirm,
   Tag,
   Avatar,
-  Typography,
-  Row,
-  Col,
   Tooltip,
   Alert,
 } from 'antd';
@@ -39,12 +36,12 @@ import type { User, UserCreate, UserUpdate } from './services/user.api';
 import {
   UserManagementContainer,
   UserManagementHeader,
+  UserManagementBody,
   UserManagementCard,
   UserActions,
   SearchContainer,
 } from './UserManagement.styles';
 
-const { Title } = Typography;
 const { Search } = Input;
 
 const UserManagement: React.FC = () => {
@@ -269,79 +266,66 @@ const UserManagement: React.FC = () => {
   return (
     <UserManagementContainer>
       <UserManagementHeader>
-        <Title level={2} style={{ margin: 0, color: '#0f172a' }}>
-          <UserOutlined style={{ marginRight: 8 }} />
-          用户管理
-        </Title>
+        <div className='header-title'>
+          <UserOutlined />
+          <span>用户管理</span>
+        </div>
+        <div className='header-actions'>
+          <SearchContainer>
+            <Search
+              placeholder='搜索用户名、邮箱或姓名'
+              allowClear
+              onChange={e => setSearchText(e.target.value)}
+              prefix={<SearchOutlined />}
+            />
+          </SearchContainer>
+          <UserActions>
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={loadUsers}
+              loading={loading}
+            >
+              刷新
+            </Button>
+            <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
+              新增用户
+            </Button>
+          </UserActions>
+        </div>
       </UserManagementHeader>
 
-      <UserManagementCard>
-        <Row
-          justify='space-between'
-          align='middle'
-          style={{ marginBottom: 16 }}
-        >
-          <Col>
-            <SearchContainer>
-              <Search
-                placeholder='搜索用户名、邮箱或姓名'
-                allowClear
-                style={{ width: 300 }}
-                onChange={e => setSearchText(e.target.value)}
-                prefix={<SearchOutlined />}
-              />
-            </SearchContainer>
-          </Col>
-          <Col>
-            <UserActions>
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={loadUsers}
-                loading={loading}
-              >
-                刷新
-              </Button>
-              <Button
-                type='primary'
-                icon={<PlusOutlined />}
-                onClick={handleAdd}
-              >
-                新增用户
-              </Button>
-            </UserActions>
-          </Col>
-        </Row>
-
-        {error && (
-          <Alert
-            message='数据加载失败'
-            description={error}
-            type='error'
-            showIcon
-            style={{ marginBottom: 16 }}
-            action={
-              <Button size='small' onClick={loadUsers}>
-                重试
-              </Button>
-            }
-          />
-        )}
-        <Table
-          columns={columns}
-          dataSource={filteredUsers}
-          rowKey='id'
-          loading={tableLoading}
-          pagination={{
-            total: filteredUsers.length,
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) =>
-              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
-          }}
-        />
-      </UserManagementCard>
-
+      <UserManagementBody>
+        {error && (
+          <Alert
+            message='数据加载失败'
+            description={error}
+            type='error'
+            showIcon
+            action={(
+              <Button size='small' onClick={loadUsers}>
+                重试
+              </Button>
+            )}
+          />
+        )}
+        <UserManagementCard>
+          <Table
+            columns={columns}
+            dataSource={filteredUsers}
+            rowKey='id'
+            loading={tableLoading}
+            pagination={{
+              total: filteredUsers.length,
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) =>
+                `第${range[0]}-${range[1]} 条，共${total} 条`,
+            }}
+          />
+        </UserManagementCard>
+      </UserManagementBody>
+
       {/* 新增/编辑用户模态框 */}
       <Modal
         title={editingUser ? '编辑用户' : '新增用户'}

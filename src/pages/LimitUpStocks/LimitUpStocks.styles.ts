@@ -1,26 +1,20 @@
 import styled from 'styled-components';
+import {
+  PageBody,
+  PageContainer,
+  PageHeader,
+} from '../../components/PageLayout';
 
-export const LimitUpStocksContainer = styled.div`
-  padding: 16px;
-  background: #f5f5f5;
-  height: 100vh;
-  overflow: hidden;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
+export const LimitUpStocksContainer = styled(PageContainer)`
+  gap: 16px;
 `;
 
-export const LimitUpStocksHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+export const LimitUpContent = styled(PageBody)`
+  overflow: hidden;
+`;
+
+export const LimitUpStocksHeader = styled(PageHeader)`
+  width: 100%;
 
   .header-left {
     display: flex;
