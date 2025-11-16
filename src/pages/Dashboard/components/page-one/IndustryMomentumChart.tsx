@@ -43,10 +43,33 @@ const IndustryMomentumChart: React.FC = React.memo(() => {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         borderColor: '#1890ff',
         textStyle: { color: '#e6f7ff' },
+        appendToBody: true,
+        formatter: (params: any) => {
+          if (!Array.isArray(params) || params.length === 0) return '';
+
+          const dateLabel = params[0]?.axisValueLabel ?? params[0]?.axisValue ?? '';
+          const sortedItems = [...params].sort((a, b) => {
+            const valueA = typeof a.data === 'number' ? a.data : Number(a.data) || 0;
+            const valueB = typeof b.data === 'number' ? b.data : Number(b.data) || 0;
+            return valueB - valueA;
+          });
+
+          const lines = sortedItems.map((item, index) => {
+            const value =
+              typeof item.data === 'number'
+                ? item.data
+                : Number.isFinite(Number(item.data))
+                  ? Number(item.data)
+                  : '-';
+            return `${index + 1}. ${item.marker || ''}${item.seriesName}: ${value}`;
+          });
+
+          return [dateLabel, ...lines].join('<br/>');
+        },
       },
       legend: {
         type: 'scroll' as const,
-        data: SHENWAN_LEVEL1_INDUSTRIES,
+        data: [...SHENWAN_LEVEL1_INDUSTRIES],
         textStyle: { color: '#e6f7ff' },
         top: 0,
         left: 0,
