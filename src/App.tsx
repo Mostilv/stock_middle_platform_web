@@ -1,16 +1,16 @@
 import React, { Suspense } from 'react';
 import {
   BrowserRouter as Router,
-  Routes,
-  Route,
   Navigate,
+  Route,
+  Routes,
 } from 'react-router-dom';
-import { ConfigProvider, App as AntdApp, Spin } from 'antd';
+import { App as AntdApp, ConfigProvider, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import MainLayout from './components/Layout';
+import RequireAuth from './components/RequireAuth';
 import './App.css';
 
-// 懒加载页面组件
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const LimitUpStocks = React.lazy(
   () => import('./pages/LimitUpStocks/LimitUpStocks'),
@@ -18,8 +18,11 @@ const LimitUpStocks = React.lazy(
 const Portfolio = React.lazy(() => import('./pages/Portfolio/Portfolio'));
 const Settings = React.lazy(() => import('./pages/Settings/Settings'));
 const UserManagement = React.lazy(() => import('./pages/UserManagement'));
+const StrategySubscription = React.lazy(
+  () => import('./pages/StrategySubscription'),
+);
+const LoginPage = React.lazy(() => import('./pages/Login'));
 
-// 加载中组件
 const LoadingComponent: React.FC = () => (
   <div
     style={{
@@ -53,7 +56,23 @@ const App: React.FC = () => {
                 <Route index element={<Dashboard />} />
                 <Route path='limit-up-stocks' element={<LimitUpStocks />} />
                 <Route path='portfolio' element={<Portfolio />} />
-                <Route path='user-management' element={<UserManagement />} />
+                <Route path='login' element={<LoginPage />} />
+                <Route
+                  path='strategy-subscription'
+                  element={
+                    <RequireAuth>
+                      <StrategySubscription />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path='user-management'
+                  element={
+                    <RequireAuth>
+                      <UserManagement />
+                    </RequireAuth>
+                  }
+                />
                 <Route path='settings' element={<Settings />} />
                 <Route path='*' element={<Navigate to='/' replace />} />
               </Route>

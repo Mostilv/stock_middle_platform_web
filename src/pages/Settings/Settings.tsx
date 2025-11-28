@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
+  Avatar,
+  Button,
   Card,
+  Col,
+  Divider,
   Form,
   Input,
-  Button,
-  Switch,
-  Select,
   message,
-  Row,
-  Col,
-  Space,
-  Divider,
   Popconfirm,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Tag,
   Typography,
 } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import {
   SaveOutlined,
   ReloadOutlined,
@@ -26,13 +29,17 @@ import {
 } from '@ant-design/icons';
 import { fetchSettingsData, saveSettingsData } from './services/settings.api';
 import type { SettingsDataResponse } from './services/settings.api';
+import { useAuth } from '../../contexts/AuthContext';
 import {
-  SettingsContainer,
-  SettingsHeader,
-  SettingsContent,
-  SettingsCard,
-  SettingsForm,
+  AccountActions,
+  AccountCard,
+  AccountInfo,
   SettingsActions,
+  SettingsCard,
+  SettingsContainer,
+  SettingsContent,
+  SettingsForm,
+  SettingsHeader,
   CardIcon,
 } from './Settings.styles';
 
@@ -59,6 +66,8 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [previewContent, setPreviewContent] = useState<string>('');
   const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([]);
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
 
   const [notificationTemplates, setNotificationTemplates] = useState<
     NotificationTemplate[]
@@ -291,6 +300,18 @@ const Settings: React.FC = () => {
     }, 800);
   };
 
+  const handleLogout = () => {
+    logout();
+    message.success('已退出登录');
+  };
+
+  const handleGoLogin = () => {
+    navigate('/login');
+  };
+
+  const accountInitial =
+    user?.username?.charAt(0).toUpperCase() || 'U';
+
   return (
     <SettingsContainer>
       <SettingsHeader>
@@ -299,6 +320,43 @@ const Settings: React.FC = () => {
           <span>配置您的个人偏好和系统参数</span>
         </div>
       </SettingsHeader>
+
+      <AccountCard>
+        <AccountInfo>
+          <Avatar
+            size={56}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              color: '#f8fafc',
+              fontWeight: 600,
+            }}
+          >
+            {accountInitial}
+          </Avatar>
+          <div>
+            <h3>{isAuthenticated ? user?.username : '尚未登录'}</h3>
+            <p>
+              {isAuthenticated
+                ? 角色：
+                : '登录后可管理策略订阅、用户等权限模块'}
+            </p>
+          </div>
+        </AccountInfo>
+        <AccountActions>
+          <Tag color={isAuthenticated ? 'green' : 'orange'}>
+            {isAuthenticated ? '已登录' : '未登录'}
+          </Tag>
+          {isAuthenticated ? (
+            <Button onClick={handleLogout} danger>
+              退出登录
+            </Button>
+          ) : (
+            <Button type='primary' onClick={handleGoLogin}>
+              去登录
+            </Button>
+          )}
+        </AccountActions>
+      </AccountCard>
 
       <SettingsContent>
         <SettingsForm>
@@ -703,3 +761,6 @@ const Settings: React.FC = () => {
 };
 
 export default Settings;
+
+
+

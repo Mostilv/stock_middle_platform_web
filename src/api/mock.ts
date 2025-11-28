@@ -473,6 +473,78 @@ const usersMock = [
   },
 ];
 
+const mockAuthUsers = {
+  admin: { password: '123456', role: 'admin' },
+  trader: { password: '123456', role: 'trader' },
+};
+
+const strategySubscriptionsMock = {
+  strategies: [
+    {
+      id: 'alpha-trend',
+      name: 'Alpha趋势跟踪',
+      summary: '捕捉高胜率趋势行情，聚焦放量突破与动量修复的组合交易信号。',
+      riskLevel: '中',
+      signalFrequency: '日内/收盘',
+      lastSignal: '2025-01-15 10:12',
+      performance: 12.4,
+      subscribed: true,
+      channels: ['app', 'email'],
+      tags: ['趋势', '风控联动'],
+      subscribers: 86,
+    },
+    {
+      id: 'quant-mean',
+      name: '量化均值回归',
+      summary: '统计套利+波动率分层，适合低回撤的稳健订阅。',
+      riskLevel: '低',
+      signalFrequency: '日内低频',
+      lastSignal: '2025-01-14 14:35',
+      performance: 6.8,
+      subscribed: false,
+      channels: ['app'],
+      tags: ['稳健', '低回撤'],
+      subscribers: 54,
+    },
+    {
+      id: 'event-drive',
+      name: '事件驱动快线',
+      summary: '侧重公告、异动与成交量触发的短线信号，推送更敏捷。',
+      riskLevel: '高',
+      signalFrequency: '实时推送',
+      lastSignal: '2025-01-15 09:55',
+      performance: 18.9,
+      subscribed: false,
+      channels: ['app', 'sms'],
+      tags: ['快节奏', '题材轮动'],
+      subscribers: 41,
+    },
+  ],
+  recentSignals: [
+    {
+      id: 'sig-1',
+      strategyName: 'Alpha趋势跟踪',
+      time: '2025-01-15 10:12',
+      action: '触发买入信号：放量突破5日高点',
+      expectedImpact: '预计提升组合beta，关注回撤控制',
+    },
+    {
+      id: 'sig-2',
+      strategyName: '事件驱动快线',
+      time: '2025-01-15 09:55',
+      action: '冲击涨停受阻，提醒减仓 30%',
+      expectedImpact: '缓冲单一标的波动，降低敞口',
+    },
+    {
+      id: 'sig-3',
+      strategyName: '量化均值回归',
+      time: '2025-01-14 14:35',
+      action: '超跌反弹触发建仓窗口',
+      expectedImpact: '占用组合 5% 仓位，目标 3% 区间收益',
+    },
+  ],
+};
+
 // 这里集中定义 Mock 路由
 const routes: Record<string, MockHandler> = {
   'GET /market/data': () => jsonResponse(marketDataMock),
@@ -482,6 +554,41 @@ const routes: Record<string, MockHandler> = {
   'POST /settings/data': () => jsonResponse({ ok: true }),
   'GET /users': () => jsonResponse(usersMock),
   'GET /analytics/industry/metrics': () => jsonResponse(industryMetricsMock),
+  'POST /auth/login': ({ config }) => {
+    const body =
+      typeof config.data === 'string' ? JSON.parse(config.data) : config.data;
+    const matched = mockAuthUsers[body?.username as keyof typeof mockAuthUsers];
+    if (matched && body?.password === matched.password) {
+      return jsonResponse({
+        token: `mock-token-${body.username}`,
+        user: {
+          username: body.username,
+          role: matched.role,
+        },
+      });
+    }
+    return jsonResponse(
+      { message: 'invalid credentials' },
+      { status: 401, statusText: 'Unauthorized' },
+    );
+  },
+  'GET /strategies/subscriptions': () =>
+    jsonResponse(strategySubscriptionsMock),
+  'POST /strategies/subscriptions': ({ config }) => {
+    const body =
+      typeof config.data === 'string' ? JSON.parse(config.data) : config.data;
+    strategySubscriptionsMock.strategies = strategySubscriptionsMock.strategies.map(
+      item =>
+        item.id === body?.strategyId
+          ? {
+              ...item,
+              subscribed: Boolean(body?.subscribed),
+              channels: body?.channels || item.channels,
+            }
+          : item,
+    );
+    return jsonResponse({ ok: true });
+  },
 };
 
 export async function resolveMockResponse<T = unknown>(

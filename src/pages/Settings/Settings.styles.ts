@@ -53,6 +53,52 @@ export const SettingsCard = styled.div`
   }
 `;
 
+export const AccountCard = styled.div`
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #0f172a, #1e3a8a);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #f8fafc;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: rgba(248, 250, 252, 0.8);
+  }
+`;
+
+export const AccountInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+export const AccountActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .ant-btn {
+    border-radius: 999px;
+    height: 36px;
+    padding: 0 18px;
+    font-weight: 500;
+  }
+`;
+
 export const SettingsForm = styled.div`
   .ant-form {
     .ant-form-item {

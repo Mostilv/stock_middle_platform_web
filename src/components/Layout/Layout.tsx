@@ -7,6 +7,7 @@ import {
   BarChartOutlined,
   SettingOutlined,
   UserOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -38,6 +39,11 @@ const LayoutComponent: React.FC = React.memo(() => {
       key: '/portfolio',
       icon: <BarChartOutlined />,
       label: '调仓',
+    },
+    {
+      key: '/strategy-subscription',
+      icon: <BellOutlined />,
+      label: '策略订阅',
     },
     {
       key: '/user-management',
