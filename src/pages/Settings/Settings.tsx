@@ -337,7 +337,7 @@ const Settings: React.FC = () => {
             <h3>{isAuthenticated ? user?.username : '尚未登录'}</h3>
             <p>
               {isAuthenticated
-                ? 角色：
+                ? `角色：${user?.role ?? '策略管理员'}`
                 : '登录后可管理策略订阅、用户等权限模块'}
             </p>
           </div>
