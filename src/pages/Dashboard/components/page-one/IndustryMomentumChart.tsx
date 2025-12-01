@@ -1,8 +1,12 @@
-import React, { useMemo } from 'react';
-import Box from '../Box';
+import React, { useMemo, useCallback } from 'react';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
+import {
+  ChartPanelBody,
+  ChartCanvas,
+  ChartMessage,
+} from './ChartPanel.styles';
 
 interface IndustryMomentumChartProps {
   data: IndustryMetricResponse | null;
@@ -46,6 +50,13 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
 
       return { dates: data.dates, series };
     }, [data]);
+
+    const formatYearLabel = useCallback((value: string) => {
+      if (!value) {
+        return '';
+      }
+      return value.length > 2 ? value.slice(2) : value;
+    }, []);
 
     const industryMomentumOption = useMemo(
       () => ({
@@ -93,7 +104,10 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
         type: 'category' as const,
         data: chartSeries.dates,
         axisLine: { lineStyle: { color: '#4a5568' } },
-        axisLabel: { color: '#e6f7ff' },
+        axisLabel: {
+          color: '#e6f7ff',
+          formatter: formatYearLabel,
+        },
       },
       yAxis: {
         type: 'value' as const,
@@ -103,7 +117,7 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
       },
       series: chartSeries.series,
     }),
-      [chartSeries],
+      [chartSeries, formatYearLabel],
     );
 
     const { containerRef, isVisible } = useEChart({
@@ -114,24 +128,18 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
     const noData = !loading && !error && chartSeries.series.length === 0;
 
     return (
-      <Box title='行业动量' padding='14px' underlineTitle>
-        {error && (
-          <p style={{ color: '#ff7875', marginBottom: 12 }}>加载失败：{error}</p>
-        )}
-        {noData && (
-          <p style={{ color: '#d1d5db', marginBottom: 12 }}>暂无数据</p>
-        )}
-        <div
+      <ChartPanelBody style={{ flex: '1 1 auto', minHeight: 0 }}>
+        {error && <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>}
+        {noData && <ChartMessage>暂无数据</ChartMessage>}
+        <ChartCanvas
           ref={containerRef}
           style={{
-            width: '100%',
             height: '100%',
-            minWidth: 0,
             opacity: isVisible ? 1 : 0,
             filter: loading ? 'grayscale(0.7)' : 'none',
           }}
         />
-      </Box>
+      </ChartPanelBody>
     );
   },
 );

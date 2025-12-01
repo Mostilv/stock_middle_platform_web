@@ -39,7 +39,6 @@ const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => {
             key={chart.key}
             title={chart.title}
             option={chart.option}
-            titleSize='sm'
           />
         ))}
       </LeftChartsStack>
@@ -90,7 +89,6 @@ const PageOne: React.FC<PageOneProps> = React.memo(({ selectedDate, copy }) => {
             key={chart.key}
             title={chart.title}
             option={chart.option}
-            titleSize='sm'
           />
         ))}
       </RightChartsStack>

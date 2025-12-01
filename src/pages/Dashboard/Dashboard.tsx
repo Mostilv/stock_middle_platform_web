@@ -184,15 +184,18 @@ const Dashboard: React.FC = React.memo(() => {
             />
           </div>
           <h1>{dashboardCopy.pageOne.heroTitle}</h1>
-          <p>{marketNarrative.detail}</p>
         </HeroCopy>
         <HeroMeta>
           <HeroMetricsRow>
             {heroMetrics.map(metric => (
               <MetricCard key={metric.label} $trend={metric.trend}>
                 <div className='label'>{metric.label}</div>
-                <div className='value'>{metric.value}</div>
-                <div className='hint'>{metric.hint}</div>
+                <div className='value'>
+                  {metric.value}
+                  <span className={`delta delta-${metric.trend}`}>
+                    {metric.hint}
+                  </span>
+                </div>
               </MetricCard>
             ))}
           </HeroMetricsRow>

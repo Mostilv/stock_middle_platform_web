@@ -77,10 +77,10 @@ export const HeroSection = styled.section`
   z-index: 2;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 4px;
+  gap: 8px 12px;
+  margin-bottom: 2px;
   flex: 0 0 auto;
   transition:
     margin 0.45s ease,
@@ -88,34 +88,31 @@ export const HeroSection = styled.section`
 `;
 
 export const HeroCopy = styled.div`
-  max-width: min(640px, 60%);
+  max-width: min(520px, 48%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   transition: max-width 0.45s ease;
 
   .hero-time {
-    margin-bottom: 6px;
+    margin-bottom: 2px;
   }
 
   h1 {
-    margin: 4px 0;
-    font-size: clamp(24px, 2.6vw, 32px);
+    margin: 2px 0;
+    font-size: clamp(22px, 2.2vw, 28px);
     font-weight: 600;
-    line-height: 1.05;
+    line-height: 1.1;
     color: #f7fbff;
   }
 
-  p {
-    margin: 0;
-    color: rgba(235, 245, 255, 0.7);
-    line-height: 1.6;
-    font-size: 14px;
-  }
 `;
 
 export const HeroMeta = styled.div`
-  min-width: 260px;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-end;
   transition:
     min-width 0.45s ease,
@@ -130,9 +127,9 @@ export const HeroMeta = styled.div`
 export const HeroMetricsRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: flex-end;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
   transition:
     padding 0.45s ease,
     gap 0.45s ease;
@@ -173,6 +170,25 @@ export const MetricCard = styled.div<{ $trend: 'up' | 'down' | 'flat' }>`
     font-size: 16px;
     font-weight: 600;
     color: #fefefe;
+
+    .delta {
+      margin-left: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+
+      &.delta-up {
+        color: #ff6b6b;
+      }
+
+      &.delta-down {
+        color: #3dd598;
+      }
+
+      &.delta-flat {
+        color: #8ea6ff;
+      }
+    }
   }
 
   .hint {
@@ -316,6 +332,7 @@ export const StackPanel = styled.section`
 export const CenterPanels = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
   gap: 16px;
   height: 100%;
   min-height: 0;
@@ -372,6 +389,7 @@ export const GlassCard = styled.section`
 
   &.full-span {
     grid-column: 1 / -1;
+    height: 100%;
   }
 `;
 

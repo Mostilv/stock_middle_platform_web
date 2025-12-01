@@ -1,8 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
-import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
+import {
+  ChartPanelBody,
+  ChartCanvas,
+  ChartMessage,
+} from './ChartPanel.styles';
 
 interface IndustryWidthChartProps {
   data: IndustryMetricResponse | null;
@@ -69,6 +73,11 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       [],
     );
 
+    const formatYearLabel = useCallback((label: string) => {
+      if (!label) return '';
+      return label.length > 2 ? label.slice(2) : label;
+    }, []);
+
     const industryWidthOption = useMemo(
       () => ({
         backgroundColor: 'transparent',
@@ -81,7 +90,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           textStyle: { color: '#e6f7ff' },
           formatter: (params: any) => {
             const [industryIndex, dateIndex, value] = params.data;
-            const date = chartData.dateLabels[dateIndex];
+            const date = formatYearLabel(chartData.dateLabels[dateIndex]);
             const industry = chartData.industries[industryIndex];
             const widthValue =
               typeof value === 'number' ? `${value.toFixed(2)}%` : '-';
@@ -105,7 +114,11 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           type: 'category' as const,
           data: chartData.dateLabels,
           axisLine: { lineStyle: { color: '#4a5568' } },
-          axisLabel: { color: '#e6f7ff', fontSize: 10 },
+          axisLabel: {
+            color: '#e6f7ff',
+            fontSize: 10,
+            formatter: formatYearLabel,
+          },
           axisTick: { show: false },
           splitLine: { show: false },
         },
@@ -179,7 +192,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           },
         ],
       }),
-      [chartData, defaultStart, defaultEnd, formatLabelVertical],
+      [chartData, defaultStart, defaultEnd, formatLabelVertical, formatYearLabel],
     );
 
     const { containerRef, isVisible } = useEChart({
@@ -190,24 +203,18 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
     const noData = !loading && !error && chartData.widthData.length === 0;
 
     return (
-      <Box title='行业宽度' padding='14px' underlineTitle>
-        {error && (
-          <p style={{ color: '#ff7875', marginBottom: 12 }}>加载失败：{error}</p>
-        )}
-        {noData && (
-          <p style={{ color: '#d1d5db', marginBottom: 12 }}>暂无数据</p>
-        )}
-        <div
+      <ChartPanelBody style={{ flex: '1 1 auto', minHeight: 0 }}>
+        {error && <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>}
+        {noData && <ChartMessage>暂无数据</ChartMessage>}
+        <ChartCanvas
           ref={containerRef}
           style={{
-            width: '100%',
             height: '100%',
-            minWidth: 0,
             opacity: isVisible ? 1 : 0,
             filter: loading ? 'grayscale(0.7)' : 'none',
           }}
         />
-      </Box>
+      </ChartPanelBody>
     );
   },
 );

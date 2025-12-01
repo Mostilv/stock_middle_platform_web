@@ -60,7 +60,7 @@ const DASHBOARD_COPY: Record<Locale, DashboardCopy> = {
           meta: 'High-frequency',
         },
         sentiment: {
-          eyebrow: 'SENTIMENT',
+          eyebrow: '',
           title: 'Sentiment probe',
           meta: 'Board mapping',
         },
@@ -69,7 +69,7 @@ const DASHBOARD_COPY: Record<Locale, DashboardCopy> = {
     pageTwo: {
       eyebrow: 'MARKET LAB',
       title: 'Multi-metric overview',
-      meta: 'Quick scan',
+      meta: '',
     },
     indexLabels: {
       shanghaiIndex: 'Shanghai Composite',
@@ -106,31 +106,31 @@ const DASHBOARD_COPY: Record<Locale, DashboardCopy> = {
       scrollHint: '\u5782\u76f4\u6ed1\u52a8\u67e5\u770b\u66f4\u591a',
       sections: {
         marketSize: {
-          eyebrow: '\u5927\u5c0f\u76d8',
+          eyebrow: '',
           title: '',
           meta: '',
         },
         breadth: {
-          eyebrow: 'BREADTH',
+          eyebrow: '',
           title: '\u884c\u4e1a\u5bbd\u5ea6',
-          meta: '\u6309\u65e5\u671f\u5bf9\u6bd4',
+          meta: '',
         },
         momentum: {
-          eyebrow: 'MOMENTUM',
+          eyebrow: '',
           title: '\u884c\u4e1a\u52a8\u91cf\u96f7\u8fbe',
-          meta: '\u9ad8\u9891\u66f4\u65b0',
+          meta: '',
         },
         sentiment: {
-          eyebrow: 'SENTIMENT',
-          title: '\u60c5\u7eea\u63a2\u9488',
-          meta: '\u76d8\u9762\u6620\u5c04',
+          eyebrow: '',
+          title: '',
+          meta: '',
         },
       },
     },
     pageTwo: {
-      eyebrow: '\u5e02\u573a\u5b9e\u9a8c\u5ba4',
-      title: '\u591a\u7ef4\u6307\u6807\u5de1\u822a',
-      meta: '\u5feb\u901f\u5de1\u68c0',
+      eyebrow: '',
+      title: '',
+      meta: '',
     },
     indexLabels: {
       shanghaiIndex: '\u4e0a\u8bc1\u6307\u6570',
