@@ -17,33 +17,23 @@ interface IndustryWidthChartProps {
 const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
   ({ data, loading, error }) => {
     const chartData = useMemo(() => {
-      if (!data) {
-        return {
-          dateLabels: [] as string[],
-          industries: [] as string[],
-          widthData: [] as [number, number, number | null][],
-        };
-      }
-
-      const orderMap = new Map(
-        SHENWAN_LEVEL1_INDUSTRIES.map((name, index) => [name, index]),
+      const industries = [...SHENWAN_LEVEL1_INDUSTRIES];
+      const normalizedDates = (data?.dates ?? []).map(date =>
+        date.slice(0, 10),
       );
-      const sortedSeries = [...data.series].sort((a, b) => {
-        const orderA = orderMap.get(a.name) ?? Number.MAX_SAFE_INTEGER;
-        const orderB = orderMap.get(b.name) ?? Number.MAX_SAFE_INTEGER;
-        return orderA - orderB;
-      });
+      const reversedDates = [...normalizedDates].reverse();
 
-      const reversedDates = [...data.dates].reverse();
       const widthData: [number, number, number | null][] = [];
 
-      sortedSeries.forEach((seriesItem, industryIndex) => {
+      industries.forEach((industryName, industryIndex) => {
+        const seriesItem = data?.series.find(item => item.name === industryName);
         const widthMap = new Map(
-          seriesItem.points.map(point => [
+          (seriesItem?.points ?? []).map(point => [
             point.date.slice(0, 10),
             point.width ?? null,
           ]),
         );
+
         reversedDates.forEach((dateLabel, dateIndex) => {
           widthData.push([
             industryIndex,
@@ -55,7 +45,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
 
       return {
         dateLabels: reversedDates,
-        industries: sortedSeries.map(item => item.name),
+        industries,
         widthData,
       };
     }, [data]);

@@ -3,6 +3,7 @@ import { Row, Col } from 'antd';
 import type { EChartsOption } from 'echarts';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
+import { buildRecentDateLabels } from '../../../../utils/date';
 
 type PanelKey =
   | 'industryTrend'
@@ -35,6 +36,7 @@ const panelMeta: Array<{ key: PanelKey; title: string }> = [
 ];
 
 const PageTwoIndicators: React.FC = () => {
+  const dateAxis = useMemo(() => buildRecentDateLabels(30), []);
   const chartOptions = useMemo<Record<PanelKey, EChartsOption>>(() => {
     const makeSeries = (len: number, seed: number) =>
       Array.from({ length: len }, (_, i) =>
@@ -45,7 +47,7 @@ const PageTwoIndicators: React.FC = () => {
       grid: { left: 20, right: 10, top: 10, bottom: 20 },
       xAxis: {
         type: 'category',
-        data: data.map((_, i) => i),
+        data: dateAxis,
         axisLine: { lineStyle: { color: '#556' } },
         axisLabel: { color: '#889' },
       },
@@ -73,7 +75,7 @@ const PageTwoIndicators: React.FC = () => {
       legend: { top: 4, textStyle: { color: '#a0aec0' } },
       xAxis: {
         type: 'category',
-        data: Array.from({ length: 30 }, (_, i) => i),
+        data: dateAxis,
         axisLine: { lineStyle: { color: '#556' } },
         axisLabel: { color: '#889' },
       },
@@ -103,7 +105,7 @@ const PageTwoIndicators: React.FC = () => {
       placeholder1: baseOption(makeSeries(30, 3), '#5470c6'),
       placeholder2: baseOption(makeSeries(30, 4), '#fac858'),
     };
-  }, []);
+  }, [dateAxis]);
 
   const industryTrendChart = useEChart({
     option: chartOptions.industryTrend,

@@ -1,4 +1,5 @@
-﻿import type { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
+import { buildRecentDateLabels } from '../../../../utils/date';
 
 export interface SmallChartConfig {
   key: string;
@@ -6,18 +7,7 @@ export interface SmallChartConfig {
   option: EChartsOption;
 }
 
-const TIME_SCALE = [
-  '09:30',
-  '10:00',
-  '10:30',
-  '11:00',
-  '11:30',
-  '13:00',
-  '13:30',
-  '14:00',
-  '14:30',
-  '15:00',
-];
+const TIME_SCALE = buildRecentDateLabels(10);
 
 const baseSmallChartOption = (
   data: number[],

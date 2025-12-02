@@ -17,38 +17,31 @@ interface IndustryMomentumChartProps {
 const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
   ({ data, loading, error }) => {
     const chartSeries = useMemo(() => {
-      if (!data) {
-        return { dates: [] as string[], series: [] as any[] };
-      }
+      const dates = (data?.dates ?? []).map(date => date.slice(0, 10));
+      const industryList = [...SHENWAN_LEVEL1_INDUSTRIES];
 
-      const orderMap = new Map(
-        SHENWAN_LEVEL1_INDUSTRIES.map((name, index) => [name, index]),
-      );
-
-      const sortedSeries = [...data.series].sort((a, b) => {
-        const orderA = orderMap.get(a.name) ?? Number.MAX_SAFE_INTEGER;
-        const orderB = orderMap.get(b.name) ?? Number.MAX_SAFE_INTEGER;
-        return orderA - orderB;
-      });
-
-      const series = sortedSeries.map(seriesItem => {
+      const series = industryList.map(industryName => {
+        const sourceSeries = data?.series.find(
+          item => item.name === industryName,
+        );
         const pointMap = new Map(
-          seriesItem.points.map(point => [
+          (sourceSeries?.points ?? []).map(point => [
             point.date.slice(0, 10),
             point.momentum ?? null,
           ]),
         );
+
         return {
-          name: seriesItem.name,
+          name: industryName,
           type: 'line' as const,
           smooth: true,
-          data: data.dates.map(date => pointMap.get(date) ?? null),
+          data: dates.map(date => pointMap.get(date) ?? null),
           symbol: 'none' as const,
           lineStyle: { width: 1.5 },
         };
       });
 
-      return { dates: data.dates, series };
+      return { dates, series };
     }, [data]);
 
     const formatYearLabel = useCallback((value: string) => {
@@ -125,7 +118,7 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
       lazy: true,
     });
 
-    const noData = !loading && !error && chartSeries.series.length === 0;
+    const noData = !loading && !error && chartSeries.dates.length === 0;
 
     return (
       <ChartPanelBody style={{ flex: '1 1 auto', minHeight: 0 }}>
