@@ -391,7 +391,7 @@ export const GlassCard = styled.section`
 
   &.full-span {
     grid-column: 1 / -1;
-    height: 100%;
+    min-height: 0;
   }
 
   @media (hover: hover) and (pointer: fine) {

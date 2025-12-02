@@ -4,6 +4,10 @@ import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
 import { formatShortDateLabel } from '../../../../utils/date';
 import {
+  buildRankingTooltipContent,
+  TOOLTIP_EXTRA_CSS,
+} from '../../../../utils/chartTooltip';
+import {
   ChartPanelBody,
   ChartCanvas,
   ChartMessage,
@@ -25,6 +29,13 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       const reversedDates = [...normalizedDates].reverse();
 
       const widthData: [number, number, number | null][] = [];
+      const dateIndustryValues = new Map<
+        string,
+        { industry: string; value: number | null }[]
+      >();
+      reversedDates.forEach(date => {
+        dateIndustryValues.set(date, []);
+      });
 
       industries.forEach((industryName, industryIndex) => {
         const seriesItem = data?.series.find(item => item.name === industryName);
@@ -36,11 +47,12 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
         );
 
         reversedDates.forEach((dateLabel, dateIndex) => {
-          widthData.push([
-            industryIndex,
-            dateIndex,
-            widthMap.get(dateLabel) ?? null,
-          ]);
+          const widthValue = widthMap.get(dateLabel) ?? null;
+          widthData.push([industryIndex, dateIndex, widthValue]);
+          dateIndustryValues.get(dateLabel)?.push({
+            industry: industryName,
+            value: widthValue,
+          });
         });
       });
 
@@ -48,6 +60,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
         dateLabels: reversedDates,
         industries,
         widthData,
+        dateIndustryValues,
       };
     }, [data]);
 
@@ -69,6 +82,42 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       [],
     );
 
+    const tooltipPosition = useCallback(
+      (
+        point: number[],
+        _params: unknown,
+        _dom?: HTMLElement,
+        _rect?: any,
+        size?: { contentSize: number[]; viewSize: number[] },
+      ) => {
+        const [mouseX, mouseY] = point;
+        const [tipWidth, tipHeight] = size?.contentSize ?? [0, 0];
+        const fallbackWidth =
+          typeof window !== 'undefined' ? window.innerWidth : tipWidth;
+        const fallbackHeight =
+          typeof window !== 'undefined' ? window.innerHeight : tipHeight;
+        const [viewWidth, viewHeight] = size?.viewSize ?? [
+          fallbackWidth,
+          fallbackHeight,
+        ];
+
+        let left = mouseX + 16;
+        if (left + tipWidth > viewWidth - 8) {
+          left = mouseX - tipWidth - 16;
+        }
+        left = Math.max(8, Math.min(left, viewWidth - tipWidth - 8));
+
+        const nearTop = mouseY < tipHeight + 40;
+        let top = nearTop ? mouseY + 16 : mouseY - tipHeight - 16;
+        if (top + tipHeight > viewHeight - 8) {
+          top = viewHeight - tipHeight - 8;
+        }
+        top = Math.max(8, top);
+        return [left, top];
+      },
+      [],
+    );
+
     const industryWidthOption = useMemo(
       () => ({
         backgroundColor: 'transparent',
@@ -79,13 +128,31 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
           borderColor: '#1890ff',
           textStyle: { color: '#e6f7ff' },
+          appendToBody: true,
+          position: tooltipPosition,
+          extraCssText: TOOLTIP_EXTRA_CSS,
           formatter: (params: any) => {
-            const [industryIndex, dateIndex, value] = params.data;
-            const date = formatDateLabel(chartData.dateLabels[dateIndex]);
-            const industry = chartData.industries[industryIndex];
-            const widthValue =
-              typeof value === 'number' ? `${value.toFixed(2)}%` : '-';
-            return `${date}<br/>${industry}: ${widthValue}`;
+            const [industryIndex, dateIndex] = params.data;
+            const dateLabel = chartData.dateLabels[dateIndex];
+            const date = formatDateLabel(dateLabel);
+            const hoveredIndustry = chartData.industries[industryIndex];
+            const values =
+              chartData.dateIndustryValues.get(dateLabel) ?? [];
+            const sorted = [...values].sort((a, b) => {
+              const valueA = typeof a.value === 'number' ? a.value : -Infinity;
+              const valueB = typeof b.value === 'number' ? b.value : -Infinity;
+              return valueB - valueA;
+            });
+            const items = sorted.map((item, idx) => ({
+              rank: idx + 1,
+              label: item.industry,
+              value:
+                typeof item.value === 'number'
+                  ? `${item.value.toFixed(2)}%`
+                  : '-',
+              highlight: item.industry === '银行',
+            }));
+            return buildRankingTooltipContent(date, items);
           },
         },
         xAxis: {
@@ -183,7 +250,14 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           },
         ],
       }),
-      [chartData, defaultStart, defaultEnd, formatLabelVertical, formatDateLabel],
+      [
+        chartData,
+        defaultStart,
+        defaultEnd,
+        formatLabelVertical,
+        formatDateLabel,
+        tooltipPosition,
+      ],
     );
 
     const { containerRef, isVisible } = useEChart({

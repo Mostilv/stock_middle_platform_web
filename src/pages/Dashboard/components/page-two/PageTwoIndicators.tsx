@@ -1,9 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Row, Col } from 'antd';
 import type { EChartsOption } from 'echarts';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 import { buildRecentDateLabels } from '../../../../utils/date';
+import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
+import {
+  buildRankingTooltipContent,
+  TOOLTIP_EXTRA_CSS,
+} from '../../../../utils/chartTooltip';
 
 type PanelKey =
   | 'industryTrend'
@@ -11,14 +16,6 @@ type PanelKey =
   | 'placeholder1'
   | 'placeholder2';
 
-const industryNames = [
-  '计算机',
-  '医药生物',
-  '食品饮料',
-  '银行',
-  '非银金融',
-  '有色金属',
-];
 const industryColors = [
   '#3ba272',
   '#ee6666',
@@ -40,6 +37,43 @@ const PageTwoIndicators: React.FC = () => {
     () => buildRecentDateLabels(30, undefined, 'YY-MM-DD'),
     [],
   );
+
+  const tooltipPosition = useCallback(
+    (
+      point: number[],
+      _params: unknown,
+      _dom?: HTMLElement,
+      _rect?: any,
+      size?: { contentSize: number[]; viewSize: number[] },
+    ) => {
+      const [mouseX, mouseY] = point;
+      const [tipWidth, tipHeight] = size?.contentSize ?? [0, 0];
+      const fallbackWidth =
+        typeof window !== 'undefined' ? window.innerWidth : tipWidth;
+      const fallbackHeight =
+        typeof window !== 'undefined' ? window.innerHeight : tipHeight;
+      const [viewWidth, viewHeight] = size?.viewSize ?? [
+        fallbackWidth,
+        fallbackHeight,
+      ];
+
+      let left = mouseX + 16;
+      if (left + tipWidth > viewWidth - 8) {
+        left = mouseX - tipWidth - 16;
+      }
+      left = Math.max(8, Math.min(left, viewWidth - tipWidth - 8));
+
+      const nearTop = mouseY < tipHeight + 40;
+      let top = nearTop ? mouseY + 16 : mouseY - tipHeight - 16;
+      if (top + tipHeight > viewHeight - 8) {
+        top = viewHeight - tipHeight - 8;
+      }
+      top = Math.max(8, top);
+      return [left, top];
+    },
+    [],
+  );
+
   const chartOptions = useMemo<Record<PanelKey, EChartsOption>>(() => {
     const makeSeries = (len: number, seed: number) =>
       Array.from({ length: len }, (_, i) =>
@@ -52,7 +86,51 @@ const PageTwoIndicators: React.FC = () => {
       borderColor: '#1890ff',
       textStyle: { color: '#e6f7ff' },
       axisPointer: { type: 'line' as const },
+      position: tooltipPosition,
+      appendToBody: true,
+      extraCssText: TOOLTIP_EXTRA_CSS,
     };
+
+    const buildIndustryRankingTooltip = () => ({
+      ...sharedTooltip,
+      formatter: (params: any) => {
+        if (!Array.isArray(params) || params.length === 0) return '';
+        const rawLabel =
+          params[0]?.axisValueLabel ?? params[0]?.axisValue ?? '';
+        const sorted = [...params].sort((a, b) => {
+          const valueA =
+            typeof a.data === 'number'
+              ? a.data
+              : Number.isFinite(Number(a.data))
+                ? Number(a.data)
+                : -Infinity;
+          const valueB =
+            typeof b.data === 'number'
+              ? b.data
+              : Number.isFinite(Number(b.data))
+                ? Number(b.data)
+                : -Infinity;
+          return valueB - valueA;
+        });
+        const items = sorted.map((item, index) => {
+          const value =
+            typeof item.data === 'number'
+              ? item.data
+              : Number.isFinite(Number(item.data))
+                ? Number(item.data)
+                : null;
+          const valueText =
+            typeof value === 'number' ? value.toFixed(2) : '-';
+          return {
+            rank: index + 1,
+            label: item.seriesName,
+            value: valueText,
+            highlight: item.seriesName === '银行',
+          };
+        });
+        return buildRankingTooltipContent(rawLabel, items);
+      },
+    });
 
     const baseOption = (data: number[], color: string): EChartsOption => ({
       grid: { left: 20, right: 10, top: 10, bottom: 20 },
@@ -84,8 +162,13 @@ const PageTwoIndicators: React.FC = () => {
 
     const industryTrend: EChartsOption = {
       grid: { left: 20, right: 10, top: 30, bottom: 20 },
-      legend: { top: 4, textStyle: { color: '#a0aec0' } },
-      tooltip: sharedTooltip,
+      legend: {
+        top: 4,
+        type: 'scroll',
+        data: [...SHENWAN_LEVEL1_INDUSTRIES],
+        textStyle: { color: '#a0aec0' },
+      },
+      tooltip: buildIndustryRankingTooltip(),
       xAxis: {
         type: 'category',
         data: dateAxis,
@@ -98,7 +181,7 @@ const PageTwoIndicators: React.FC = () => {
         splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
         axisLabel: { color: '#889' },
       },
-      series: industryNames.map((name, idx) => ({
+      series: SHENWAN_LEVEL1_INDUSTRIES.map((name, idx) => ({
         name,
         type: 'line',
         smooth: false,
@@ -118,7 +201,7 @@ const PageTwoIndicators: React.FC = () => {
       placeholder1: baseOption(makeSeries(30, 3), '#5470c6'),
       placeholder2: baseOption(makeSeries(30, 4), '#fac858'),
     };
-  }, [dateAxis]);
+  }, [dateAxis, tooltipPosition]);
 
   const industryTrendChart = useEChart({
     option: chartOptions.industryTrend,
