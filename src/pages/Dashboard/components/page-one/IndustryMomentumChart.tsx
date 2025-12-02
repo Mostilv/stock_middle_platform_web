@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
+import { formatShortDateLabel } from '../../../../utils/date';
 import {
   ChartPanelBody,
   ChartCanvas,
@@ -34,7 +35,7 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
         return {
           name: industryName,
           type: 'line' as const,
-          smooth: true,
+          smooth: false,
           data: dates.map(date => pointMap.get(date) ?? null),
           symbol: 'none' as const,
           lineStyle: { width: 1.5 },
@@ -44,12 +45,10 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
       return { dates, series };
     }, [data]);
 
-    const formatYearLabel = useCallback((value: string) => {
-      if (!value) {
-        return '';
-      }
-      return value.length > 2 ? value.slice(2) : value;
-    }, []);
+    const formatDateLabel = useCallback(
+      (value: string) => formatShortDateLabel(value),
+      [],
+    );
 
     const industryMomentumOption = useMemo(
       () => ({
@@ -64,8 +63,8 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
         formatter: (params: any) => {
           if (!Array.isArray(params) || params.length === 0) return '';
 
-          const dateLabel =
-            params[0]?.axisValueLabel ?? params[0]?.axisValue ?? '';
+          const rawLabel = params[0]?.axisValue ?? params[0]?.axisValueLabel ?? '';
+          const dateLabel = formatDateLabel(rawLabel);
           const sortedItems = [...params].sort((a, b) => {
             const valueA = typeof a.data === 'number' ? a.data : Number(a.data) || 0;
             const valueB = typeof b.data === 'number' ? b.data : Number(b.data) || 0;
@@ -99,7 +98,7 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
         axisLine: { lineStyle: { color: '#4a5568' } },
         axisLabel: {
           color: '#e6f7ff',
-          formatter: formatYearLabel,
+          formatter: formatDateLabel,
         },
       },
       yAxis: {
@@ -110,7 +109,7 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
       },
       series: chartSeries.series,
     }),
-      [chartSeries, formatYearLabel],
+      [chartSeries, formatDateLabel],
     );
 
     const { containerRef, isVisible } = useEChart({

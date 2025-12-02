@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
+import { formatShortDateLabel } from '../../../../utils/date';
 import {
   ChartPanelBody,
   ChartCanvas,
@@ -63,10 +64,10 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       [],
     );
 
-    const formatYearLabel = useCallback((label: string) => {
-      if (!label) return '';
-      return label.length > 2 ? label.slice(2) : label;
-    }, []);
+    const formatDateLabel = useCallback(
+      (label: string) => formatShortDateLabel(label),
+      [],
+    );
 
     const industryWidthOption = useMemo(
       () => ({
@@ -80,7 +81,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           textStyle: { color: '#e6f7ff' },
           formatter: (params: any) => {
             const [industryIndex, dateIndex, value] = params.data;
-            const date = formatYearLabel(chartData.dateLabels[dateIndex]);
+            const date = formatDateLabel(chartData.dateLabels[dateIndex]);
             const industry = chartData.industries[industryIndex];
             const widthValue =
               typeof value === 'number' ? `${value.toFixed(2)}%` : '-';
@@ -107,7 +108,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           axisLabel: {
             color: '#e6f7ff',
             fontSize: 10,
-            formatter: formatYearLabel,
+            formatter: formatDateLabel,
           },
           axisTick: { show: false },
           splitLine: { show: false },
@@ -182,7 +183,7 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           },
         ],
       }),
-      [chartData, defaultStart, defaultEnd, formatLabelVertical, formatYearLabel],
+      [chartData, defaultStart, defaultEnd, formatLabelVertical, formatDateLabel],
     );
 
     const { containerRef, isVisible } = useEChart({

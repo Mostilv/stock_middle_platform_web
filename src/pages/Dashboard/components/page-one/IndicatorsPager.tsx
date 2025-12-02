@@ -57,7 +57,7 @@ const IndicatorsPager: React.FC<IndicatorsPagerProps> = ({ marketData }) => {
         {
           type: 'line',
           data,
-          smooth: true,
+          smooth: false,
           symbol: 'none',
           lineStyle: { color, width: 2 },
           areaStyle: { color: `${color}1A` },

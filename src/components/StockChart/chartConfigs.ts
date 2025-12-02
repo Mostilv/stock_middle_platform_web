@@ -280,7 +280,7 @@ export const getLineOption = (
       name: '价格',
       type: 'line',
       data: prices,
-      smooth: true,
+      smooth: false,
       symbol: showDataLabel ? 'circle' : 'none',
       symbolSize: 4,
       lineStyle: {

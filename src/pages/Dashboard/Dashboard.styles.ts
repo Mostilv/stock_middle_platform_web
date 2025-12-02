@@ -348,6 +348,7 @@ export const GlassCard = styled.section`
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 16px;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -356,7 +357,8 @@ export const GlassCard = styled.section`
   transition:
     transform 0.45s ease,
     background 0.3s ease,
-    border-color 0.3s ease;
+    border-color 0.3s ease,
+    box-shadow 0.45s ease;
   will-change: transform;
 
   &::before {
@@ -390,6 +392,14 @@ export const GlassCard = styled.section`
   &.full-span {
     grid-column: 1 / -1;
     height: 100%;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 25px 45px rgba(5, 8, 20, 0.55);
+    }
   }
 `;
 

@@ -14,3 +14,17 @@ export const buildRecentDateLabels = (
       .format(format),
   );
 };
+
+export const formatShortDateLabel = (
+  value?: ConfigType | null,
+  format = 'YY-MM-DD',
+): string => {
+  if (value === undefined || value === null || value === '') {
+    return '';
+  }
+  const date = dayjs(value);
+  if (!date.isValid()) {
+    return typeof value === 'string' ? value : '';
+  }
+  return date.format(format);
+};

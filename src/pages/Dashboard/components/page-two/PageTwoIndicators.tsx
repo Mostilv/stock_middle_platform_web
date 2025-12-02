@@ -36,15 +36,27 @@ const panelMeta: Array<{ key: PanelKey; title: string }> = [
 ];
 
 const PageTwoIndicators: React.FC = () => {
-  const dateAxis = useMemo(() => buildRecentDateLabels(30), []);
+  const dateAxis = useMemo(
+    () => buildRecentDateLabels(30, undefined, 'YY-MM-DD'),
+    [],
+  );
   const chartOptions = useMemo<Record<PanelKey, EChartsOption>>(() => {
     const makeSeries = (len: number, seed: number) =>
       Array.from({ length: len }, (_, i) =>
         Math.round(50 + 20 * Math.sin((i + seed) / 3) + Math.random() * 10),
       );
 
+    const sharedTooltip = {
+      trigger: 'axis' as const,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      borderColor: '#1890ff',
+      textStyle: { color: '#e6f7ff' },
+      axisPointer: { type: 'line' as const },
+    };
+
     const baseOption = (data: number[], color: string): EChartsOption => ({
       grid: { left: 20, right: 10, top: 10, bottom: 20 },
+      tooltip: sharedTooltip,
       xAxis: {
         type: 'category',
         data: dateAxis,
@@ -61,7 +73,7 @@ const PageTwoIndicators: React.FC = () => {
         {
           type: 'line',
           data,
-          smooth: true,
+          smooth: false,
           symbol: 'none',
           lineStyle: { color, width: 2 },
           areaStyle: { color: `${color}1A` },
@@ -73,6 +85,7 @@ const PageTwoIndicators: React.FC = () => {
     const industryTrend: EChartsOption = {
       grid: { left: 20, right: 10, top: 30, bottom: 20 },
       legend: { top: 4, textStyle: { color: '#a0aec0' } },
+      tooltip: sharedTooltip,
       xAxis: {
         type: 'category',
         data: dateAxis,
@@ -88,7 +101,7 @@ const PageTwoIndicators: React.FC = () => {
       series: industryNames.map((name, idx) => ({
         name,
         type: 'line',
-        smooth: true,
+        smooth: false,
         symbol: 'none',
         lineStyle: {
           color: industryColors[idx % industryColors.length],

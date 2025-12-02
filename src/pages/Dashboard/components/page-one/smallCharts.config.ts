@@ -7,7 +7,7 @@ export interface SmallChartConfig {
   option: EChartsOption;
 }
 
-const TIME_SCALE = buildRecentDateLabels(10);
+const TIME_SCALE = buildRecentDateLabels(10, undefined, 'YY-MM-DD');
 
 const baseSmallChartOption = (
   data: number[],
@@ -36,7 +36,7 @@ const baseSmallChartOption = (
   series: [
     {
       type: 'line',
-      smooth: true,
+      smooth: false,
       data,
       lineStyle: { color, width: 1 },
       symbol: 'none',

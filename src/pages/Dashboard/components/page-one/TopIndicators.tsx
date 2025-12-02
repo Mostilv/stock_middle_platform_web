@@ -46,7 +46,7 @@ const TopIndicators: React.FC<TopIndicatorsProps> = ({ marketData }) => {
         data,
         lineStyle: { color, width: 2 },
         symbol: 'none',
-        smooth: true,
+        smooth: false,
         areaStyle: {
           color: {
             type: 'linear',

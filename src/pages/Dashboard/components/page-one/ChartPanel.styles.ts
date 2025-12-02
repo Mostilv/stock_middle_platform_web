@@ -29,6 +29,19 @@ export const ChartMessage = styled.p<{ $variant?: 'error' }>`
 export const SmallChartCardRoot = styled(ChartPanelBody)`
   gap: 4px;
   padding: 2px 0 4px;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+  border-radius: 12px;
+  position: relative;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 30px rgba(5, 8, 20, 0.45);
+    }
+  }
 `;
 
 export const SmallChartTitle = styled.span`
