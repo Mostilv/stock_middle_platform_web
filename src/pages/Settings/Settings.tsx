@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   Alert,
   Avatar,
@@ -107,13 +107,17 @@ const Settings: React.FC = () => {
   const { isAuthenticated, user, logout, updateUser } = useAuth();
   const [profileExpanded, setProfileExpanded] = useState(false);
   const [passwordExpanded, setPasswordExpanded] = useState(false);
+  const settingsLoadedRef = useRef(false);
+  const profileLoadedRef = useRef(false);
 
   const [notificationTemplates, setNotificationTemplates] = useState<
     NotificationTemplate[]
   >([]);
 
   useEffect(() => {
+    if (settingsLoadedRef.current) return;
     let mounted = true;
+    settingsLoadedRef.current = true;
     fetchSettingsData()
       .then(data => {
         if (!mounted) return;
@@ -121,6 +125,7 @@ const Settings: React.FC = () => {
         setNotificationTemplates(data.notificationTemplates as any);
       })
       .catch(() => {
+        settingsLoadedRef.current = false;
         // 保持空数组
       });
     return () => {
@@ -137,8 +142,9 @@ const Settings: React.FC = () => {
   }, [profileForm, user]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || profileLoadedRef.current) return;
     let mounted = true;
+    profileLoadedRef.current = true;
     fetchAccountProfile()
       .then(profile => {
         if (!mounted) return;
@@ -162,6 +168,7 @@ const Settings: React.FC = () => {
         });
       })
       .catch(() => {
+        profileLoadedRef.current = false;
         // ignore
       });
     return () => {
@@ -173,6 +180,8 @@ const Settings: React.FC = () => {
     if (!isAuthenticated) {
       setProfileExpanded(false);
       setPasswordExpanded(false);
+      profileLoadedRef.current = false;
+      settingsLoadedRef.current = false;
     }
   }, [isAuthenticated]);
 
