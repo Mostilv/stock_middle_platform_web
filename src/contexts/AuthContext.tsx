@@ -30,6 +30,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const isAuthenticated = Boolean(user);
 
+  const persistUser = useCallback((nextUser: AuthUser | null) => {
+    if (typeof window === 'undefined') return;
+    if (nextUser) {
+      window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+    } else {
+      window.localStorage.removeItem(AUTH_USER_KEY);
+    }
+  }, []);
+
+  const applyUser = useCallback(
+    (nextUser: AuthUser | null) => {
+      setUser(nextUser);
+      persistUser(nextUser);
+    },
+    [persistUser, setUser],
+  );
+
   useEffect(() => {
     if (hydrated) return;
     const storedUser = readStoredUser();
@@ -55,12 +72,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         if (result?.token) {
           if (typeof window !== 'undefined') {
             window.localStorage.setItem(AUTH_TOKEN_KEY, result.token);
-            window.localStorage.setItem(
-              AUTH_USER_KEY,
-              JSON.stringify(result.user || { username }),
-            );
           }
-          setUser(result.user || { username });
+          applyUser(result.user || { username });
           message.success('ç™»å½•æˆåŠŸ');
           return true;
         }
@@ -77,16 +90,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setLoading(false);
       }
     },
-    [setUser],
+    [applyUser],
   );
 
   const logout = useCallback(() => {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(AUTH_TOKEN_KEY);
-      window.localStorage.removeItem(AUTH_USER_KEY);
     }
-    setUser(null);
-  }, [setUser]);
+    applyUser(null);
+  }, [applyUser]);
+
+  const updateUser = useCallback(
+    (updates: Partial<AuthUser>) => {
+      if (!user) return;
+      const nextUser: AuthUser = {
+        ...user,
+        ...updates,
+      };
+      applyUser(nextUser);
+    },
+    [applyUser, user],
+  );
 
   const value = useMemo(
     () => ({
@@ -95,8 +119,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       loading,
       login,
       logout,
+      updateUser,
     }),
-    [isAuthenticated, user, loading, login, logout],
+    [isAuthenticated, user, loading, login, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

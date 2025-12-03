@@ -11,7 +11,18 @@ export const SettingsContainer = styled(PageContainer)`
 `;
 
 export const SettingsContent = styled(PageBody)`
-  padding-bottom: 8px;
+  padding: 8px 0 16px;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  overflow-x: visible;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 `;
 
 export const SettingsHeader = styled(PageHeader)`
@@ -35,7 +46,11 @@ export const SettingsCard = styled.div`
 
   .ant-card {
     border-radius: 8px;
-    box-shadow: var(--page-panel-shadow);
+    box-shadow: var(
+      --page-panel-shadow,
+      0 10px 24px rgba(15, 23, 42, 0.08),
+      0 1px 3px rgba(15, 23, 42, 0.05)
+    );
     border: 1px solid rgba(15, 23, 42, 0.08);
 
     .ant-card-head {
@@ -57,25 +72,30 @@ export const AccountCard = styled.div`
   width: 100%;
   margin-bottom: 16px;
   padding: 20px 24px;
-  border-radius: 14px;
-  background: linear-gradient(120deg, #0f172a, #1e3a8a);
-  color: #f8fafc;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: var(
+    --page-panel-shadow,
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    0 1px 3px rgba(15, 23, 42, 0.05)
+  );
 
   h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #f8fafc;
+    color: #0f172a;
   }
 
   p {
     margin: 4px 0 0;
-    color: rgba(248, 250, 252, 0.8);
+    color: #475569;
   }
 `;
 

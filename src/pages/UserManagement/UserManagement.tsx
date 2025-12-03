@@ -88,10 +88,15 @@ const UserManagement: React.FC = () => {
           username: values.username,
           email: values.email,
           full_name: values.full_name,
+          display_name: values.display_name,
+          avatar_url: values.avatar_url,
           is_active: values.is_active,
           is_superuser: values.is_superuser,
           isReal: values.isReal,
         };
+        if (values.newPassword) {
+          updateData.password = values.newPassword;
+        }
         await updateUser(editingUser.id, updateData);
         message.success('用户更新成功');
       } else {
@@ -101,6 +106,8 @@ const UserManagement: React.FC = () => {
           email: values.email,
           password: values.password,
           full_name: values.full_name,
+          display_name: values.display_name,
+          avatar_url: values.avatar_url,
           isReal: values.isReal,
         };
         await createUser(createData);
@@ -145,6 +152,8 @@ const UserManagement: React.FC = () => {
       username: user.username,
       email: user.email,
       full_name: user.full_name,
+      display_name: user.display_name,
+      avatar_url: user.avatar_url,
       is_active: user.is_active,
       is_superuser: user.is_superuser,
       isReal: user.isReal ?? true,
@@ -166,6 +175,10 @@ const UserManagement: React.FC = () => {
         user =>
           user.username.toLowerCase().includes(searchText.toLowerCase()) ||
           user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+          (user.display_name &&
+            user.display_name
+              .toLowerCase()
+              .includes(searchText.toLowerCase())) ||
           (user.full_name &&
             user.full_name.toLowerCase().includes(searchText.toLowerCase())),
       )
@@ -177,14 +190,25 @@ const UserManagement: React.FC = () => {
       title: '用户',
       dataIndex: 'username',
       key: 'username',
-      render: (text: string, record: User) => (
-        <Space>
-          <Avatar icon={<UserOutlined />} />
+      render: (_text: string, record: User) => (
+        <Space align='start'>
+          <Avatar
+            src={record.avatar_url || undefined}
+            icon={<UserOutlined />}
+            style={{ backgroundColor: '#e0f2fe', color: '#0f172a' }}
+          />
           <div>
-            <div style={{ fontWeight: 500 }}>{text}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              {record.full_name}
+            <div style={{ fontWeight: 500 }}>
+              {record.display_name || record.username}
             </div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              用户名：{record.username}
+            </div>
+            {record.full_name && (
+              <div style={{ fontSize: '12px', color: '#999' }}>
+                姓名：{record.full_name}
+              </div>
+            )}
           </div>
         </Space>
       ),
@@ -273,7 +297,7 @@ const UserManagement: React.FC = () => {
         <div className='header-actions'>
           <SearchContainer>
             <Search
-              placeholder='搜索用户名、邮箱或姓名'
+              placeholder='搜索用户名、邮箱、姓名或账户名称'
               allowClear
               onChange={e => setSearchText(e.target.value)}
               prefix={<SearchOutlined />}
@@ -377,6 +401,14 @@ const UserManagement: React.FC = () => {
             <Input placeholder='请输入姓名' />
           </Form.Item>
 
+          <Form.Item label='账户名称' name='display_name'>
+            <Input placeholder='请输入在前台展示的名称' />
+          </Form.Item>
+
+          <Form.Item label='头像地址' name='avatar_url'>
+            <Input placeholder='请输入头像图片链接' />
+          </Form.Item>
+
           <Form.Item
             label='数据类型'
             name='isReal'
@@ -417,6 +449,35 @@ const UserManagement: React.FC = () => {
                 valuePropName='checked'
               >
                 <Switch checkedChildren='是' unCheckedChildren='否' />
+              </Form.Item>
+              <Form.Item
+                label='新密码'
+                name='newPassword'
+                rules={[{ min: 6, message: '新密码至少6个字符' }]}
+              >
+                <Input.Password placeholder='不修改时可留空' />
+              </Form.Item>
+              <Form.Item
+                label='确认新密码'
+                name='confirmNewPassword'
+                dependencies={['newPassword']}
+                hasFeedback
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      const newPwd = getFieldValue('newPassword');
+                      if (!newPwd && !value) {
+                        return Promise.resolve();
+                      }
+                      if (newPwd === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('两次输入的新密码不一致'));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder='请再次输入新密码' />
               </Form.Item>
             </>
           )}

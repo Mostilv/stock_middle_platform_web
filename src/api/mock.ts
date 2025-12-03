@@ -29,6 +29,18 @@ const jsonResponse = <T>(
   ...(init ?? {}),
 });
 
+const readRequestBody = (config: AxiosRequestConfig): any => {
+  if (!config?.data) return {};
+  if (typeof config.data === 'string') {
+    try {
+      return config.data ? JSON.parse(config.data) : {};
+    } catch {
+      return {};
+    }
+  }
+  return config.data ?? {};
+};
+
 const marketDataMock = {
   shanghaiIndex: {
     current: 3700.25,
@@ -415,7 +427,9 @@ const usersMock = [
     id: 1,
     username: 'admin',
     email: 'admin@example.com',
-    full_name: '系统管理员',
+    full_name: 'System Admin',
+    display_name: '?????',
+    avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Admin',
     is_active: true,
     is_superuser: true,
     created_at: '2024-01-01T00:00:00Z',
@@ -426,7 +440,9 @@ const usersMock = [
     id: 2,
     username: 'trader',
     email: 'trader@example.com',
-    full_name: '交易员',
+    full_name: 'Trader',
+    display_name: '?????',
+    avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Trader',
     is_active: true,
     is_superuser: false,
     created_at: '2024-01-02T00:00:00Z',
@@ -437,7 +453,9 @@ const usersMock = [
     id: 3,
     username: 'analyst',
     email: 'analyst@example.com',
-    full_name: '分析师',
+    full_name: 'Analyst',
+    display_name: '?????',
+    avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Analyst',
     is_active: true,
     is_superuser: false,
     created_at: '2024-01-03T00:00:00Z',
@@ -448,7 +466,9 @@ const usersMock = [
     id: 4,
     username: 'viewer',
     email: 'viewer@example.com',
-    full_name: '观察员',
+    full_name: 'Viewer',
+    display_name: '???',
+    avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Viewer',
     is_active: false,
     is_superuser: false,
     created_at: '2024-01-04T00:00:00Z',
@@ -457,9 +477,36 @@ const usersMock = [
   },
 ];
 
+let accountProfileMock = {
+  username: 'admin',
+  email: 'admin@example.com',
+  role: 'admin',
+  display_name: '?????',
+  avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Admin',
+};
+
+
 const mockAuthUsers = {
-  admin: { password: '123456', role: 'admin' },
-  trader: { password: '123456', role: 'trader' },
+  admin: {
+    password: '123456',
+    role: 'admin',
+    profile: {
+      username: 'admin',
+      email: 'admin@example.com',
+      displayName: '策略管理员',
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Admin',
+    },
+  },
+  trader: {
+    password: '123456',
+    role: 'trader',
+    profile: {
+      username: 'trader',
+      email: 'trader@example.com',
+      displayName: '资深交易员',
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Trader',
+    },
+  },
 };
 
 const strategySubscriptionsMock = {
@@ -515,17 +562,78 @@ const routes: Record<string, MockHandler> = {
   'GET /settings/data': () => jsonResponse(settingsDataMock),
   'POST /settings/data': () => jsonResponse({ ok: true }),
   'GET /users': () => jsonResponse(usersMock),
+  'POST /users': ({ config }) => {
+    const body = readRequestBody(config);
+    const nextId =
+      usersMock.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+    const now = new Date().toISOString();
+    const username = body?.username || `user-${nextId}`;
+    const newUser = {
+      id: nextId,
+      username,
+      email: body?.email || `${username}@example.com`,
+      full_name: body?.full_name || '',
+      display_name: body?.display_name || username,
+      avatar_url:
+        body?.avatar_url ||
+        `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username)}`,
+      is_active: body?.is_active ?? true,
+      is_superuser: body?.is_superuser ?? false,
+      created_at: now,
+      updated_at: now,
+      isReal: body?.isReal ?? true,
+    };
+    usersMock.push(newUser);
+    return jsonResponse(newUser);
+  },
+  'GET /account/profile': () => jsonResponse(accountProfileMock),
+  'PUT /account/profile': ({ config }) => {
+    const body = readRequestBody(config);
+    accountProfileMock = {
+      ...accountProfileMock,
+      display_name:
+        body?.display_name ?? body?.displayName ?? accountProfileMock.display_name,
+      avatar_url:
+        body?.avatar_url ?? body?.avatarUrl ?? accountProfileMock.avatar_url,
+      email: body?.email ?? accountProfileMock.email,
+    };
+    return jsonResponse(accountProfileMock);
+  },
+  'POST /account/password': ({ config }) => {
+    const body = readRequestBody(config);
+    if (!body?.currentPassword || !body?.newPassword) {
+      return jsonResponse(
+        { message: 'missing password fields' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+    }
+    return jsonResponse({ ok: true });
+  },
   'GET /analytics/industry/metrics': () => jsonResponse(industryMetricsMock),
   'POST /auth/login': ({ config }) => {
-    const body =
-      typeof config.data === 'string' ? JSON.parse(config.data) : config.data;
+    const body = readRequestBody(config);
     const matched = mockAuthUsers[body?.username as keyof typeof mockAuthUsers];
     if (matched && body?.password === matched.password) {
+      const profile = matched.profile || {
+        username: body.username,
+        email: `${body.username}@example.com`,
+        displayName: body.username,
+      };
+      accountProfileMock = {
+        username: profile.username,
+        email: profile.email,
+        role: matched.role,
+        display_name: profile.displayName ?? profile.username,
+        avatar_url: profile.avatarUrl,
+      };
       return jsonResponse({
         token: `mock-token-${body.username}`,
         user: {
-          username: body.username,
+          username: profile.username,
           role: matched.role,
+          email: profile.email,
+          displayName: profile.displayName,
+          avatarUrl: profile.avatarUrl,
         },
       });
     }
@@ -561,6 +669,50 @@ const routes: Record<string, MockHandler> = {
   },
 };
 
+const handleDynamicRoute = (
+  method: string,
+  path: string,
+  config: AxiosRequestConfig,
+): MockResult | undefined => {
+  if (path.startsWith('/users/')) {
+    const id = Number(path.split('/')[2]);
+    if (Number.isNaN(id)) {
+      return jsonResponse(
+        { message: 'invalid id' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+    }
+    if (method === 'PUT') {
+      const body = readRequestBody(config);
+      const index = usersMock.findIndex(user => user.id === id);
+      if (index === -1) {
+        return jsonResponse(
+          { message: 'not found' },
+          { status: 404, statusText: 'Not Found' },
+        );
+      }
+      usersMock[index] = {
+        ...usersMock[index],
+        ...body,
+        updated_at: new Date().toISOString(),
+      };
+      return jsonResponse(usersMock[index]);
+    }
+    if (method === 'DELETE') {
+      const index = usersMock.findIndex(user => user.id === id);
+      if (index === -1) {
+        return jsonResponse(
+          { message: 'not found' },
+          { status: 404, statusText: 'Not Found' },
+        );
+      }
+      usersMock.splice(index, 1);
+      return jsonResponse({ ok: true });
+    }
+  }
+  return undefined;
+};
+
 export async function resolveMockResponse<T = unknown>(
   config: AxiosRequestConfig,
 ): Promise<AxiosResponse<T> | undefined> {
@@ -571,10 +723,9 @@ export async function resolveMockResponse<T = unknown>(
   const [pathPart] = rawUrl.split('?');
   const normalizedPath = pathPart.startsWith('/') ? pathPart : `/${pathPart}`;
   const handler = routes[`${method} ${normalizedPath}`];
-
-  if (!handler) return undefined;
-
-  const result = await handler({ path: normalizedPath, config });
+  const result = handler
+    ? await handler({ path: normalizedPath, config })
+    : handleDynamicRoute(method, normalizedPath, config);
   if (!result) return undefined;
 
   return {

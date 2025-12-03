@@ -5,6 +5,8 @@ export interface User {
   username: string;
   email: string;
   full_name?: string;
+  display_name?: string;
+  avatar_url?: string;
   is_active: boolean;
   is_superuser: boolean;
   created_at: string;
@@ -17,6 +19,8 @@ export interface UserCreate {
   email: string;
   password: string;
   full_name?: string;
+  display_name?: string;
+  avatar_url?: string;
   isReal?: boolean;
 }
 
@@ -24,6 +28,9 @@ export interface UserUpdate {
   username?: string;
   email?: string;
   full_name?: string;
+  display_name?: string;
+  avatar_url?: string;
+  password?: string;
   is_active?: boolean;
   is_superuser?: boolean;
   isReal?: boolean;
