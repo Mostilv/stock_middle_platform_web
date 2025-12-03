@@ -23,8 +23,7 @@ import {
 } from '@ant-design/icons';
 import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
-import { fetchPortfolioOverview } from './services/portfolio.api';
-import type { PortfolioOverviewResponse } from './services/portfolio.api';
+import { useGlobalStore } from '../../stores/globalStore';
 import {
   PortfolioContent,
   PortfolioContainer,
@@ -81,97 +80,15 @@ interface Strategy {
 }
 
 const Portfolio: React.FC = () => {
-  const [strategies, setStrategies] = useState<Strategy[]>([
-    {
-      id: '1',
-      name: '价值投资策略',
-      description: '基于基本面分析的价值投资策略',
-      status: 'active',
-      totalValue: 1000000,
-      totalWeight: 100,
-      items: [
-        {
-          key: '1',
-          stock: '贵州茅台',
-          code: '600519',
-          currentWeight: 15.2,
-          targetWeight: 18.0,
-          action: 'buy',
-          price: 1688.0,
-          quantity: 100,
-          status: 'pending',
-          createdAt: '2024-01-15',
-          marketValue: 168800,
-        },
-        {
-          key: '2',
-          stock: '招商银行',
-          code: '600036',
-          currentWeight: 8.5,
-          targetWeight: 8.5,
-          action: 'hold',
-          price: 35.2,
-          quantity: 0,
-          status: 'completed',
-          createdAt: '2024-01-13',
-          marketValue: 0,
-        },
-      ],
-      createdAt: '2024-01-01',
-    },
-    {
-      id: '2',
-      name: '成长投资策略',
-      description: '专注于高成长性公司的投资策略',
-      status: 'active',
-      totalValue: 800000,
-      totalWeight: 100,
-      items: [
-        {
-          key: '3',
-          stock: '宁德时代',
-          code: '300750',
-          currentWeight: 12.8,
-          targetWeight: 10.0,
-          action: 'sell',
-          price: 245.6,
-          quantity: 200,
-          status: 'completed',
-          createdAt: '2024-01-14',
-          marketValue: 49120,
-        },
-      ],
-      createdAt: '2024-01-05',
-    },
-    {
-      id: '3',
-      name: '量化交易策略',
-      description: '基于技术指标的量化交易策略',
-      status: 'inactive',
-      totalValue: 500000,
-      totalWeight: 100,
-      items: [],
-      createdAt: '2024-01-10',
-    },
-  ]);
-  const [overview, setOverview] = useState<PortfolioOverviewResponse | null>(
-    null,
+  const strategies = useGlobalStore(state => state.strategies as Strategy[]);
+  const overview = useGlobalStore(state => state.overview);
+  const loadStrategies = useGlobalStore(state => state.loadStrategies);
+  const toggleStrategyStatus = useGlobalStore(
+    state => state.toggleStrategyStatus,
   );
-
   useEffect(() => {
-    let mounted = true;
-    fetchPortfolioOverview()
-      .then(data => {
-        if (!mounted) return;
-        setOverview(data);
-        setStrategies(data.strategies as any);
-      })
-      .catch(() => {});
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
+    loadStrategies().catch(() => {});
+  }, [loadStrategies]);
   const [stockDetailVisible, setStockDetailVisible] = useState(false);
   const [currentStockDetail, setCurrentStockDetail] =
     useState<StockDetail | null>(null);
@@ -389,40 +306,6 @@ const Portfolio: React.FC = () => {
 
   // 删除模态框相关功能，只保留详情查看
 
-  const toggleStrategyStatus = (strategyId: string) => {
-    // 获取当前策略的状态
-    const currentStrategy = strategies.find(
-      strategy => strategy.id === strategyId,
-    );
-    const newStatus =
-      currentStrategy?.status === 'active' ? 'inactive' : 'active';
-
-    // 更新策略状态
-    setStrategies(
-      strategies.map(strategy =>
-        strategy.id === strategyId
-          ? {
-              ...strategy,
-              status: newStatus,
-            }
-          : strategy,
-      ),
-    );
-
-    // 如果用户需要，可以在这里添加条件，只在切换到停用状态时折叠菜单
-    // 目前完全取消折叠联动，保持当前展开状态
-
-    // 如果需要只在切换到停用状态时折叠菜单，取消下面注释
-    /*
-    if (newStatus === 'inactive') {
-      // 获取全局折叠状态控制函数
-      const event = new CustomEvent('toggleSider', { detail: { collapsed: true } });
-      window.dispatchEvent(event);
-    }
-    */
-  };
-
-  // 统计数据
   const totalStrategies = strategies.length;
   const activeStrategies = strategies.filter(s => s.status === 'active').length;
   const totalHoldings = strategies.reduce(

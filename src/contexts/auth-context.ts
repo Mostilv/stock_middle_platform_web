@@ -1,8 +1,10 @@
 import { createContext } from 'react';
+import type { StrategySubscriptionPreference } from '../types/subscription';
 
 export interface AuthUser {
   username: string;
   role?: string;
+  subscriptions?: StrategySubscriptionPreference[];
 }
 
 export interface AuthContextValue {

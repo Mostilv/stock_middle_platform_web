@@ -8,6 +8,7 @@ import {
   AuthContext,
   type AuthUser,
 } from './auth-context';
+import { useGlobalStore } from '../stores/globalStore';
 
 const readStoredUser = (): AuthUser | null => {
   if (typeof window === 'undefined') return null;
@@ -23,9 +24,20 @@ const readStoredUser = (): AuthUser | null => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<AuthUser | null>(() => readStoredUser());
+  const user = useGlobalStore(state => state.user);
+  const setUser = useGlobalStore(state => state.setUser);
+  const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(false);
   const isAuthenticated = Boolean(user);
+
+  useEffect(() => {
+    if (hydrated) return;
+    const storedUser = readStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    setHydrated(true);
+  }, [hydrated, setUser]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -33,35 +45,40 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     if (!hasToken && user) {
       setUser(null);
     }
-  }, [user]);
+  }, [user, setUser]);
 
-  const login = useCallback(async (username: string, password: string) => {
-    setLoading(true);
-    try {
-      const result = await loginRequest({ username, password });
-      if (result?.token) {
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(AUTH_TOKEN_KEY, result.token);
-          window.localStorage.setItem(
-            AUTH_USER_KEY,
-            JSON.stringify(result.user || { username }),
-          );
+  const login = useCallback(
+    async (username: string, password: string) => {
+      setLoading(true);
+      try {
+        const result = await loginRequest({ username, password });
+        if (result?.token) {
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(AUTH_TOKEN_KEY, result.token);
+            window.localStorage.setItem(
+              AUTH_USER_KEY,
+              JSON.stringify(result.user || { username }),
+            );
+          }
+          setUser(result.user || { username });
+          message.success('ç™»å½•æˆåŠŸ');
+          return true;
         }
-        setUser(result.user || { username });
-        message.success('登录成功');
-        return true;
+        message.error('ç™»å½•å¤±è´¥ï¼Œè¯·é‡è¯•');
+        return false;
+      } catch (error) {
+        const msg =
+          error instanceof Error
+            ? error.message
+            : 'ç™»å½•å¤±è´¥ï¼Œè¯·æ£€æŸ¥è´¦å·ä¿¡æ?';
+        message.error(msg);
+        return false;
+      } finally {
+        setLoading(false);
       }
-      message.error('登录失败，请重试');
-      return false;
-    } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : '登录失败，请检查账号信息';
-      message.error(msg);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [setUser],
+  );
 
   const logout = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -69,7 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       window.localStorage.removeItem(AUTH_USER_KEY);
     }
     setUser(null);
-  }, []);
+  }, [setUser]);
 
   const value = useMemo(
     () => ({

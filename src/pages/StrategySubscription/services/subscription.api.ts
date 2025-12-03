@@ -1,6 +1,5 @@
 import { http } from '../../../api/httpClient';
-
-export type NotificationChannel = 'app' | 'email' | 'sms' | 'webhook';
+import type { NotificationChannel } from '../../../types/subscription';
 
 export interface StrategySubscriptionItem {
   id: string;
