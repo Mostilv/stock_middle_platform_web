@@ -16,23 +16,19 @@ export interface StrategySubscriptionItem {
   subscribers?: number;
 }
 
-export interface SignalPreview {
-  id: string;
-  strategyName: string;
-  time: string;
-  action: string;
-  expectedImpact: string;
-}
-
 export interface StrategySubscriptionResponse {
   strategies: StrategySubscriptionItem[];
-  recentSignals: SignalPreview[];
+  blacklist: string[];
 }
 
 export interface UpdateSubscriptionPayload {
   strategyId: string;
   subscribed: boolean;
   channels: NotificationChannel[];
+}
+
+export interface UpdateBlacklistPayload {
+  blacklist: string[];
 }
 
 export const fetchStrategySubscriptions =
@@ -44,5 +40,13 @@ export const updateStrategySubscription = (
 ): Promise<{ ok: boolean }> =>
   http.post<{ ok: boolean }, UpdateSubscriptionPayload>(
     '/strategies/subscriptions',
+    payload,
+  );
+
+export const updateStrategyBlacklist = (
+  payload: UpdateBlacklistPayload,
+): Promise<{ ok: boolean }> =>
+  http.post<{ ok: boolean }, UpdateBlacklistPayload>(
+    '/strategies/subscriptions/blacklist',
     payload,
   );

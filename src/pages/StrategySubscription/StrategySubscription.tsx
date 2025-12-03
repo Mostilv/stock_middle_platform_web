@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
-  Badge,
-  Button,
   Card,
   Checkbox,
-  Divider,
+  Input,
   Space,
   Statistic,
   Switch,
@@ -17,33 +14,30 @@ import {
   type ColumnsType,
 } from 'antd';
 import {
-  ThunderboltOutlined,
   BellOutlined,
-  SyncOutlined,
   RadarChartOutlined,
-  AimOutlined,
-  ClockCircleOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import {
   PageBody,
   PageContainer,
   PageHeader,
-  PageHeaderActions,
   PageTitle,
 } from '../../components/PageLayout';
 import {
   fetchStrategySubscriptions,
   updateStrategySubscription,
+  updateStrategyBlacklist,
 } from './services/subscription.api';
 import type {
   StrategySubscriptionItem,
-  SignalPreview,
   NotificationChannel,
 } from './services/subscription.api';
 import {
   CardPanel,
   ChannelRow,
   EmptyState,
+  PanelBody,
   SectionGrid,
   SectionTitle,
   StatsRow,
@@ -52,15 +46,11 @@ import {
 
 const { Text } = Typography;
 
-const riskColorMap: Record<StrategySubscriptionItem['riskLevel'], string> = {
-  高: 'red',
-  中: 'orange',
-  低: 'green',
-};
-
 const StrategySubscription: React.FC = () => {
   const [strategies, setStrategies] = useState<StrategySubscriptionItem[]>([]);
-  const [signals, setSignals] = useState<SignalPreview[]>([]);
+  const [blacklist, setBlacklist] = useState<string[]>([]);
+  const [blacklistInput, setBlacklistInput] = useState('');
+  const [blacklistSaving, setBlacklistSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
 
@@ -69,7 +59,7 @@ const StrategySubscription: React.FC = () => {
     try {
       const data = await fetchStrategySubscriptions();
       setStrategies(data.strategies || []);
-      setSignals(data.recentSignals || []);
+      setBlacklist(data.blacklist || []);
     } catch (error) {
       const msg =
         error instanceof Error ? error.message : '加载策略订阅数据失败';
@@ -129,6 +119,48 @@ const StrategySubscription: React.FC = () => {
     }
   };
 
+  const persistBlacklist = useCallback(async (nextList: string[]) => {
+    setBlacklistSaving(true);
+    try {
+      await updateStrategyBlacklist({ blacklist: nextList });
+      setBlacklist(nextList);
+      message.success('已更新黑名单');
+      return true;
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : '更新黑名单失败';
+      message.error(msg);
+      return false;
+    } finally {
+      setBlacklistSaving(false);
+    }
+  }, []);
+
+  const handleBlacklistAdd = useCallback(
+    async (rawValue?: string) => {
+      const inputValue = (rawValue ?? blacklistInput).trim();
+      if (!inputValue) return;
+      const normalized = inputValue.toUpperCase();
+      if (blacklist.includes(normalized)) {
+        message.info('该标的已在黑名单');
+        return;
+      }
+      const success = await persistBlacklist([...blacklist, normalized]);
+      if (success) {
+        setBlacklistInput('');
+      }
+    },
+    [blacklist, blacklistInput, persistBlacklist],
+  );
+
+  const handleBlacklistRemove = useCallback(
+    async (symbol: string) => {
+      const nextList = blacklist.filter(item => item !== symbol);
+      await persistBlacklist(nextList);
+    },
+    [blacklist, persistBlacklist],
+  );
+
   const subscribedCount = useMemo(
     () => strategies.filter(item => item.subscribed).length,
     [strategies],
@@ -139,50 +171,7 @@ const StrategySubscription: React.FC = () => {
       title: '策略',
       dataIndex: 'name',
       key: 'name',
-      render: (_: string, record) => (
-        <Space direction='vertical' size={4}>
-          <Space size={8} wrap>
-            <Text strong>{record.name}</Text>
-            <Tag color={riskColorMap[record.riskLevel]}>
-              风险：{record.riskLevel}
-            </Tag>
-            <Tag color='blue'>信号：{record.signalFrequency}</Tag>
-          </Space>
-          <Text type='secondary'>{record.summary}</Text>
-          <Space size={6} wrap>
-            {(record.tags || []).map(tag => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </Space>
-        </Space>
-      ),
-    },
-    {
-      title: '最新信号',
-      dataIndex: 'lastSignal',
-      key: 'lastSignal',
-      width: 160,
-      render: (text: string | undefined) =>
-        text ? (
-          <Space size={6}>
-            <ThunderboltOutlined style={{ color: '#f59e0b' }} />
-            <span>{text}</span>
-          </Space>
-        ) : (
-          <Text type='secondary'>暂无</Text>
-        ),
-    },
-    {
-      title: '近30日表现',
-      dataIndex: 'performance',
-      key: 'performance',
-      width: 140,
-      render: (value: number) => (
-        <Tag color={value >= 0 ? 'green' : 'red'}>
-          {value >= 0 ? '+' : ''}
-          {value}%
-        </Tag>
-      ),
+      render: (_: string, record) => <Text strong>{record.name}</Text>,
     },
     {
       title: '通知渠道',
@@ -193,10 +182,7 @@ const StrategySubscription: React.FC = () => {
         <ChannelRow>
           <Checkbox.Group
             options={[
-              { label: '站内', value: 'app' },
               { label: '邮件', value: 'email' },
-              { label: '短信', value: 'sms' },
-              { label: 'Webhook', value: 'webhook' },
             ]}
             value={record.channels}
             onChange={values => handleChannelChange(record, values)}
@@ -221,28 +207,23 @@ const StrategySubscription: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer style={{ minHeight: '100vh' }}>
       <PageHeader>
         <PageTitle>
           <BellOutlined />
           策略订阅
         </PageTitle>
-        <PageHeaderActions>
-          <Button icon={<SyncOutlined />} onClick={loadData} loading={loading}>
-            刷新
-          </Button>
-        </PageHeaderActions>
       </PageHeader>
 
-      <PageBody>
+      <PageBody
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflow: 'visible',
+          paddingRight: 0,
+        }}
+      >
         <SubscriptionContainer>
-          <Alert
-            type='info'
-            showIcon
-            message='策略订阅与调仓管理是不同的入口'
-            description='收到交易信号后，用户可在此按需订阅策略与通知渠道；调仓页保留管理员的策略总开关，不会被订阅操作影响。'
-          />
-
           <StatsRow>
             <Card>
               <Statistic
@@ -260,16 +241,9 @@ const StrategySubscription: React.FC = () => {
             </Card>
             <Card>
               <Statistic
-                title='最新信号'
-                value={signals[0]?.strategyName ?? '-'}
-                prefix={<ThunderboltOutlined />}
-              />
-            </Card>
-            <Card>
-              <Statistic
-                title='信号时刻'
-                value={signals[0]?.time ?? '-'}
-                prefix={<ClockCircleOutlined />}
+                title='已屏蔽'
+                value={blacklist.length}
+                prefix={<StopOutlined />}
               />
             </Card>
           </StatsRow>
@@ -281,50 +255,57 @@ const StrategySubscription: React.FC = () => {
                 <span>策略列表</span>
                 <span className='muted'>选择订阅并配置通知渠道</span>
               </SectionTitle>
-              <Table
-                rowKey='id'
-                columns={columns}
-                dataSource={strategies}
-                loading={loading}
-                pagination={{ pageSize: 6 }}
-              />
+              <PanelBody>
+                <div className='strategy-table' style={{ height: '100%' }}>
+                  <Table
+                    rowKey='id'
+                    columns={columns}
+                    dataSource={strategies}
+                    loading={loading}
+                    pagination={{ pageSize: 6, position: ['bottomRight'] }}
+                  />
+                </div>
+              </PanelBody>
             </CardPanel>
 
             <CardPanel>
               <SectionTitle>
-                <ThunderboltOutlined />
-                <span>最近信号预览</span>
-                <span className='muted'>仅展示概要，不影响调仓页</span>
+                <StopOutlined />
+                <span>黑名单</span>
+                <span className='muted'>输入需要屏蔽的股票代码或名称</span>
               </SectionTitle>
-              <Divider style={{ margin: '12px 0' }} />
-              {signals.length === 0 ? (
-                <EmptyState>暂无最新信号</EmptyState>
-              ) : (
-                <Space direction='vertical' size={12} style={{ width: '100%' }}>
-                  {signals.map(item => (
-                    <Card
-                      key={item.id}
-                      size='small'
-                      style={{ borderRadius: 10 }}
-                      title={
-                        <Space>
-                          <Badge status='processing' />
-                          <Text strong>{item.strategyName}</Text>
-                        </Space>
-                      }
-                      extra={<Text type='secondary'>{item.time}</Text>}
-                    >
-                      <Space direction='vertical' size={4}>
-                        <Space>
-                          <AimOutlined />
-                          <Text>{item.action}</Text>
-                        </Space>
-                        <Text type='secondary'>{item.expectedImpact}</Text>
-                      </Space>
-                    </Card>
-                  ))}
-                </Space>
-              )}
+              <PanelBody>
+                <div className='blacklist-body'>
+                  <Input.Search
+                    allowClear
+                    placeholder='输入股票代码或名称，按回车添加'
+                    enterButton='添加'
+                    value={blacklistInput}
+                    disabled={blacklistSaving}
+                    loading={blacklistSaving}
+                    onChange={e => setBlacklistInput(e.target.value)}
+                    onSearch={value => handleBlacklistAdd(value)}
+                  />
+                  {blacklist.length === 0 ? (
+                    <EmptyState>暂无黑名单股票</EmptyState>
+                  ) : (
+                    <div className='blacklist-tags'>
+                      {blacklist.map(item => (
+                        <Tag
+                          key={item}
+                          closable={!blacklistSaving}
+                          onClose={e => {
+                            e.preventDefault();
+                            handleBlacklistRemove(item);
+                          }}
+                        >
+                          {item}
+                        </Tag>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </PanelBody>
             </CardPanel>
           </SectionGrid>
         </SubscriptionContainer>

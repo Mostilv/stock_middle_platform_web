@@ -473,7 +473,7 @@ const strategySubscriptionsMock = {
       lastSignal: '2025-01-15 10:12',
       performance: 12.4,
       subscribed: true,
-      channels: ['app', 'email'],
+      channels: ['email'],
       tags: ['趋势', '风控联动'],
       subscribers: 86,
     },
@@ -486,7 +486,7 @@ const strategySubscriptionsMock = {
       lastSignal: '2025-01-14 14:35',
       performance: 6.8,
       subscribed: false,
-      channels: ['app'],
+      channels: [],
       tags: ['稳健', '低回撤'],
       subscribers: 54,
     },
@@ -499,34 +499,13 @@ const strategySubscriptionsMock = {
       lastSignal: '2025-01-15 09:55',
       performance: 18.9,
       subscribed: false,
-      channels: ['app', 'sms'],
+      channels: [],
       tags: ['快节奏', '题材轮动'],
       subscribers: 41,
     },
   ],
-  recentSignals: [
-    {
-      id: 'sig-1',
-      strategyName: 'Alpha趋势跟踪',
-      time: '2025-01-15 10:12',
-      action: '触发买入信号：放量突破5日高点',
-      expectedImpact: '预计提升组合beta，关注回撤控制',
-    },
-    {
-      id: 'sig-2',
-      strategyName: '事件驱动快线',
-      time: '2025-01-15 09:55',
-      action: '冲击涨停受阻，提醒减仓 30%',
-      expectedImpact: '缓冲单一标的波动，降低敞口',
-    },
-    {
-      id: 'sig-3',
-      strategyName: '量化均值回归',
-      time: '2025-01-14 14:35',
-      action: '超跌反弹触发建仓窗口',
-      expectedImpact: '占用组合 5% 仓位，目标 3% 区间收益',
-    },
-  ],
+  blacklist: ['600519', '000001', '300750'],
+
 };
 
 // 这里集中定义 Mock 路由
@@ -571,6 +550,14 @@ const routes: Record<string, MockHandler> = {
             }
           : item,
     );
+    return jsonResponse({ ok: true });
+  },
+  'POST /strategies/subscriptions/blacklist': ({ config }) => {
+    const body =
+      typeof config.data === 'string' ? JSON.parse(config.data) : config.data;
+    if (Array.isArray(body?.blacklist)) {
+      strategySubscriptionsMock.blacklist = body.blacklist;
+    }
     return jsonResponse({ ok: true });
   },
 };
