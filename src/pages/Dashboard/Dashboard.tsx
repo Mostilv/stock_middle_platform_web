@@ -12,9 +12,8 @@ import { getMarketData } from './services/marketData';
 import type { MarketDataState } from './services/marketData';
 import { fetchMarketData } from './services/marketData.api';
 import type { HeroMetric, MarketNarrative } from './types';
-import { useLocale } from '../../i18n/useLocale';
-import { getDashboardCopy } from '../../i18n/dashboard';
 import TimeDisplay from './components/page-one/TimeDisplay';
+import { dashboardCopy as DASHBOARD_COPY } from './dashboardCopy';
 import {
   DashboardContainer,
   HeroSection,
@@ -40,7 +39,6 @@ const Dashboard: React.FC = React.memo(() => {
   const [marketData, setMarketData] = useState<MarketDataState>(() =>
     getMarketData(),
   );
-  const { locale } = useLocale();
   const carouselRef = useRef<CarouselRef | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);
@@ -85,7 +83,7 @@ const Dashboard: React.FC = React.memo(() => {
     setSelectedDate(date);
   }, []);
 
-  const dashboardCopy = useMemo(() => getDashboardCopy(locale), [locale]);
+  const dashboardCopy = DASHBOARD_COPY;
 
   const labelMap = dashboardCopy.indexLabels as Record<
     keyof MarketDataState,
@@ -140,7 +138,7 @@ const Dashboard: React.FC = React.memo(() => {
     }
 
     return narratives.range;
-  }, [averageChange, dashboardCopy]);
+  }, [averageChange]);
 
   const handleWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
     if (!carouselRef.current) return;
@@ -161,7 +159,6 @@ const Dashboard: React.FC = React.memo(() => {
     updateDashboardPageHeight,
     heroMetrics,
     marketNarrative,
-    dashboardCopy,
     selectedDate,
   ]);
 

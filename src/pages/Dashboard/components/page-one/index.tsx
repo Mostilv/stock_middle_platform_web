@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import type { DashboardPageOneCopy } from '../../../../i18n/dashboard';
+import type { DashboardPageOneCopy } from '../../dashboardCopy';
 import {
   MainContent,
   StackPanel,

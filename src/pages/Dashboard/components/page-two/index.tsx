@@ -5,7 +5,7 @@ import IndustryTrendPanel from './IndustryTrendPanel';
 import LimitUpCountPanel from './LimitUpCountPanel';
 import PlaceholderPanelOne from './PlaceholderPanelOne';
 import PlaceholderPanelTwo from './PlaceholderPanelTwo';
-import type { DashboardPageTwoCopy } from '../../../../i18n/dashboard';
+import type { DashboardPageTwoCopy } from '../../dashboardCopy';
 
 interface PageTwoProps {
   copy: DashboardPageTwoCopy;

@@ -25,7 +25,6 @@ import {
   DeleteOutlined,
   MailOutlined,
   NotificationOutlined,
-  GlobalOutlined,
 } from '@ant-design/icons';
 import { fetchSettingsData, saveSettingsData } from './services/settings.api';
 import type { SettingsDataResponse } from './services/settings.api';
@@ -365,7 +364,6 @@ const Settings: React.FC = () => {
             onFinish={onFinish}
             initialValues={{
               theme: 'light',
-              language: 'zh-CN',
               rebalanceNotifications: true,
             }}
           >
@@ -388,32 +386,6 @@ const Settings: React.FC = () => {
                         <Option value='light'>浅色主题</Option>
                         <Option value='dark'>深色主题</Option>
                         <Option value='auto'>跟随系统</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Card>
-            </SettingsCard>
-
-            {/* 语言设置 */}
-            <SettingsCard>
-              <Card
-                title={
-                  <Space>
-                    <CardIcon>
-                      <GlobalOutlined />
-                    </CardIcon>
-                    <span>语言设置</span>
-                  </Space>
-                }
-              >
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name='language' label='界面语言'>
-                      <Select>
-                        <Option value='zh-CN'>简体中文</Option>
-                        <Option value='en-US'>English</Option>
-                        <Option value='zh-TW'>繁體中文</Option>
                       </Select>
                     </Form.Item>
                   </Col>
