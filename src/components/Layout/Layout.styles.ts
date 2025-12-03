@@ -122,25 +122,46 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
   overflow: hidden;
 
   .logo-mark {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 14px;
     background: linear-gradient(135deg, #3d8bff, #5be7c4);
     display: grid;
     place-items: center;
     font-weight: 700;
     letter-spacing: 1px;
+    overflow: hidden;
+
+    .logo-initial {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .ant-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+    }
+  }
+
+  .logo-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
+    transform: translateX(${({ $collapsed }) => ($collapsed ? '-8px' : '0')});
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
   }
 
   .logo-text {
     display: flex;
     flex-direction: column;
     line-height: 1.2;
-    opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
-    transform: translateX(${({ $collapsed }) => ($collapsed ? '-8px' : '0')});
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
   }
 
   .logo-subtitle {
@@ -153,6 +174,28 @@ export const LogoContainer = styled.div<{ $collapsed: boolean }>`
   .logo-title {
     font-size: 16px;
     font-weight: 600;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .user-name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
   }
 `;
 

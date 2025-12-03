@@ -591,8 +591,12 @@ const routes: Record<string, MockHandler> = {
     const body = readRequestBody(config);
     accountProfileMock = {
       ...accountProfileMock,
+      username: body?.username ?? accountProfileMock.username,
       display_name:
-        body?.display_name ?? body?.displayName ?? accountProfileMock.display_name,
+        body?.display_name ??
+        body?.displayName ??
+        body?.username ??
+        accountProfileMock.display_name,
       avatar_url:
         body?.avatar_url ?? body?.avatarUrl ?? accountProfileMock.avatar_url,
       email: body?.email ?? accountProfileMock.email,

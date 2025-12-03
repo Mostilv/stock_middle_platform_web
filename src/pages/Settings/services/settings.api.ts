@@ -29,7 +29,7 @@ export interface AccountProfileResponse {
 }
 
 export interface AccountProfilePayload {
-  displayName: string;
+  username: string;
   avatarUrl?: string;
 }
 
@@ -60,7 +60,8 @@ export async function updateAccountProfile(
   payload: AccountProfilePayload,
 ): Promise<AccountProfileResponse> {
   const body = {
-    display_name: payload.displayName,
+    username: payload.username,
+    display_name: payload.username,
     avatar_url: payload.avatarUrl,
   };
   const { data } = await apiClient.put<

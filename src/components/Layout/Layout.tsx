@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Menu } from 'antd';
+import { Avatar, Menu } from 'antd';
 import {
   LeftOutlined,
   RightOutlined,
@@ -18,11 +18,17 @@ import {
   HeaderButton,
   ContentContainer,
 } from './Layout.styles';
+import { useAuth } from '../../contexts/useAuth';
 
 const LayoutComponent: React.FC = React.memo(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user } = useAuth();
+  const accountInitial =
+    user?.username?.charAt(0).toUpperCase() ||
+    user?.displayName?.charAt(0).toUpperCase() ||
+    'U';
 
   const menuItems = [
     {
@@ -90,10 +96,33 @@ const LayoutComponent: React.FC = React.memo(() => {
         collapsedWidth={0}
       >
         <LogoContainer $collapsed={collapsed}>
-          <div className='logo-mark'>S</div>
-          <div className='logo-text'>
-            <span className='logo-subtitle'>SOHA ALPHA</span>
-            <span className='logo-title'>市场中台</span>
+          <div className='logo-mark'>
+            {isAuthenticated ? (
+              <Avatar size={44} src={user?.avatarUrl || undefined}>
+                {accountInitial}
+              </Avatar>
+            ) : (
+              <span className='logo-initial'>S</span>
+            )}
+          </div>
+          <div className='logo-content'>
+            {isAuthenticated ? (
+              <div className='user-info'>
+                <div className='user-meta'>
+                  <span className='user-name'>
+                    {user?.username || '我的账户'}
+                  </span>
+                  <span className='user-role'>
+                    {user?.role ? `角色：${user.role}` : '策略管理员'}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className='logo-text'>
+                <span className='logo-title'>市场监控</span>
+                <span className='logo-subtitle'>SOHA ALPHA</span>
+              </div>
+            )}
           </div>
         </LogoContainer>
         <div className='menu-scroll'>

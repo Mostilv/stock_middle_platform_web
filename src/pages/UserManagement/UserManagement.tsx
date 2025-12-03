@@ -190,28 +190,28 @@ const UserManagement: React.FC = () => {
       title: '用户',
       dataIndex: 'username',
       key: 'username',
-      render: (_text: string, record: User) => (
-        <Space align='start'>
-          <Avatar
-            src={record.avatar_url || undefined}
-            icon={<UserOutlined />}
-            style={{ backgroundColor: '#e0f2fe', color: '#0f172a' }}
-          />
-          <div>
-            <div style={{ fontWeight: 500 }}>
-              {record.display_name || record.username}
-            </div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              用户名：{record.username}
-            </div>
-            {record.full_name && (
-              <div style={{ fontSize: '12px', color: '#999' }}>
-                姓名：{record.full_name}
+      render: (_text: string, record: User) => {
+        const initial =
+          record.username?.charAt(0).toUpperCase() ||
+          record.display_name?.charAt(0).toUpperCase() ||
+          'U';
+        return (
+          <Space align='center'>
+            <Avatar
+              src={record.avatar_url || undefined}
+              style={{ borderRadius: 12 }}
+            >
+              {initial}
+            </Avatar>
+            <div>
+              <div style={{ fontWeight: 600 }}>{record.username}</div>
+              <div style={{ fontSize: '12px', color: '#64748b' }}>
+                角色：{record.is_superuser ? '管理员' : '普通用户'}
               </div>
-            )}
-          </div>
-        </Space>
-      ),
+            </div>
+          </Space>
+        );
+      },
     },
     {
       title: '邮箱',

@@ -75,7 +75,7 @@ interface NotificationTemplate {
 }
 
 interface ProfileFormValues {
-  displayName: string;
+  username: string;
   avatarUrl?: string;
 }
 
@@ -130,7 +130,7 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     profileForm.setFieldsValue({
-      displayName: user?.displayName || user?.username || '',
+      username: user?.username || '',
       avatarUrl: user?.avatarUrl || '',
     });
     setAvatarPreview(user?.avatarUrl || '');
@@ -142,18 +142,20 @@ const Settings: React.FC = () => {
     fetchAccountProfile()
       .then(profile => {
         if (!mounted) return;
+        const usernameValue = profile.username || user?.username || '';
         const displayName =
           profile.display_name ||
           (profile as any).displayName ||
-          profile.username;
+          usernameValue;
         const avatarUrl =
           profile.avatar_url || (profile as any).avatarUrl || '';
         profileForm.setFieldsValue({
-          displayName,
+          username: usernameValue,
           avatarUrl,
         });
         setAvatarPreview(avatarUrl);
         updateUser({
+          username: usernameValue,
           email: profile.email ?? user?.email,
           displayName,
           avatarUrl,
@@ -401,26 +403,28 @@ const Settings: React.FC = () => {
     }
     setProfileLoading(true);
     try {
-      const displayName = values.displayName?.trim() || user?.username || '';
+      const username = values.username?.trim() || user?.username || '';
       const avatarUrl = values.avatarUrl?.trim() || '';
       const response = await updateAccountProfile({
-        displayName,
+        username,
         avatarUrl,
       });
+      const resolvedUsername = response.username || username;
       const resolvedName =
         response.display_name ||
         (response as any).displayName ||
-        displayName;
+        resolvedUsername;
       const resolvedAvatar =
         response.avatar_url || (response as any).avatarUrl || avatarUrl;
       updateUser({
+        username: resolvedUsername,
         displayName: resolvedName,
         avatarUrl: resolvedAvatar,
         email: response.email ?? user?.email,
       });
       setAvatarPreview(resolvedAvatar);
       profileForm.setFieldsValue({
-        displayName: resolvedName,
+        username: resolvedUsername,
         avatarUrl: resolvedAvatar,
       });
       message.success('账户信息已更新');
@@ -471,12 +475,14 @@ const Settings: React.FC = () => {
   };
 
   const accountInitial =
-    (user?.displayName || user?.username || 'U').charAt(0).toUpperCase();
+    user?.username?.charAt(0).toUpperCase() ||
+    user?.displayName?.charAt(0).toUpperCase() ||
+    'U';
   const accountName = isAuthenticated
-    ? user?.displayName || user?.username || '我的账户'
+    ? user?.username || '我的账户'
     : '尚未登录';
-  const accountSubtitle = isAuthenticated
-    ? `用户名：${user?.username || '--'}`
+  const accountRoleText = isAuthenticated
+    ? `角色：${user?.role ?? '策略管理员'}`
     : '登录后可管理策略订阅、用户等权限模块';
 
   const toggleProfileSection = () => {
@@ -515,17 +521,17 @@ const Settings: React.FC = () => {
       <SettingsContent>
         <AccountCard>
           <AccountInfo>
-            <Avatar
-              size={64}
-              src={user?.avatarUrl || undefined}
-              style={{
-                background: '#e0f2fe',
-                color: '#0f172a',
-                fontWeight: 600,
-              }}
-            >
-              {accountInitial}
-            </Avatar>
+          <Avatar
+            size={64}
+            src={user?.avatarUrl || undefined}
+            style={{
+              borderRadius: 16,
+              backgroundColor: '#e0f2fe',
+              color: '#0f172a',
+            }}
+          >
+            {accountInitial}
+          </Avatar>
             <div>
               <div
                 style={{
@@ -546,12 +552,7 @@ const Settings: React.FC = () => {
                   编辑资料
                 </Button>
               </div>
-              <p>{accountSubtitle}</p>
-              {isAuthenticated && (
-                <Text style={{ color: '#4b5563', display: 'block' }}>
-                  角色：{user?.role ?? '策略管理员'}
-                </Text>
-              )}
+            <p>{accountRoleText}</p>
             </div>
           </AccountInfo>
           <AccountActions>
@@ -604,7 +605,7 @@ const Settings: React.FC = () => {
                   layout='vertical'
                   onFinish={handleProfileSubmit}
                   initialValues={{
-                    displayName: user?.displayName || user?.username || '',
+                    username: user?.username || '',
                     avatarUrl: user?.avatarUrl || '',
                   }}
                   disabled={!isAuthenticated}
@@ -614,27 +615,30 @@ const Settings: React.FC = () => {
                   </Form.Item>
                   <Row gutter={24}>
                     <Col span={8}>
-                      <Upload
-                        accept='image/*'
-                        showUploadList={false}
-                        beforeUpload={handleAvatarUpload}
-                        disabled={!isAuthenticated}
+                    <Upload
+                      accept='image/*'
+                      showUploadList={false}
+                      beforeUpload={handleAvatarUpload}
+                      disabled={!isAuthenticated}
+                    >
+                      <div
+                        style={{
+                          border: '1px dashed #cbd5f5',
+                          borderRadius: 12,
+                          padding: 16,
+                          textAlign: 'center',
+                          cursor: isAuthenticated ? 'pointer' : 'not-allowed',
+                        }}
                       >
-                        <div
-                          style={{
-                            border: '1px dashed #cbd5f5',
-                            borderRadius: 12,
-                            padding: 16,
-                            textAlign: 'center',
-                            cursor: isAuthenticated ? 'pointer' : 'not-allowed',
-                          }}
-                        >
-                          {avatarPreview ? (
-                            <Avatar
-                              size={96}
-                              src={avatarPreview}
-                              style={{ marginBottom: 12 }}
-                            />
+                        {avatarPreview ? (
+                          <Avatar
+                            size={96}
+                            src={avatarPreview}
+                            style={{
+                              marginBottom: 12,
+                              borderRadius: 18,
+                            }}
+                          />
                           ) : (
                             <CameraOutlined
                               style={{ fontSize: 32, color: '#94a3b8' }}
@@ -648,14 +652,14 @@ const Settings: React.FC = () => {
                     </Col>
                     <Col span={16}>
                       <Form.Item
-                        label='账户名称'
-                        name='displayName'
+                        label='用户名'
+                        name='username'
                         rules={[
                           { required: true, message: '请输入账户名称' },
                           { max: 32, message: '账户名称最多32个字符' },
                         ]}
                       >
-                        <Input placeholder='请输入用于展示的名称' />
+                        <Input placeholder='请输入用户名' />
                       </Form.Item>
                       <Form.Item style={{ marginBottom: 0 }}>
                         <Space>
@@ -663,8 +667,7 @@ const Settings: React.FC = () => {
                             onClick={() => {
                               profileForm.resetFields();
                               profileForm.setFieldsValue({
-                                displayName:
-                                  user?.displayName || user?.username || '',
+                                username: user?.username || '',
                                 avatarUrl: user?.avatarUrl || '',
                               });
                               setAvatarPreview(user?.avatarUrl || '');
