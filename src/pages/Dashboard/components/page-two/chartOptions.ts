@@ -108,7 +108,10 @@ const buildIndustryRankingTooltip = () => ({
 const axisLine = { lineStyle: { color: '#556' } };
 const axisLabel = { color: '#889' };
 
-const buildBaseChartOption = (data: number[], color: string): EChartsOption => ({
+const buildBaseChartOption = (
+  data: number[],
+  color: string,
+): EChartsOption => ({
   grid: { left: 20, right: 10, top: 10, bottom: 20 },
   tooltip: buildSharedTooltip(),
   xAxis: {

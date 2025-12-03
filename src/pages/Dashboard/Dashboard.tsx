@@ -12,7 +12,7 @@ import { getMarketData } from './services/marketData';
 import type { MarketDataState } from './services/marketData';
 import { fetchMarketData } from './services/marketData.api';
 import type { HeroMetric, MarketNarrative } from './types';
-import { useLocale } from '../../i18n/LocaleContext';
+import { useLocale } from '../../i18n/useLocale';
 import { getDashboardCopy } from '../../i18n/dashboard';
 import TimeDisplay from './components/page-one/TimeDisplay';
 import {

@@ -44,16 +44,16 @@ export const StatisticsRow = styled.div`
 
   .ant-row {
     .ant-col {
-        .ant-card {
-          border-radius: 8px;
-          box-shadow: var(--page-panel-shadow);
-          border: 1px solid rgba(15, 23, 42, 0.08);
-          transition: box-shadow 0.2s ease;
-          height: 100%;
+      .ant-card {
+        border-radius: 8px;
+        box-shadow: var(--page-panel-shadow);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        transition: box-shadow 0.2s ease;
+        height: 100%;
 
-          &:hover {
-            box-shadow: var(--page-panel-shadow);
-          }
+        &:hover {
+          box-shadow: var(--page-panel-shadow);
+        }
 
         .ant-card-body {
           padding: 16px;

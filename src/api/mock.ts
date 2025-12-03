@@ -505,7 +505,6 @@ const strategySubscriptionsMock = {
     },
   ],
   blacklist: ['600519', '000001', '300750'],
-
 };
 
 // 这里集中定义 Mock 路由
@@ -540,8 +539,8 @@ const routes: Record<string, MockHandler> = {
   'POST /strategies/subscriptions': ({ config }) => {
     const body =
       typeof config.data === 'string' ? JSON.parse(config.data) : config.data;
-    strategySubscriptionsMock.strategies = strategySubscriptionsMock.strategies.map(
-      item =>
+    strategySubscriptionsMock.strategies =
+      strategySubscriptionsMock.strategies.map(item =>
         item.id === body?.strategyId
           ? {
               ...item,
@@ -549,7 +548,7 @@ const routes: Record<string, MockHandler> = {
               channels: body?.channels || item.channels,
             }
           : item,
-    );
+      );
     return jsonResponse({ ok: true });
   },
   'POST /strategies/subscriptions/blacklist': ({ config }) => {

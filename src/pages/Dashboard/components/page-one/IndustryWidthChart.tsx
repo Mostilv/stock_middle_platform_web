@@ -7,11 +7,7 @@ import {
   buildRankingTooltipContent,
   TOOLTIP_EXTRA_CSS,
 } from '../../../../utils/chartTooltip';
-import {
-  ChartPanelBody,
-  ChartCanvas,
-  ChartMessage,
-} from './ChartPanel.styles';
+import { ChartPanelBody, ChartCanvas, ChartMessage } from './ChartPanel.styles';
 
 interface IndustryWidthChartProps {
   data: IndustryMetricResponse | null;
@@ -38,7 +34,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
       });
 
       industries.forEach((industryName, industryIndex) => {
-        const seriesItem = data?.series.find(item => item.name === industryName);
+        const seriesItem = data?.series.find(
+          item => item.name === industryName,
+        );
         const widthMap = new Map(
           (seriesItem?.points ?? []).map(point => [
             point.date.slice(0, 10),
@@ -132,12 +130,10 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
           position: tooltipPosition,
           extraCssText: TOOLTIP_EXTRA_CSS,
           formatter: (params: any) => {
-            const [industryIndex, dateIndex] = params.data;
+            const [, dateIndex] = params.data;
             const dateLabel = chartData.dateLabels[dateIndex];
             const date = formatDateLabel(dateLabel);
-            const hoveredIndustry = chartData.industries[industryIndex];
-            const values =
-              chartData.dateIndustryValues.get(dateLabel) ?? [];
+            const values = chartData.dateIndustryValues.get(dateLabel) ?? [];
             const sorted = [...values].sort((a, b) => {
               const valueA = typeof a.value === 'number' ? a.value : -Infinity;
               const valueB = typeof b.value === 'number' ? b.value : -Infinity;
@@ -269,7 +265,9 @@ const IndustryWidthChart: React.FC<IndustryWidthChartProps> = React.memo(
 
     return (
       <ChartPanelBody style={{ flex: '1 1 auto', minHeight: 0 }}>
-        {error && <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>}
+        {error && (
+          <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>
+        )}
         {noData && <ChartMessage>暂无数据</ChartMessage>}
         <ChartCanvas
           ref={containerRef}

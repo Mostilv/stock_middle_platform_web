@@ -3,7 +3,6 @@ import {
   Card,
   Checkbox,
   Input,
-  Space,
   Statistic,
   Switch,
   Table,
@@ -96,8 +95,7 @@ const StrategySubscription: React.FC = () => {
       );
       message.success(subscribed ? '已订阅该策略' : '已取消订阅');
     } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : '更新订阅状态失败';
+      const msg = error instanceof Error ? error.message : '更新订阅状态失败';
       message.error(msg);
     } finally {
       setSavingId(null);
@@ -110,9 +108,7 @@ const StrategySubscription: React.FC = () => {
   ) => {
     const channels = values as NotificationChannel[];
     setStrategies(prev =>
-      prev.map(item =>
-        item.id === record.id ? { ...item, channels } : item,
-      ),
+      prev.map(item => (item.id === record.id ? { ...item, channels } : item)),
     );
     if (record.subscribed) {
       await handleSubscriptionChange(record, true, channels);
@@ -127,8 +123,7 @@ const StrategySubscription: React.FC = () => {
       message.success('已更新黑名单');
       return true;
     } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : '更新黑名单失败';
+      const msg = error instanceof Error ? error.message : '更新黑名单失败';
       message.error(msg);
       return false;
     } finally {
@@ -181,9 +176,7 @@ const StrategySubscription: React.FC = () => {
       render: (_: NotificationChannel[], record) => (
         <ChannelRow>
           <Checkbox.Group
-            options={[
-              { label: '邮件', value: 'email' },
-            ]}
+            options={[{ label: '邮件', value: 'email' }]}
             value={record.channels}
             onChange={values => handleChannelChange(record, values)}
           />

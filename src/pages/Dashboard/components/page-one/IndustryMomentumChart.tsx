@@ -7,11 +7,7 @@ import {
   buildRankingTooltipContent,
   TOOLTIP_EXTRA_CSS,
 } from '../../../../utils/chartTooltip';
-import {
-  ChartPanelBody,
-  ChartCanvas,
-  ChartMessage,
-} from './ChartPanel.styles';
+import { ChartPanelBody, ChartCanvas, ChartMessage } from './ChartPanel.styles';
 
 interface IndustryMomentumChartProps {
   data: IndustryMetricResponse | null;
@@ -110,17 +106,12 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
             const dateLabel = formatDateLabel(rawLabel);
             const sortedItems = [...params].sort((a, b) => {
               const valueA =
-                typeof a.data === 'number'
-                  ? a.data
-                  : Number(a.data) || 0;
+                typeof a.data === 'number' ? a.data : Number(a.data) || 0;
               const valueB =
-                typeof b.data === 'number'
-                  ? b.data
-                  : Number(b.data) || 0;
+                typeof b.data === 'number' ? b.data : Number(b.data) || 0;
               return valueB - valueA;
             });
 
-            const hoveredName = params[0]?.seriesName;
             const items = sortedItems.map((item, index) => {
               const value =
                 typeof item.data === 'number'
@@ -178,7 +169,9 @@ const IndustryMomentumChart: React.FC<IndustryMomentumChartProps> = React.memo(
 
     return (
       <ChartPanelBody style={{ flex: '1 1 auto', minHeight: 0 }}>
-        {error && <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>}
+        {error && (
+          <ChartMessage $variant='error'>加载失败：{error}</ChartMessage>
+        )}
         {noData && <ChartMessage>暂无数据</ChartMessage>}
         <ChartCanvas
           ref={containerRef}

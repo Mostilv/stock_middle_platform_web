@@ -1,5 +1,5 @@
 import type { MarketNarrative } from '../pages/Dashboard/types';
-import type { Locale } from './LocaleContext';
+import type { Locale } from './locale-context';
 
 type NarrativeKey =
   | 'strongBull'
@@ -80,23 +80,28 @@ const DASHBOARD_COPY: Record<Locale, DashboardCopy> = {
     narratives: {
       strongBull: {
         mood: 'Bullish control',
-        detail: 'Fresh capital keeps rotating into core assets, sustaining the uptrend.',
+        detail:
+          'Fresh capital keeps rotating into core assets, sustaining the uptrend.',
       },
       mildBull: {
         mood: 'Gentle uptrend',
-        detail: 'Bull and bear forces are balanced for now, while structural themes keep lighting up.',
+        detail:
+          'Bull and bear forces are balanced for now, while structural themes keep lighting up.',
       },
       strongBear: {
         mood: 'Risk-off retreat',
-        detail: 'Defensive assets are in demand, consider upgrading the protection level of positions.',
+        detail:
+          'Defensive assets are in demand, consider upgrading the protection level of positions.',
       },
       pullback: {
         mood: 'Choppy pullback',
-        detail: 'Short-term volatility is expanding, trimming exposure is recommended.',
+        detail:
+          'Short-term volatility is expanding, trimming exposure is recommended.',
       },
       range: {
         mood: 'Sideways build-up',
-        detail: 'Volatility narrows around the neutral zone, timing strategies take priority.',
+        detail:
+          'Volatility narrows around the neutral zone, timing strategies take priority.',
       },
     },
   },

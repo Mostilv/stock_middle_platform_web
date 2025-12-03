@@ -1,38 +1,13 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { message } from 'antd';
 import { login as loginRequest } from '../api/auth';
-
-interface AuthUser {
-  username: string;
-  role?: string;
-}
-
-interface AuthContextValue {
-  isAuthenticated: boolean;
-  user: AuthUser | null;
-  loading: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
-}
-
-const AUTH_TOKEN_KEY = 'auth_token';
-const AUTH_USER_KEY = 'auth_user';
-
-const AuthContext = createContext<AuthContextValue>({
-  isAuthenticated: false,
-  user: null,
-  loading: false,
-  login: async () => false,
-  logout: () => {},
-});
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  AuthContext,
+  type AuthUser,
+} from './auth-context';
 
 const readStoredUser = (): AuthUser | null => {
   if (typeof window === 'undefined') return null;
@@ -40,8 +15,7 @@ const readStoredUser = (): AuthUser | null => {
   if (!stored) return null;
   try {
     return JSON.parse(stored) as AuthUser;
-  } catch (error) {
-    console.error('Failed to parse stored auth user', error);
+  } catch {
     return null;
   }
 };
@@ -110,5 +84,3 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export const useAuth = (): AuthContextValue => useContext(AuthContext);

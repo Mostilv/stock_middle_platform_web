@@ -452,186 +452,188 @@ const Portfolio: React.FC = () => {
           <Row gutter={[16, 16]}>
             <Col span={6}>
               <Card size='small'>
-              <Statistic
-                title='总策略数'
-                value={totalStrategies}
-                valueStyle={{ color: 'var(--ant-color-primary)' }}
-                prefix={<BarChartOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='总持仓数'
-                value={totalHoldings}
-                valueStyle={{ color: 'var(--ant-color-info)' }}
-                prefix={<DollarOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='活跃策略'
-                value={activeStrategies}
-                valueStyle={{ color: 'var(--ant-color-success)' }}
-                prefix={<SwapOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='活跃策略持仓'
-                value={activeStrategyHoldings}
-                valueStyle={{ color: 'var(--ant-color-warning)' }}
-                prefix={<RiseOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='当日盈亏'
-                value={todayPnL}
-                valueStyle={{
-                  color:
-                    todayPnL >= 0
-                      ? 'var(--ant-color-success)'
-                      : 'var(--ant-color-error)',
-                }}
-                prefix={todayPnL >= 0 ? '+' : ''}
-                suffix='元'
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='累计盈亏'
-                value={totalPnL}
-                valueStyle={{
-                  color:
-                    totalPnL >= 0
-                      ? 'var(--ant-color-success)'
-                      : 'var(--ant-color-error)',
-                }}
-                prefix={totalPnL >= 0 ? '+' : ''}
-                suffix='元'
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='今日调仓'
-                value={todayRebalance}
-                valueStyle={{ color: 'var(--ant-color-purple)' }}
-                prefix={<ClockCircleOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card size='small'>
-              <Statistic
-                title='今日待调仓'
-                value={todayPendingRebalance}
-                valueStyle={{ color: 'var(--ant-color-orange)' }}
-                prefix={<ClockCircleOutlined />}
-              />
-            </Card>
-          </Col>
-        </Row>
+                <Statistic
+                  title='总策略数'
+                  value={totalStrategies}
+                  valueStyle={{ color: 'var(--ant-color-primary)' }}
+                  prefix={<BarChartOutlined />}
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='总持仓数'
+                  value={totalHoldings}
+                  valueStyle={{ color: 'var(--ant-color-info)' }}
+                  prefix={<DollarOutlined />}
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='活跃策略'
+                  value={activeStrategies}
+                  valueStyle={{ color: 'var(--ant-color-success)' }}
+                  prefix={<SwapOutlined />}
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='活跃策略持仓'
+                  value={activeStrategyHoldings}
+                  valueStyle={{ color: 'var(--ant-color-warning)' }}
+                  prefix={<RiseOutlined />}
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='当日盈亏'
+                  value={todayPnL}
+                  valueStyle={{
+                    color:
+                      todayPnL >= 0
+                        ? 'var(--ant-color-success)'
+                        : 'var(--ant-color-error)',
+                  }}
+                  prefix={todayPnL >= 0 ? '+' : ''}
+                  suffix='元'
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='累计盈亏'
+                  value={totalPnL}
+                  valueStyle={{
+                    color:
+                      totalPnL >= 0
+                        ? 'var(--ant-color-success)'
+                        : 'var(--ant-color-error)',
+                  }}
+                  prefix={totalPnL >= 0 ? '+' : ''}
+                  suffix='元'
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='今日调仓'
+                  value={todayRebalance}
+                  valueStyle={{ color: 'var(--ant-color-purple)' }}
+                  prefix={<ClockCircleOutlined />}
+                />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card size='small'>
+                <Statistic
+                  title='今日待调仓'
+                  value={todayPendingRebalance}
+                  valueStyle={{ color: 'var(--ant-color-orange)' }}
+                  prefix={<ClockCircleOutlined />}
+                />
+              </Card>
+            </Col>
+          </Row>
         </StatisticsRow>
 
         {/* 策略列表 */}
         <PortfolioCard>
           <Collapse defaultActiveKey={['1']} ghost>
-          {strategies.map(strategy => (
-            <Panel
-              key={strategy.id}
-              header={
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                  }}
-                >
-                  <div>
-                    <Title
-                      level={4}
-                      style={{
-                        margin: 0,
-                        display: 'inline-block',
-                        marginRight: 16,
-                      }}
-                    >
-                      {strategy.name}
-                    </Title>
-                    <Tag color={strategy.status === 'active' ? 'green' : 'red'}>
-                      {strategy.status === 'active' ? '活跃' : '停用'}
-                    </Tag>
-                    <Text type='secondary' style={{ marginLeft: 16 }}>
-                      创建于 {strategy.createdAt}
-                    </Text>
+            {strategies.map(strategy => (
+              <Panel
+                key={strategy.id}
+                header={
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                    }}
+                  >
+                    <div>
+                      <Title
+                        level={4}
+                        style={{
+                          margin: 0,
+                          display: 'inline-block',
+                          marginRight: 16,
+                        }}
+                      >
+                        {strategy.name}
+                      </Title>
+                      <Tag
+                        color={strategy.status === 'active' ? 'green' : 'red'}
+                      >
+                        {strategy.status === 'active' ? '活跃' : '停用'}
+                      </Tag>
+                      <Text type='secondary' style={{ marginLeft: 16 }}>
+                        创建于 {strategy.createdAt}
+                      </Text>
+                    </div>
+                    <div onClick={e => e.stopPropagation()}>
+                      <Switch
+                        checked={strategy.status === 'active'}
+                        onChange={(checked, event) => {
+                          // 阻止事件冒泡，防止触发菜单折叠
+                          event?.stopPropagation();
+                          toggleStrategyStatus(strategy.id);
+                        }}
+                        checkedChildren='启用'
+                        unCheckedChildren='停用'
+                      />
+                    </div>
                   </div>
-                  <div onClick={e => e.stopPropagation()}>
-                    <Switch
-                      checked={strategy.status === 'active'}
-                      onChange={(checked, event) => {
-                        // 阻止事件冒泡，防止触发菜单折叠
-                        event?.stopPropagation();
-                        toggleStrategyStatus(strategy.id);
-                      }}
-                      checkedChildren='启用'
-                      unCheckedChildren='停用'
-                    />
-                  </div>
+                }
+              >
+                <div style={{ marginBottom: 16 }}>
+                  <Row gutter={16}>
+                    <Col span={8}>
+                      <Text strong>策略总价值：</Text>
+                      <Text>¥{strategy.totalValue.toLocaleString()}</Text>
+                    </Col>
+                    <Col span={8}>
+                      <Text strong>总权重：</Text>
+                      <Text>{strategy.totalWeight}%</Text>
+                    </Col>
+                    <Col span={8}>
+                      <Text strong>持仓数量：</Text>
+                      <Text>{strategy.items.length}只</Text>
+                    </Col>
+                  </Row>
                 </div>
-              }
-            >
-              <div style={{ marginBottom: 16 }}>
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Text strong>策略总价值：</Text>
-                    <Text>¥{strategy.totalValue.toLocaleString()}</Text>
-                  </Col>
-                  <Col span={8}>
-                    <Text strong>总权重：</Text>
-                    <Text>{strategy.totalWeight}%</Text>
-                  </Col>
-                  <Col span={8}>
-                    <Text strong>持仓数量：</Text>
-                    <Text>{strategy.items.length}只</Text>
-                  </Col>
-                </Row>
-              </div>
 
-              {strategy.items.length > 0 ? (
-                <Table
-                  columns={columns}
-                  dataSource={strategy.items}
-                  pagination={false}
-                  size='small'
-                  scroll={{ x: 800 }}
-                />
-              ) : (
-                <div
-                  style={{
-                    textAlign: 'center',
-                    padding: '20px',
-                    color: '#999',
-                  }}
-                >
-                  暂无调仓记录
-                </div>
-              )}
-            </Panel>
-          ))}
-        </Collapse>
+                {strategy.items.length > 0 ? (
+                  <Table
+                    columns={columns}
+                    dataSource={strategy.items}
+                    pagination={false}
+                    size='small'
+                    scroll={{ x: 800 }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      padding: '20px',
+                      color: '#999',
+                    }}
+                  >
+                    暂无调仓记录
+                  </div>
+                )}
+              </Panel>
+            ))}
+          </Collapse>
         </PortfolioCard>
       </PortfolioContent>
 

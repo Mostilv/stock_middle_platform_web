@@ -12,7 +12,7 @@ import {
   PageHeader,
   PageTitle,
 } from '../../components/PageLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/useAuth';
 import { FormCard, Hero, LoginPage, Panel, PanelBody } from './Login.styles';
 
 const { Title, Paragraph, Text } = Typography;
@@ -78,8 +78,7 @@ const Login: React.FC = () => {
                   - 用户管理、策略订阅为需要账号校验的入口
                   <br />
                   - 调仓页保留管理员级别的总开关，与订阅独立
-                  <br />
-                  - 收到交易信号后，用户可按需订阅策略并设置通知渠道
+                  <br />- 收到交易信号后，用户可按需订阅策略并设置通知渠道
                 </Paragraph>
                 <div>
                   <Text style={{ color: '#cbd5e1' }}>快速体验：</Text>
@@ -120,7 +119,10 @@ const Login: React.FC = () => {
                     name='username'
                     rules={[{ required: true, message: '请输入用户名' }]}
                   >
-                    <Input prefix={<UserOutlined />} placeholder='请输入用户名' />
+                    <Input
+                      prefix={<UserOutlined />}
+                      placeholder='请输入用户名'
+                    />
                   </Form.Item>
                   <Form.Item
                     label='密码'

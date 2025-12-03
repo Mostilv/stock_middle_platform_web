@@ -1,24 +1,5 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
-
-export type Locale = 'en-US' | 'zh-CN';
-
-interface LocaleContextValue {
-  locale: Locale;
-  setLocale: (next: Locale) => void;
-}
-
-const DEFAULT_LOCALE: Locale = 'zh-CN';
-
-const LocaleContext = createContext<LocaleContextValue>({
-  locale: DEFAULT_LOCALE,
-  setLocale: () => {},
-});
+import React, { useCallback, useMemo, useState } from 'react';
+import { DEFAULT_LOCALE, LocaleContext, type Locale } from './locale-context';
 
 const getStoredLocale = (): Locale => {
   if (typeof window === 'undefined') return DEFAULT_LOCALE;
@@ -46,7 +27,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({
     [locale, setLocale],
   );
 
-  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+  return (
+    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
+  );
 };
-
-export const useLocale = (): LocaleContextValue => useContext(LocaleContext);

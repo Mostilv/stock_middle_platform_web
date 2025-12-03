@@ -13,9 +13,5 @@ export interface LoginResponse {
   };
 }
 
-export const login = (
-  body: LoginRequestBody,
-): Promise<LoginResponse> => http.post<LoginResponse, LoginRequestBody>(
-  '/auth/login',
-  body,
-);
+export const login = (body: LoginRequestBody): Promise<LoginResponse> =>
+  http.post<LoginResponse, LoginRequestBody>('/auth/login', body);

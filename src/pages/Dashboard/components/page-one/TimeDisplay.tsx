@@ -37,5 +37,3 @@ const TimeDisplay: React.FC<TimeDisplayProps> = () => {
 };
 
 export default TimeDisplay;
-
-

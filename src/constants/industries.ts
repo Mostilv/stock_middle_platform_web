@@ -29,5 +29,4 @@ export const SHENWAN_LEVEL1_INDUSTRIES = [
   '计算机',
 ] as const;
 
-export type ShenwanIndustry =
-  (typeof SHENWAN_LEVEL1_INDUSTRIES)[number];
+export type ShenwanIndustry = (typeof SHENWAN_LEVEL1_INDUSTRIES)[number];

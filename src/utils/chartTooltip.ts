@@ -13,16 +13,15 @@ interface BuildRankingOptions {
 const DEFAULT_COLUMNS = 4;
 const DEFAULT_ROWS_PER_COLUMN = 7;
 
-export const TOOLTIP_EXTRA_CSS =
-  [
-    'position:fixed',
-    'pointer-events:none',
-    'max-width:680px',
-    'max-height:calc(100vh - 16px)',
-    'overflow:auto',
-    'border-radius:12px',
-    'box-shadow:0 12px 32px rgba(5,8,20,0.55)',
-  ].join(';') + ';';
+export const TOOLTIP_EXTRA_CSS = `${[
+  'position:fixed',
+  'pointer-events:none',
+  'max-width:680px',
+  'max-height:calc(100vh - 16px)',
+  'overflow:auto',
+  'border-radius:12px',
+  'box-shadow:0 12px 32px rgba(5,8,20,0.55)',
+].join(';')};`;
 
 export const buildRankingTooltipContent = (
   title: string,
@@ -53,7 +52,7 @@ export const buildRankingTooltipContent = (
   const columnHtml = columns
     .map(column => {
       if (column.length === 0) {
-        return `<div style="min-height:4px;"></div>`;
+        return '<div style="min-height:4px;"></div>';
       }
       return `<div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
         ${column

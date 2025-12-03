@@ -105,7 +105,6 @@ export const HeroCopy = styled.div`
     line-height: 1.1;
     color: #f7fbff;
   }
-
 `;
 
 export const HeroMeta = styled.div`

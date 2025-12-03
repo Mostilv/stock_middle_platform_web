@@ -294,38 +294,43 @@ const UserManagement: React.FC = () => {
         </div>
       </UserManagementHeader>
 
-      <UserManagementBody>
-        {error && (
-          <Alert
-            message='数据加载失败'
-            description={error}
-            type='error'
-            showIcon
-            action={(
-              <Button size='small' onClick={loadUsers}>
-                重试
-              </Button>
-            )}
-          />
-        )}
-        <UserManagementCard>
-          <Table
-            columns={columns}
-            dataSource={filteredUsers}
-            rowKey='id'
-            loading={tableLoading}
-            pagination={{
-              total: filteredUsers.length,
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) =>
-                `第${range[0]}-${range[1]} 条，共${total} 条`,
-            }}
-          />
-        </UserManagementCard>
-      </UserManagementBody>
-
+      <UserManagementBody>
+        {error && (
+          <Alert
+            message='数据加载失败'
+            description={error}
+            type='error'
+            showIcon
+            action={
+              <Button size='small' onClick={loadUsers}>
+                重试
+              </Button>
+            }
+          />
+        )}
+
+        <UserManagementCard>
+          <Table
+            columns={columns}
+            dataSource={filteredUsers}
+            rowKey='id'
+            loading={tableLoading}
+            pagination={{
+              total: filteredUsers.length,
+
+              pageSize: 10,
+
+              showSizeChanger: true,
+
+              showQuickJumper: true,
+
+              showTotal: (total, range) =>
+                `第${range[0]}-${range[1]} 条，共${total} 条`,
+            }}
+          />
+        </UserManagementCard>
+      </UserManagementBody>
+
       {/* 新增/编辑用户模态框 */}
       <Modal
         title={editingUser ? '编辑用户' : '新增用户'}
