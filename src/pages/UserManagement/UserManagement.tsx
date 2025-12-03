@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   Switch,
-  Radio,
   message,
   Popconfirm,
   Tag,
@@ -87,12 +86,9 @@ const UserManagement: React.FC = () => {
         const updateData: UserUpdate = {
           username: values.username,
           email: values.email,
-          full_name: values.full_name,
-          display_name: values.display_name,
-          avatar_url: values.avatar_url,
           is_active: values.is_active,
           is_superuser: values.is_superuser,
-          isReal: values.isReal,
+          remark: values.remark,
         };
         if (values.newPassword) {
           updateData.password = values.newPassword;
@@ -105,10 +101,7 @@ const UserManagement: React.FC = () => {
           username: values.username,
           email: values.email,
           password: values.password,
-          full_name: values.full_name,
-          display_name: values.display_name,
-          avatar_url: values.avatar_url,
-          isReal: values.isReal,
+          remark: values.remark,
         };
         await createUser(createData);
         message.success('用户创建成功');
@@ -151,12 +144,9 @@ const UserManagement: React.FC = () => {
     form.setFieldsValue({
       username: user.username,
       email: user.email,
-      full_name: user.full_name,
-      display_name: user.display_name,
-      avatar_url: user.avatar_url,
       is_active: user.is_active,
       is_superuser: user.is_superuser,
-      isReal: user.isReal ?? true,
+      remark: user.remark,
     });
     setIsModalVisible(true);
   };
@@ -165,7 +155,6 @@ const UserManagement: React.FC = () => {
   const handleAdd = () => {
     setEditingUser(null);
     form.resetFields();
-    form.setFieldsValue({ isReal: true });
     setIsModalVisible(true);
   };
 
@@ -180,7 +169,9 @@ const UserManagement: React.FC = () => {
               .toLowerCase()
               .includes(searchText.toLowerCase())) ||
           (user.full_name &&
-            user.full_name.toLowerCase().includes(searchText.toLowerCase())),
+            user.full_name.toLowerCase().includes(searchText.toLowerCase())) ||
+          (user.remark &&
+            user.remark.toLowerCase().includes(searchText.toLowerCase())),
       )
     : [];
 
@@ -192,9 +183,7 @@ const UserManagement: React.FC = () => {
       key: 'username',
       render: (_text: string, record: User) => {
         const initial =
-          record.username?.charAt(0).toUpperCase() ||
-          record.display_name?.charAt(0).toUpperCase() ||
-          'U';
+          record.username?.charAt(0).toUpperCase() || 'U';
         return (
           <Space align='center'>
             <Avatar
@@ -235,13 +224,6 @@ const UserManagement: React.FC = () => {
       ),
     },
     {
-      title: '测试标记',
-      dataIndex: 'isReal',
-      key: 'isReal',
-      render: (isReal?: boolean) =>
-        isReal === false ? <Tag color='magenta'>测试数据</Tag> : null,
-    },
-    {
       title: '角色',
       dataIndex: 'is_superuser',
       key: 'is_superuser',
@@ -253,6 +235,12 @@ const UserManagement: React.FC = () => {
           {isSuperuser ? '管理员' : '普通用户'}
         </Tag>
       ),
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+      render: (remark?: string) => remark || '—',
     },
     {
       title: '创建时间',
@@ -368,12 +356,7 @@ const UserManagement: React.FC = () => {
         width={600}
         confirmLoading={loading}
       >
-        <Form
-          form={form}
-          layout='vertical'
-          onFinish={handleSubmit}
-          initialValues={{ isReal: true }}
-        >
+        <Form form={form} layout='vertical' onFinish={handleSubmit}>
           <Form.Item
             label='用户名'
             name='username'
@@ -397,27 +380,8 @@ const UserManagement: React.FC = () => {
             <Input placeholder='请输入邮箱' />
           </Form.Item>
 
-          <Form.Item label='姓名' name='full_name'>
-            <Input placeholder='请输入姓名' />
-          </Form.Item>
-
-          <Form.Item label='账户名称' name='display_name'>
-            <Input placeholder='请输入在前台展示的名称' />
-          </Form.Item>
-
-          <Form.Item label='头像地址' name='avatar_url'>
-            <Input placeholder='请输入头像图片链接' />
-          </Form.Item>
-
-          <Form.Item
-            label='数据类型'
-            name='isReal'
-            rules={[{ required: true, message: '请选择数据类型' }]}
-          >
-            <Radio.Group optionType='button' buttonStyle='solid'>
-              <Radio.Button value={true}>真实数据</Radio.Button>
-              <Radio.Button value={false}>测试数据</Radio.Button>
-            </Radio.Group>
+          <Form.Item label='备注' name='remark'>
+            <Input placeholder='请输入备注信息' />
           </Form.Item>
 
           {!editingUser && (

@@ -12,6 +12,7 @@ export interface User {
   created_at: string;
   updated_at: string;
   isReal?: boolean;
+  remark?: string;
 }
 
 export interface UserCreate {
@@ -22,6 +23,7 @@ export interface UserCreate {
   display_name?: string;
   avatar_url?: string;
   isReal?: boolean;
+  remark?: string;
 }
 
 export interface UserUpdate {
@@ -34,6 +36,7 @@ export interface UserUpdate {
   is_active?: boolean;
   is_superuser?: boolean;
   isReal?: boolean;
+  remark?: string;
 }
 
 export interface UserListParams {

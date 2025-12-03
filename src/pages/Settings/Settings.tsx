@@ -475,9 +475,7 @@ const Settings: React.FC = () => {
   };
 
   const accountInitial =
-    user?.username?.charAt(0).toUpperCase() ||
-    user?.displayName?.charAt(0).toUpperCase() ||
-    'U';
+    user?.username?.charAt(0).toUpperCase() || 'U';
   const accountName = isAuthenticated
     ? user?.username || '我的账户'
     : '尚未登录';

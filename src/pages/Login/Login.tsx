@@ -13,9 +13,9 @@ import {
   PageTitle,
 } from '../../components/PageLayout';
 import { useAuth } from '../../contexts/useAuth';
-import { FormCard, Hero, LoginPage, Panel, PanelBody } from './Login.styles';
+import { FormCard, LoginPage, Panel } from './Login.styles';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
@@ -25,6 +25,14 @@ const Login: React.FC = () => {
   const { login, loading, isAuthenticated } = useAuth();
   const redirectPath =
     (location.state as { from?: Location })?.from?.pathname || '/';
+
+  const commonAccounts = useMemo(
+    () => [
+      { label: '管理员', username: 'admin', password: '123456' },
+      { label: '交易员', username: 'trader', password: '123456' },
+    ],
+    [],
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -44,14 +52,6 @@ const Login: React.FC = () => {
     navigate(redirectPath === '/login' ? '/' : redirectPath, { replace: true });
   };
 
-  const commonAccounts = useMemo(
-    () => [
-      { label: '管理员', username: 'admin', password: '123456' },
-      { label: '交易员', username: 'trader', password: '123456' },
-    ],
-    [],
-  );
-
   return (
     <PageContainer>
       <PageHeader>
@@ -59,104 +59,92 @@ const Login: React.FC = () => {
           <SafetyCertificateOutlined />
           登录
         </PageTitle>
-        <Text type='secondary'>
-          登录页作为子页面存在，如无账号可通过侧边菜单切换到其他页面。
-        </Text>
+        <Text type='secondary'>仅在需要授权的模块中使用账号登录。</Text>
       </PageHeader>
 
       <PageBody>
         <LoginPage>
           <Panel>
-            <PanelBody>
-              <Hero>
-                <span className='pill'>
-                  <SafetyCertificateOutlined />
-                  访问控制
-                </span>
-                <Title level={3}>登录后才能管理用户与订阅策略</Title>
-                <Paragraph>
-                  - 用户管理、策略订阅为需要账号校验的入口
-                  <br />
-                  - 调仓页保留管理员级别的总开关，与订阅独立
-                  <br />- 收到交易信号后，用户可按需订阅策略并设置通知渠道
-                </Paragraph>
-                <div>
-                  <Text style={{ color: '#cbd5e1' }}>快速体验：</Text>
-                  <div className='badges'>
-                    {commonAccounts.map(item => (
-                      <span
-                        key={item.username}
-                        onClick={() =>
-                          form.setFieldsValue({
-                            username: item.username,
-                            password: item.password,
-                          })
-                        }
-                      >
-                        {item.label}: {item.username}/{item.password}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </Hero>
-
-              <FormCard>
-                <Title level={4} style={{ margin: 0 }}>
-                  账号登录
-                </Title>
-                <Text type='secondary'>
-                  仅当访问用户管理或策略订阅时需要登录，其余页面保持可浏览。
-                </Text>
-                {error && <Alert type='error' message={error} showIcon />}
-                <Form
-                  layout='vertical'
-                  form={form}
-                  onFinish={onFinish}
-                  initialValues={{ username: 'admin', password: '123456' }}
+            <FormCard>
+              <Title level={4} style={{ margin: 0 }}>
+                账户登录
+              </Title>
+              {error && (
+                <Alert
+                  className='login-error'
+                  type='error'
+                  message={error}
+                  showIcon
+                />
+              )}
+              <Form
+                layout='vertical'
+                form={form}
+                onFinish={onFinish}
+                initialValues={{ username: 'admin', password: '123456' }}
+              >
+                <Form.Item
+                  label='用户名'
+                  name='username'
+                  rules={[{ required: true, message: '请输入用户名' }]}
                 >
-                  <Form.Item
-                    label='用户名'
-                    name='username'
-                    rules={[{ required: true, message: '请输入用户名' }]}
+                  <Input
+                    prefix={<UserOutlined />}
+                    placeholder='请输入用户名'
+                    allowClear
+                  />
+                </Form.Item>
+                <Form.Item
+                  label='密码'
+                  name='password'
+                  rules={[{ required: true, message: '请输入密码' }]}
+                >
+                  <Input.Password
+                    prefix={<LockOutlined />}
+                    placeholder='请输入密码'
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Space
+                    align='center'
+                    style={{ width: '100%', justifyContent: 'space-between' }}
                   >
-                    <Input
-                      prefix={<UserOutlined />}
-                      placeholder='请输入用户名'
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label='密码'
-                    name='password'
-                    rules={[{ required: true, message: '请输入密码' }]}
+                    <Checkbox>记住账号</Checkbox>
+                    <Text type='secondary'>如需扩展权限请联系管理员</Text>
+                  </Space>
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    block
+                    loading={loading}
+                    size='large'
                   >
-                    <Input.Password
-                      prefix={<LockOutlined />}
-                      placeholder='请输入密码'
-                    />
-                  </Form.Item>
-                  <Form.Item>
-                    <Space
-                      align='center'
-                      style={{ width: '100%', justifyContent: 'space-between' }}
+                    立即登录
+                  </Button>
+                </Form.Item>
+              </Form>
+              <div className='quick-fill'>
+                <Text>快速体验</Text>
+                <div className='badges'>
+                  {commonAccounts.map(item => (
+                    <button
+                      type='button'
+                      key={item.username}
+                      onClick={() =>
+                        form.setFieldsValue({
+                          username: item.username,
+                          password: item.password,
+                        })
+                      }
                     >
-                      <Checkbox>记住我</Checkbox>
-                      <Text type='secondary'>如需权限，请联系管理员开通</Text>
-                    </Space>
-                  </Form.Item>
-                  <Form.Item style={{ marginBottom: 0 }}>
-                    <Button
-                      type='primary'
-                      htmlType='submit'
-                      block
-                      loading={loading}
-                      size='large'
-                    >
-                      立即登录
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </FormCard>
-            </PanelBody>
+                      {item.label}&nbsp;{item.username}/{item.password}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </FormCard>
           </Panel>
         </LoginPage>
       </PageBody>
