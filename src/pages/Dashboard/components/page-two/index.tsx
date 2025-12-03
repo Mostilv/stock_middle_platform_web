@@ -1,6 +1,10 @@
 import React from 'react';
+import { Row, Col } from 'antd';
 import { MainContent } from '../../Dashboard.styles';
-import PageTwoIndicators from './PageTwoIndicators';
+import IndustryTrendPanel from './IndustryTrendPanel';
+import LimitUpCountPanel from './LimitUpCountPanel';
+import PlaceholderPanelOne from './PlaceholderPanelOne';
+import PlaceholderPanelTwo from './PlaceholderPanelTwo';
 import type { DashboardPageTwoCopy } from '../../../../i18n/dashboard';
 
 interface PageTwoProps {
@@ -17,7 +21,20 @@ const PageTwo: React.FC<PageTwoProps> = React.memo(({}) => (
         height: '100%',
       }}
     >
-      <PageTwoIndicators />
+      <Row gutter={[16, 16]} style={{ padding: '0 12px 12px', height: '100%' }}>
+        <Col span={12} style={{ height: 'calc(50% - 16px)' }}>
+          <IndustryTrendPanel />
+        </Col>
+        <Col span={12} style={{ height: 'calc(50% - 16px)' }}>
+          <LimitUpCountPanel />
+        </Col>
+        <Col span={12} style={{ height: 'calc(50% - 16px)' }}>
+          <PlaceholderPanelOne />
+        </Col>
+        <Col span={12} style={{ height: 'calc(50% - 16px)' }}>
+          <PlaceholderPanelTwo />
+        </Col>
+      </Row>
     </div>
   </MainContent>
 ));
