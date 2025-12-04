@@ -22,11 +22,11 @@ export const SectionGrid = styled.div`
 `;
 
 export const CardPanel = styled.div`
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--app-border-color);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -105,10 +105,10 @@ export const SectionTitle = styled.div`
   gap: 8px;
   margin-bottom: 12px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-primary);
 
   .muted {
-    color: #64748b;
+    color: var(--app-text-secondary);
     font-weight: 400;
   }
 `;
@@ -133,7 +133,7 @@ export const StatsRow = styled.div`
 export const EmptyState = styled.div`
   padding: 24px;
   text-align: center;
-  color: #94a3b8;
-  border: 1px dashed #e2e8f0;
+  color: var(--app-text-secondary);
+  border: 1px dashed var(--app-border-color);
   border-radius: 10px;
 `;

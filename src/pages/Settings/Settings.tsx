@@ -43,6 +43,8 @@ import {
 } from './services/settings.api';
 import type { SettingsDataResponse } from './services/settings.api';
 import { useAuth } from '../../contexts/useAuth';
+import { useTheme } from '../../contexts/useTheme';
+import type { ThemeMode } from '../../contexts/theme-context';
 import {
   AccountActions,
   AccountCard,
@@ -105,6 +107,7 @@ const Settings: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const navigate = useNavigate();
   const { isAuthenticated, user, logout, updateUser } = useAuth();
+  const { themeMode, setThemeMode } = useTheme();
   const [profileExpanded, setProfileExpanded] = useState(false);
   const [passwordExpanded, setPasswordExpanded] = useState(false);
   const settingsLoadedRef = useRef(false);
@@ -185,6 +188,12 @@ const Settings: React.FC = () => {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    form.setFieldsValue({
+      theme: themeMode,
+    });
+  }, [form, themeMode]);
+
   const onFinish = (_values: any) => {
     setLoading(true);
     const payload: SettingsDataResponse = {
@@ -229,7 +238,14 @@ const Settings: React.FC = () => {
     ]);
 
     form.resetFields();
+    form.setFieldsValue({ theme: themeMode });
     message.info('设置已重置');
+  };
+
+  const handleThemeSelect = (mode: ThemeMode) => {
+    setThemeMode(mode);
+    form.setFieldsValue({ theme: mode });
+    message.success(`已切换到${mode === 'dark' ? '深色' : '浅色'}主题`);
   };
 
   const addEmailConfig = () => {
@@ -814,7 +830,7 @@ const Settings: React.FC = () => {
             layout='vertical'
             onFinish={onFinish}
             initialValues={{
-              theme: 'light',
+              theme: themeMode,
               rebalanceNotifications: true,
             }}
           >
@@ -833,10 +849,9 @@ const Settings: React.FC = () => {
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name='theme' label='主题'>
-                      <Select>
+                      <Select onChange={handleThemeSelect}>
                         <Option value='light'>浅色主题</Option>
                         <Option value='dark'>深色主题</Option>
-                        <Option value='auto'>跟随系统</Option>
                       </Select>
                     </Form.Item>
                   </Col>

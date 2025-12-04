@@ -21,13 +21,13 @@ export const PortfolioHeader = styled(PageHeader)`
     h1 {
       font-size: 18px;
       font-weight: 700;
-      color: #111827;
+      color: var(--app-text-primary);
       margin: 0;
     }
 
     span {
       font-size: 13px;
-      color: #6b7280;
+      color: var(--app-text-secondary);
     }
   }
 
@@ -47,7 +47,7 @@ export const StatisticsRow = styled.div`
       .ant-card {
         border-radius: 8px;
         box-shadow: var(--page-panel-shadow);
-        border: 1px solid rgba(15, 23, 42, 0.08);
+        border: 1px solid var(--app-border-color);
         transition: box-shadow 0.2s ease;
         height: 100%;
 
@@ -59,16 +59,16 @@ export const StatisticsRow = styled.div`
           padding: 16px;
         }
 
-        .ant-statistic {
-          .ant-statistic-title {
-            font-size: 12px;
-            margin-bottom: 8px;
-            color: #666;
-          }
+          .ant-statistic {
+            .ant-statistic-title {
+              font-size: 12px;
+              margin-bottom: 8px;
+              color: var(--app-text-secondary);
+            }
 
-          .ant-statistic-content {
-            font-size: 18px;
-            font-weight: 600;
+            .ant-statistic-content {
+              font-size: 18px;
+              font-weight: 600;
           }
         }
       }
@@ -77,10 +77,10 @@ export const StatisticsRow = styled.div`
 `;
 
 export const PortfolioCard = styled.div`
-  background: white;
+  background: var(--app-surface);
   border-radius: 8px;
   box-shadow: var(--page-panel-shadow);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--app-border-color);
   overflow: hidden;
 
   .ant-table-wrapper {

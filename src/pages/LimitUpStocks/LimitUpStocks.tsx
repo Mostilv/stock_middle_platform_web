@@ -21,6 +21,7 @@ import {
 } from './LimitUpStocks.styles';
 import StockChart from '../../components/StockChart';
 import type { StockDataPoint } from '../../components/StockChart';
+import { useTheme } from '../../contexts/useTheme';
 
 const { Group: CheckboxGroup } = Checkbox;
 
@@ -70,6 +71,7 @@ const LimitUpStocks: React.FC = () => {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tableScrollY, setTableScrollY] = useState<number>(400);
+  const { themeMode } = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -502,11 +504,12 @@ const LimitUpStocks: React.FC = () => {
                   cursor: 'pointer',
                   padding: '4px',
                   borderRadius: '4px',
-                  transition: 'background-color 0.2s',
+                  transition: 'background-color 0.2s, color 0.2s',
+                  color: 'var(--app-text-primary)',
                 }}
                 onMouseEnter={e => {
                   (e.currentTarget as HTMLDivElement).style.backgroundColor =
-                    '#f0f0f0';
+                    'var(--app-table-hover)';
                 }}
                 onMouseLeave={e => {
                   (e.currentTarget as HTMLDivElement).style.backgroundColor =
@@ -517,18 +520,29 @@ const LimitUpStocks: React.FC = () => {
                   setIsModalVisible(true);
                 }}
               >
-                <div style={{ color: '#666' }}>{stock.time}</div>
-                <div style={{ fontWeight: 'bold', color: '#333' }}>
+                <div style={{ color: 'var(--app-text-secondary)' }}>
+                  {stock.time}
+                </div>
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'var(--app-text-primary)',
+                  }}
+                >
                   {stock.name}
                 </div>
                 <div style={{ color: '#1890ff', fontWeight: 'bold' }}>
                   {stock.price}
                 </div>
                 <div style={{ color: '#52c41a' }}>{stock.changePercent}%</div>
-                <div style={{ color: '#666', fontSize: '11px' }}>
+                <div
+                  style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+                >
                   {stock.volume1}万
                 </div>
-                <div style={{ color: '#999', fontSize: '11px' }}>
+                <div
+                  style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+                >
                   {stock.ratio1}/{stock.ratio2}
                 </div>
               </div>
@@ -562,11 +576,12 @@ const LimitUpStocks: React.FC = () => {
                 cursor: 'pointer',
                 padding: '4px',
                 borderRadius: '4px',
-                transition: 'background-color 0.2s',
+                transition: 'background-color 0.2s, color 0.2s',
+                color: 'var(--app-text-primary)',
               }}
               onMouseEnter={e => {
                 (e.currentTarget as HTMLDivElement).style.backgroundColor =
-                  '#f0f0f0';
+                  'var(--app-table-hover)';
               }}
               onMouseLeave={e => {
                 (e.currentTarget as HTMLDivElement).style.backgroundColor =
@@ -577,18 +592,29 @@ const LimitUpStocks: React.FC = () => {
                 setIsModalVisible(true);
               }}
             >
-              <div style={{ color: '#666' }}>{stock.time}</div>
-              <div style={{ fontWeight: 'bold', color: '#333' }}>
+              <div style={{ color: 'var(--app-text-secondary)' }}>
+                {stock.time}
+              </div>
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  color: 'var(--app-text-primary)',
+                }}
+              >
                 {stock.name}
               </div>
               <div style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
                 {stock.price}
               </div>
               <div style={{ color: '#ff4d4f' }}>{stock.changePercent}%</div>
-              <div style={{ color: '#666', fontSize: '11px' }}>
+              <div
+                style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+              >
                 {stock.volume1}万
               </div>
-              <div style={{ color: '#999', fontSize: '11px' }}>
+              <div
+                style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+              >
                 {stock.ratio1}/{stock.ratio2}
               </div>
             </div>
@@ -613,7 +639,7 @@ const LimitUpStocks: React.FC = () => {
         render: (text: string, record: any) => (
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={{ fontSize: '12px', color: 'var(--app-text-secondary)' }}>
               {record.count}
             </div>
           </div>
@@ -661,7 +687,14 @@ const LimitUpStocks: React.FC = () => {
               onChange={setVisibleColumns}
             />
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '14px', color: '#666' }}>日期：</span>
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: 'var(--app-text-secondary)',
+                }}
+              >
+                日期：
+              </span>
               <DatePicker
                 value={dayjs(selectedDate)}
                 onChange={date =>
@@ -798,7 +831,7 @@ const LimitUpStocks: React.FC = () => {
                     <StockChart
                       data={generateStockTrendData(selectedStock)}
                       chartType='line'
-                      theme='light'
+                      theme={themeMode}
                       showVolume={true}
                       height={400}
                       stockCode={selectedStock.code}
@@ -819,7 +852,7 @@ const LimitUpStocks: React.FC = () => {
                     <StockChart
                       data={generateStockKLineData(selectedStock)}
                       chartType='candlestick'
-                      theme='light'
+                      theme={themeMode}
                       showVolume={true}
                       height={400}
                       stockCode={selectedStock.code}

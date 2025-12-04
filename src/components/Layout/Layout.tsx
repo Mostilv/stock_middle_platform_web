@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Avatar, Menu } from 'antd';
 import {
   LeftOutlined,
@@ -19,12 +19,14 @@ import {
   ContentContainer,
 } from './Layout.styles';
 import { useAuth } from '../../contexts/useAuth';
+import { useTheme } from '../../contexts/useTheme';
 
 const LayoutComponent: React.FC = React.memo(() => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
+  const { themeMode } = useTheme();
   const accountInitial =
     user?.username?.charAt(0).toUpperCase() ||
     user?.displayName?.charAt(0).toUpperCase() ||
@@ -84,6 +86,17 @@ const LayoutComponent: React.FC = React.memo(() => {
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const body = document.body;
+    if (!body) return;
+    if (location.pathname === '/') {
+      body.removeAttribute('data-app-theme');
+      return;
+    }
+    body.setAttribute('data-app-theme', themeMode);
+  }, [location.pathname, themeMode]);
 
   return (
     <LayoutContainer data-path={location.pathname}>

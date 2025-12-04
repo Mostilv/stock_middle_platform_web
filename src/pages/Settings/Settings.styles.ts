@@ -31,13 +31,13 @@ export const SettingsHeader = styled(PageHeader)`
   h1 {
     font-size: 18px;
     font-weight: 700;
-    color: #111827;
+    color: var(--app-text-primary);
     margin: 0;
   }
 
   span {
     font-size: 13px;
-    color: #6b7280;
+    color: var(--app-text-secondary);
   }
 `;
 
@@ -51,14 +51,15 @@ export const SettingsCard = styled.div`
       0 10px 24px rgba(15, 23, 42, 0.08),
       0 1px 3px rgba(15, 23, 42, 0.05)
     );
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--app-border-color);
+    background: var(--app-surface);
 
     .ant-card-head {
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--app-border-color);
 
       .ant-card-head-title {
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
@@ -73,13 +74,13 @@ export const AccountCard = styled.div`
   margin-bottom: 16px;
   padding: 20px 24px;
   border-radius: 10px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--app-border-color);
   box-shadow: var(
     --page-panel-shadow,
     0 10px 24px rgba(15, 23, 42, 0.08),
@@ -90,12 +91,12 @@ export const AccountCard = styled.div`
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--app-text-primary);
   }
 
   p {
     margin: 4px 0 0;
-    color: #475569;
+    color: var(--app-text-secondary);
   }
 `;
 
@@ -128,7 +129,7 @@ export const SettingsForm = styled.div`
     .ant-form-item-label {
       label {
         font-weight: 500;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
@@ -136,7 +137,7 @@ export const SettingsForm = styled.div`
     .ant-select-selector,
     .ant-input-number {
       border-radius: 6px;
-      border: 1px solid #d9d9d9;
+      border: 1px solid var(--app-border-color);
 
       &:hover {
         border-color: #40a9ff;

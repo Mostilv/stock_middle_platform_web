@@ -2,6 +2,32 @@ import { createGlobalStyle } from 'styled-components';
 import { theme } from './theme';
 
 export const GlobalStyles = createGlobalStyle`
+  :root {
+    --app-page-bg: #f4f6fb;
+    --app-surface: #ffffff;
+    --app-surface-muted: #f8fafc;
+    --app-text-primary: #111827;
+    --app-text-secondary: #6b7280;
+    --app-border-color: rgba(15, 23, 42, 0.08);
+    --app-card-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --app-card-hover-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    --app-table-hover: rgba(24, 144, 255, 0.08);
+    --app-table-header-bg: #f5f6fa;
+  }
+
+  body[data-app-theme='dark'] {
+    --app-page-bg: #0f172a;
+    --app-surface: #111827;
+    --app-surface-muted: #0b1626;
+    --app-text-primary: #e5edf9;
+    --app-text-secondary: #a5b4c5;
+    --app-border-color: rgba(148, 163, 184, 0.25);
+    --app-card-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+    --app-card-hover-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    --app-table-hover: rgba(255, 255, 255, 0.06);
+    --app-table-header-bg: #152236;
+  }
+
   /* 全局样式重置 */
   * {
     margin: 0;
@@ -16,8 +42,8 @@ export const GlobalStyles = createGlobalStyle`
 
   body {
     font-family: ${theme.typography.fontFamily};
-    background-color: ${theme.colors.layout.lightBackground};
-    color: ${theme.colors.text.primary};
+    background-color: var(--app-page-bg);
+    color: var(--app-text-primary);
     line-height: ${theme.typography.lineHeights.normal};
     font-size: ${theme.typography.fontSizes.md};
     -webkit-font-smoothing: antialiased;
@@ -49,12 +75,12 @@ export const GlobalStyles = createGlobalStyle`
 
   /* 其他页面使用浅色主题 */
   .ant-layout:not([data-path="/"]) {
-    background: ${theme.colors.layout.lightBackground};
+    background: var(--app-page-bg);
   }
 
   .ant-layout-content:not([data-path="/"]) {
-    background: ${theme.colors.layout.lightBackground};
-    color: ${theme.colors.text.primary};
+    background: var(--app-page-bg);
+    color: var(--app-text-primary);
   }
   
   /* 链接样式 */
@@ -77,7 +103,7 @@ export const GlobalStyles = createGlobalStyle`
 
   /* 表单组件 */
   .ant-form-item-label > label {
-    color: ${theme.colors.text.secondary};
+    color: var(--app-text-secondary);
     font-weight: ${theme.typography.fontWeights.medium};
   }
 
@@ -134,57 +160,66 @@ export const GlobalStyles = createGlobalStyle`
 
   .ant-card {
     border-radius: ${theme.borderRadius.md};
-    box-shadow: ${theme.shadows.small};
+    box-shadow: var(--app-card-shadow);
     transition: box-shadow 0.3s ease;
     overflow: hidden;
-    border: none;
+    border: 1px solid var(--app-border-color);
+    background: var(--app-surface);
     
     &:hover {
-      box-shadow: ${theme.shadows.medium};
+      box-shadow: var(--app-card-hover-shadow);
     }
   }
 
   .ant-card-head {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--app-border-color);
     padding: 16px 24px;
   }
 
   .ant-card-head-title {
     font-weight: ${theme.typography.fontWeights.semibold};
     font-size: ${theme.typography.fontSizes.lg};
+    color: var(--app-text-primary);
   }
 
   .ant-statistic-title {
-    color: ${theme.colors.text.secondary};
+    color: var(--app-text-secondary);
     font-size: ${theme.typography.fontSizes.sm};
     margin-bottom: 4px;
   }
 
   .ant-statistic-content {
-    color: ${theme.colors.text.primary};
+    color: var(--app-text-primary);
     font-weight: ${theme.typography.fontWeights.semibold};
   }
 
   .ant-table {
     border-radius: ${theme.borderRadius.md};
     overflow: hidden;
-    box-shadow: ${theme.shadows.small};
+    box-shadow: var(--app-card-shadow);
+    background: var(--app-surface);
+    color: var(--app-text-primary);
   }
 
   .ant-table-thead > tr > th {
-    background: #fafafa;
-    border-bottom: 1px solid #f0f0f0;
+    background: var(--app-table-header-bg);
+    border-bottom: 1px solid var(--app-border-color);
     font-weight: ${theme.typography.fontWeights.semibold};
-    color: ${theme.colors.text.secondary};
+    color: var(--app-text-secondary);
   }
 
   .ant-table-tbody > tr:hover > td {
-    background: rgba(24, 144, 255, 0.1);
+    background: var(--app-table-hover);
+  }
+
+  .ant-table-tbody > tr > td {
+    color: var(--app-text-primary);
+    background: var(--app-surface);
   }
 
   .ant-progress-text {
     font-size: ${theme.typography.fontSizes.xs};
-    color: ${theme.colors.text.secondary};
+    color: var(--app-text-secondary);
   }
 
   /* 按钮样式优化 */
