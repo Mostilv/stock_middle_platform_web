@@ -395,7 +395,36 @@ const portfolioOverviewMock = {
   todayPendingRebalance: 3,
 };
 
-const settingsDataMock = {
+interface EmailConfigSettings {
+  id: string;
+  email: string;
+  remark: string;
+  enabled: boolean;
+}
+
+interface NotificationTemplateSettings {
+  id: string;
+  name: string;
+  subject: string;
+  content: string;
+  enabled: boolean;
+}
+
+interface SettingsDataSettings {
+  emailConfigs: EmailConfigSettings[];
+  notificationTemplates: NotificationTemplateSettings[];
+}
+
+const MAX_EMAIL_CONFIGS = 3;
+
+const cloneSettingsData = (data: SettingsDataSettings): SettingsDataSettings => ({
+  emailConfigs: data.emailConfigs.map(item => ({ ...item })),
+  notificationTemplates: data.notificationTemplates.map(item => ({
+    ...item,
+  })),
+});
+
+const defaultSettingsData: SettingsDataSettings = {
   emailConfigs: [
     {
       id: '1',
@@ -414,12 +443,31 @@ const settingsDataMock = {
     {
       id: '1',
       name: '通知模板',
-      subject: '投资组合调仓通知 - {date}',
+      subject: '投资组合调仓通知 - {{date}}',
       content:
         '策略名称：{{strategyName}}\n委托时间：{{orderTime}}\n股票|委托数量|委托类型|委托价格|操作|持仓\n{{#orders}}{{stock}}|{{quantity}}|{{orderType}}|{{price}}|{{action}}|{{position}}\n{{/orders}}',
       enabled: true,
     },
   ],
+};
+
+const settingsDataStoreByUser: Record<string, SettingsDataSettings> = {};
+
+const getUserSettingsData = (username?: string): SettingsDataSettings => {
+  if (!username) return cloneSettingsData(defaultSettingsData);
+  if (!settingsDataStoreByUser[username]) {
+    settingsDataStoreByUser[username] = cloneSettingsData(defaultSettingsData);
+  }
+  return cloneSettingsData(settingsDataStoreByUser[username]);
+};
+
+const persistUserSettingsData = (
+  username: string,
+  data: SettingsDataSettings,
+): SettingsDataSettings => {
+  const cloned = cloneSettingsData(data);
+  settingsDataStoreByUser[username] = cloned;
+  return cloneSettingsData(cloned);
 };
 
 const usersMock = [
@@ -563,8 +611,51 @@ const routes: Record<string, MockHandler> = {
   'GET /market/data': () => jsonResponse(marketDataMock),
   'GET /limitup/overview': () => jsonResponse(limitUpOverviewMock),
   'GET /portfolio/overview': () => jsonResponse(portfolioOverviewMock),
-  'GET /settings/data': () => jsonResponse(settingsDataMock),
-  'POST /settings/data': () => jsonResponse({ ok: true }),
+  'GET /settings/data': () =>
+    jsonResponse(getUserSettingsData(accountProfileMock?.username)),
+  'POST /settings/data': ({ config }) => {
+    const username = accountProfileMock?.username;
+    if (!username) {
+      return jsonResponse(
+        { message: 'unauthorized' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
+    }
+    const body = readRequestBody(config);
+    const nextEmailConfigs: EmailConfigSettings[] = Array.isArray(
+      body?.emailConfigs,
+    )
+      ? body.emailConfigs.slice(0, MAX_EMAIL_CONFIGS).map(
+          (item: Partial<EmailConfigSettings> = {}, index: number) => ({
+            id: item?.id?.toString() || `${Date.now()}-${index}`,
+            email: item?.email ?? '',
+            remark: item?.remark ?? '',
+            enabled: item?.enabled ?? true,
+          }),
+        )
+      : [];
+    const nextTemplates: NotificationTemplateSettings[] = Array.isArray(
+      body?.notificationTemplates,
+    )
+      ? body.notificationTemplates.slice(0, 1).map(
+          (item: Partial<NotificationTemplateSettings> = {}, index: number) => ({
+            id: item?.id?.toString() || `tpl-${index + 1}`,
+            name: item?.name ?? '',
+            subject: item?.subject ?? '',
+            content: item?.content ?? '',
+            enabled: item?.enabled ?? true,
+          }),
+        )
+      : cloneSettingsData(defaultSettingsData).notificationTemplates;
+    persistUserSettingsData(username, {
+      emailConfigs: nextEmailConfigs,
+      notificationTemplates:
+        nextTemplates.length > 0
+          ? nextTemplates
+          : cloneSettingsData(defaultSettingsData).notificationTemplates,
+    });
+    return jsonResponse({ ok: true });
+  },
   'GET /users': () => jsonResponse(usersMock),
   'POST /users': ({ config }) => {
     const body = readRequestBody(config);
