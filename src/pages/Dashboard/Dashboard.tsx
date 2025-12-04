@@ -155,12 +155,7 @@ const Dashboard: React.FC = React.memo(() => {
 
   useEffect(() => {
     updateDashboardPageHeight();
-  }, [
-    updateDashboardPageHeight,
-    heroMetrics,
-    marketNarrative,
-    selectedDate,
-  ]);
+  }, [updateDashboardPageHeight, heroMetrics, marketNarrative, selectedDate]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;

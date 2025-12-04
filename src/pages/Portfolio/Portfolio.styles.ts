@@ -59,16 +59,16 @@ export const StatisticsRow = styled.div`
           padding: 16px;
         }
 
-          .ant-statistic {
-            .ant-statistic-title {
-              font-size: 12px;
-              margin-bottom: 8px;
-              color: var(--app-text-secondary);
-            }
+        .ant-statistic {
+          .ant-statistic-title {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: var(--app-text-secondary);
+          }
 
-            .ant-statistic-content {
-              font-size: 18px;
-              font-weight: 600;
+          .ant-statistic-content {
+            font-size: 18px;
+            font-weight: 600;
           }
         }
       }

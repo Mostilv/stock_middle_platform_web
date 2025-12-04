@@ -50,9 +50,8 @@ export async function saveSettingsData(
 }
 
 export async function fetchAccountProfile(): Promise<AccountProfileResponse> {
-  const { data } = await apiClient.get<AccountProfileResponse>(
-    '/account/profile',
-  );
+  const { data } =
+    await apiClient.get<AccountProfileResponse>('/account/profile');
   return data;
 }
 
@@ -64,10 +63,10 @@ export async function updateAccountProfile(
     display_name: payload.username,
     avatar_url: payload.avatarUrl,
   };
-  const { data } = await apiClient.put<
-    AccountProfileResponse,
-    typeof body
-  >('/account/profile', body);
+  const { data } = await apiClient.put<AccountProfileResponse, typeof body>(
+    '/account/profile',
+    body,
+  );
   return data;
 }
 

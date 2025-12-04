@@ -417,7 +417,9 @@ interface SettingsDataSettings {
 
 const MAX_EMAIL_CONFIGS = 3;
 
-const cloneSettingsData = (data: SettingsDataSettings): SettingsDataSettings => ({
+const cloneSettingsData = (
+  data: SettingsDataSettings,
+): SettingsDataSettings => ({
   emailConfigs: data.emailConfigs.map(item => ({ ...item })),
   notificationTemplates: data.notificationTemplates.map(item => ({
     ...item,
@@ -537,7 +539,6 @@ let accountProfileMock = {
   avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Admin',
 };
 
-
 const mockAuthUsers = {
   admin: {
     password: '123456',
@@ -625,27 +626,32 @@ const routes: Record<string, MockHandler> = {
     const nextEmailConfigs: EmailConfigSettings[] = Array.isArray(
       body?.emailConfigs,
     )
-      ? body.emailConfigs.slice(0, MAX_EMAIL_CONFIGS).map(
-          (item: Partial<EmailConfigSettings> = {}, index: number) => ({
+      ? body.emailConfigs
+          .slice(0, MAX_EMAIL_CONFIGS)
+          .map((item: Partial<EmailConfigSettings> = {}, index: number) => ({
             id: item?.id?.toString() || `${Date.now()}-${index}`,
             email: item?.email ?? '',
             remark: item?.remark ?? '',
             enabled: item?.enabled ?? true,
-          }),
-        )
+          }))
       : [];
     const nextTemplates: NotificationTemplateSettings[] = Array.isArray(
       body?.notificationTemplates,
     )
-      ? body.notificationTemplates.slice(0, 1).map(
-          (item: Partial<NotificationTemplateSettings> = {}, index: number) => ({
-            id: item?.id?.toString() || `tpl-${index + 1}`,
-            name: item?.name ?? '',
-            subject: item?.subject ?? '',
-            content: item?.content ?? '',
-            enabled: item?.enabled ?? true,
-          }),
-        )
+      ? body.notificationTemplates
+          .slice(0, 1)
+          .map(
+            (
+              item: Partial<NotificationTemplateSettings> = {},
+              index: number,
+            ) => ({
+              id: item?.id?.toString() || `tpl-${index + 1}`,
+              name: item?.name ?? '',
+              subject: item?.subject ?? '',
+              content: item?.content ?? '',
+              enabled: item?.enabled ?? true,
+            }),
+          )
       : cloneSettingsData(defaultSettingsData).notificationTemplates;
     persistUserSettingsData(username, {
       emailConfigs: nextEmailConfigs,

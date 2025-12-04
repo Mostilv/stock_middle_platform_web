@@ -175,8 +175,8 @@ const Settings: React.FC = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [previewContent, setPreviewContent] = useState<string>('');
-  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>(
-    () => getDefaultEmailConfigs(),
+  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>(() =>
+    getDefaultEmailConfigs(),
   );
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const navigate = useNavigate();
@@ -228,9 +228,7 @@ const Settings: React.FC = () => {
         if (!mounted) return;
         const usernameValue = profile.username || user?.username || '';
         const displayName =
-          profile.display_name ||
-          (profile as any).displayName ||
-          usernameValue;
+          profile.display_name || (profile as any).displayName || usernameValue;
         const avatarUrl =
           profile.avatar_url || (profile as any).avatarUrl || '';
         profileForm.setFieldsValue({
@@ -551,16 +549,13 @@ const Settings: React.FC = () => {
       passwordForm.resetFields();
       setPasswordExpanded(false);
     } catch (error) {
-      message.error(
-        error instanceof Error ? error.message : '密码修改失败',
-      );
+      message.error(error instanceof Error ? error.message : '密码修改失败');
     } finally {
       setPasswordLoading(false);
     }
   };
 
-  const accountInitial =
-    user?.username?.charAt(0).toUpperCase() || 'U';
+  const accountInitial = user?.username?.charAt(0).toUpperCase() || 'U';
   const accountName = isAuthenticated
     ? user?.username || '我的账户'
     : '尚未登录';
@@ -604,17 +599,17 @@ const Settings: React.FC = () => {
       <SettingsContent>
         <AccountCard>
           <AccountInfo>
-          <Avatar
-            size={64}
-            src={user?.avatarUrl || undefined}
-            style={{
-              borderRadius: 16,
-              backgroundColor: '#e0f2fe',
-              color: '#0f172a',
-            }}
-          >
-            {accountInitial}
-          </Avatar>
+            <Avatar
+              size={64}
+              src={user?.avatarUrl || undefined}
+              style={{
+                borderRadius: 16,
+                backgroundColor: '#e0f2fe',
+                color: '#0f172a',
+              }}
+            >
+              {accountInitial}
+            </Avatar>
             <div>
               <div
                 style={{
@@ -635,7 +630,7 @@ const Settings: React.FC = () => {
                   编辑资料
                 </Button>
               </div>
-            <p>{accountRoleText}</p>
+              <p>{accountRoleText}</p>
             </div>
           </AccountInfo>
           <AccountActions>
@@ -698,30 +693,30 @@ const Settings: React.FC = () => {
                   </Form.Item>
                   <Row gutter={24}>
                     <Col span={8}>
-                    <Upload
-                      accept='image/*'
-                      showUploadList={false}
-                      beforeUpload={handleAvatarUpload}
-                      disabled={!isAuthenticated}
-                    >
-                      <div
-                        style={{
-                          border: '1px dashed #cbd5f5',
-                          borderRadius: 12,
-                          padding: 16,
-                          textAlign: 'center',
-                          cursor: isAuthenticated ? 'pointer' : 'not-allowed',
-                        }}
+                      <Upload
+                        accept='image/*'
+                        showUploadList={false}
+                        beforeUpload={handleAvatarUpload}
+                        disabled={!isAuthenticated}
                       >
-                        {avatarPreview ? (
-                          <Avatar
-                            size={96}
-                            src={avatarPreview}
-                            style={{
-                              marginBottom: 12,
-                              borderRadius: 18,
-                            }}
-                          />
+                        <div
+                          style={{
+                            border: '1px dashed #cbd5f5',
+                            borderRadius: 12,
+                            padding: 16,
+                            textAlign: 'center',
+                            cursor: isAuthenticated ? 'pointer' : 'not-allowed',
+                          }}
+                        >
+                          {avatarPreview ? (
+                            <Avatar
+                              size={96}
+                              src={avatarPreview}
+                              style={{
+                                marginBottom: 12,
+                                borderRadius: 18,
+                              }}
+                            />
                           ) : (
                             <CameraOutlined
                               style={{ fontSize: 32, color: '#94a3b8' }}
@@ -841,7 +836,10 @@ const Settings: React.FC = () => {
                           { required: true, message: '请确认新密码' },
                           ({ getFieldValue }) => ({
                             validator(_, value) {
-                              if (!value || getFieldValue('newPassword') === value)
+                              if (
+                                !value ||
+                                getFieldValue('newPassword') === value
+                              )
                                 return Promise.resolve();
                               return Promise.reject(
                                 new Error('两次输入的新密码不一致'),

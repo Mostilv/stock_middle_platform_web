@@ -41,9 +41,7 @@ const LoadingComponent: React.FC = () => (
 const App: React.FC = () => {
   const { themeMode } = useTheme();
   const algorithm =
-    themeMode === 'dark'
-      ? antdTheme.darkAlgorithm
-      : antdTheme.defaultAlgorithm;
+    themeMode === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm;
 
   return (
     <ConfigProvider

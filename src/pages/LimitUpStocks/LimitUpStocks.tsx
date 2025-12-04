@@ -536,12 +536,18 @@ const LimitUpStocks: React.FC = () => {
                 </div>
                 <div style={{ color: '#52c41a' }}>{stock.changePercent}%</div>
                 <div
-                  style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+                  style={{
+                    color: 'var(--app-text-secondary)',
+                    fontSize: '11px',
+                  }}
                 >
                   {stock.volume1}万
                 </div>
                 <div
-                  style={{ color: 'var(--app-text-secondary)', fontSize: '11px' }}
+                  style={{
+                    color: 'var(--app-text-secondary)',
+                    fontSize: '11px',
+                  }}
                 >
                   {stock.ratio1}/{stock.ratio2}
                 </div>
@@ -639,7 +645,9 @@ const LimitUpStocks: React.FC = () => {
         render: (text: string, record: any) => (
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{text}</div>
-            <div style={{ fontSize: '12px', color: 'var(--app-text-secondary)' }}>
+            <div
+              style={{ fontSize: '12px', color: 'var(--app-text-secondary)' }}
+            >
               {record.count}
             </div>
           </div>

@@ -182,8 +182,7 @@ const UserManagement: React.FC = () => {
       dataIndex: 'username',
       key: 'username',
       render: (_text: string, record: User) => {
-        const initial =
-          record.username?.charAt(0).toUpperCase() || 'U';
+        const initial = record.username?.charAt(0).toUpperCase() || 'U';
         return (
           <Space align='center'>
             <Avatar
@@ -436,7 +435,9 @@ const UserManagement: React.FC = () => {
                       if (newPwd === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('两次输入的新密码不一致'));
+                      return Promise.reject(
+                        new Error('两次输入的新密码不一致'),
+                      );
                     },
                   }),
                 ]}
