@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  App as AntdApp,
   Card,
   Checkbox,
   Input,
@@ -8,7 +9,6 @@ import {
   Table,
   Tag,
   Typography,
-  message,
   type CheckboxValueType,
   type ColumnsType,
 } from 'antd';
@@ -62,6 +62,7 @@ interface SubscriptionPreference {
 type SubscriptionMap = Record<string, SubscriptionPreference>;
 
 const StrategySubscription: React.FC = () => {
+  const { message } = AntdApp.useApp();
   const strategies = useGlobalStore(state => state.strategies);
   const strategiesLoading = useGlobalStore(state => state.strategiesLoading);
   const loadStrategies = useGlobalStore(state => state.loadStrategies);
@@ -78,32 +79,51 @@ const StrategySubscription: React.FC = () => {
   const [blacklistSaving, setBlacklistSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const syncUserSubscriptions = useCallback(
-    (nextMap: SubscriptionMap) => {
-      if (!user) return;
-      const subscriptions = Object.entries(nextMap).map(
-        ([strategyId, pref]) => ({
-          strategyId,
-          subscribed: pref.subscribed,
-          channels: pref.channels,
-        }),
-      );
-      setUser({ ...user, subscriptions });
-    },
-    [setUser, user],
-  );
   const updateSubscriptionMap = useCallback(
     (updater: (prev: SubscriptionMap) => SubscriptionMap) => {
       setSubscriptionMap(prev => {
         const next = updater(prev);
-        if (next !== prev) {
-          syncUserSubscriptions(next);
-        }
         return next;
       });
     },
-    [syncUserSubscriptions],
+    [],
   );
+
+  useEffect(() => {
+    if (!user) return;
+    const subscriptions = Object.entries(subscriptionMap).map(
+      ([strategyId, pref]) => ({
+        strategyId,
+        subscribed: pref.subscribed,
+        channels: pref.channels,
+      }),
+    );
+    const existing = user.subscriptions ?? [];
+    const normalize = (list: typeof subscriptions) =>
+      list
+        .map(item => ({
+          ...item,
+          channels: [...item.channels].sort(),
+        }))
+        .sort((a, b) => a.strategyId.localeCompare(b.strategyId));
+    const normalizedExisting = normalize(existing);
+    const normalizedNext = normalize(subscriptions);
+    const isSame =
+      normalizedExisting.length === normalizedNext.length &&
+      normalizedExisting.every((item, index) => {
+        const next = normalizedNext[index];
+        return (
+          item.strategyId === next.strategyId &&
+          item.subscribed === next.subscribed &&
+          item.channels.length === next.channels.length &&
+          item.channels.every((channel, channelIndex) => {
+            return channel === next.channels[channelIndex];
+          })
+        );
+      });
+    if (isSame) return;
+    setUser({ ...user, subscriptions });
+  }, [setUser, subscriptionMap, user]);
 
   const loadData = useCallback(async () => {
     setLoading(true);

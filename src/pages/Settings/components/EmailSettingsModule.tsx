@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  App as AntdApp,
   Alert,
   Button,
   Card,
@@ -11,7 +12,6 @@ import {
   Space,
   Switch,
   Typography,
-  message,
 } from 'antd';
 import {
   DeleteOutlined,
@@ -101,6 +101,7 @@ const EmailSettingsModule: React.FC<EmailSettingsModuleProps> = ({
   onReset,
   loading = false,
 }) => {
+  const { message } = AntdApp.useApp();
   const [previewContent, setPreviewContent] = useState<string>('');
   const accentColor = themeMode === 'dark' ? '#93c5fd' : '#2563eb';
 

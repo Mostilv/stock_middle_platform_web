@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import {
+  App as AntdApp,
   Alert,
   Avatar,
   Button,
@@ -7,7 +8,6 @@ import {
   Col,
   Form,
   Input,
-  message,
   Row,
   Select,
   Space,
@@ -79,6 +79,7 @@ const fileToBase64 = (file: RcFile): Promise<string> =>
   });
 
 const Settings: React.FC = () => {
+  const { message } = AntdApp.useApp();
   const [form] = Form.useForm();
   const [profileForm] = Form.useForm<ProfileFormValues>();
   const [passwordForm] = Form.useForm<PasswordFormValues>();
@@ -469,231 +470,229 @@ const Settings: React.FC = () => {
         </AccountCard>
 
         <SettingsForm>
-          {profileExpanded && (
-            <SettingsCard>
-              <Card
-                title={
-                  <Space>
-                    <CardIcon>
-                      <IdcardOutlined />
-                    </CardIcon>
-                    <span>账户资料</span>
-                  </Space>
-                }
-                extra={
-                  <Button
-                    type='text'
-                    icon={<CloseOutlined />}
-                    onClick={() => setProfileExpanded(false)}
-                  >
-                    关闭
-                  </Button>
-                }
-              >
-                <Form
-                  form={profileForm}
-                  layout='vertical'
-                  onFinish={handleProfileSubmit}
-                  initialValues={{
-                    username: user?.username || '',
-                    avatarUrl: user?.avatarUrl || '',
-                  }}
-                  disabled={!isAuthenticated}
+          <SettingsCard style={{ display: profileExpanded ? 'block' : 'none' }}>
+            <Card
+              title={
+                <Space>
+                  <CardIcon>
+                    <IdcardOutlined />
+                  </CardIcon>
+                  <span>账户资料</span>
+                </Space>
+              }
+              extra={
+                <Button
+                  type='text'
+                  icon={<CloseOutlined />}
+                  onClick={() => setProfileExpanded(false)}
                 >
-                  <Form.Item name='avatarUrl' hidden>
-                    <Input type='hidden' />
-                  </Form.Item>
-                  <Row gutter={24}>
-                    <Col span={8}>
-                      <Upload
-                        accept='image/*'
-                        showUploadList={false}
-                        beforeUpload={handleAvatarUpload}
-                        disabled={!isAuthenticated}
+                  关闭
+                </Button>
+              }
+            >
+              <Form
+                form={profileForm}
+                layout='vertical'
+                onFinish={handleProfileSubmit}
+                initialValues={{
+                  username: user?.username || '',
+                  avatarUrl: user?.avatarUrl || '',
+                }}
+                disabled={!isAuthenticated}
+              >
+                <Form.Item name='avatarUrl' hidden>
+                  <Input type='hidden' />
+                </Form.Item>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <Upload
+                      accept='image/*'
+                      showUploadList={false}
+                      beforeUpload={handleAvatarUpload}
+                      disabled={!isAuthenticated}
+                    >
+                      <div
+                        style={{
+                          border: '1px dashed #cbd5f5',
+                          borderRadius: 12,
+                          padding: 16,
+                          textAlign: 'center',
+                          cursor: isAuthenticated ? 'pointer' : 'not-allowed',
+                        }}
                       >
-                        <div
-                          style={{
-                            border: '1px dashed #cbd5f5',
-                            borderRadius: 12,
-                            padding: 16,
-                            textAlign: 'center',
-                            cursor: isAuthenticated ? 'pointer' : 'not-allowed',
+                        {avatarPreview ? (
+                          <Avatar
+                            size={96}
+                            src={avatarPreview}
+                            style={{
+                              marginBottom: 12,
+                              borderRadius: 18,
+                            }}
+                          />
+                        ) : (
+                          <CameraOutlined
+                            style={{ fontSize: 32, color: '#94a3b8' }}
+                          />
+                        )}
+                        <div style={{ color: '#475569' }}>
+                          {isAuthenticated ? '上传头像' : '登录后可上传'}
+                        </div>
+                      </div>
+                    </Upload>
+                  </Col>
+                  <Col span={16}>
+                    <Form.Item
+                      label='用户名'
+                      name='username'
+                      rules={[
+                        { required: true, message: '请输入账户名称' },
+                        { max: 32, message: '账户名称最多32个字符' },
+                      ]}
+                    >
+                      <Input placeholder='请输入用户名' />
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }}>
+                      <Space>
+                        <Button
+                          onClick={() => {
+                            profileForm.resetFields();
+                            profileForm.setFieldsValue({
+                              username: user?.username || '',
+                              avatarUrl: user?.avatarUrl || '',
+                            });
+                            setAvatarPreview(user?.avatarUrl || '');
                           }}
                         >
-                          {avatarPreview ? (
-                            <Avatar
-                              size={96}
-                              src={avatarPreview}
-                              style={{
-                                marginBottom: 12,
-                                borderRadius: 18,
-                              }}
-                            />
-                          ) : (
-                            <CameraOutlined
-                              style={{ fontSize: 32, color: '#94a3b8' }}
-                            />
-                          )}
-                          <div style={{ color: '#475569' }}>
-                            {isAuthenticated ? '上传头像' : '登录后可上传'}
-                          </div>
-                        </div>
-                      </Upload>
-                    </Col>
-                    <Col span={16}>
-                      <Form.Item
-                        label='用户名'
-                        name='username'
-                        rules={[
-                          { required: true, message: '请输入账户名称' },
-                          { max: 32, message: '账户名称最多32个字符' },
-                        ]}
-                      >
-                        <Input placeholder='请输入用户名' />
-                      </Form.Item>
-                      <Form.Item style={{ marginBottom: 0 }}>
-                        <Space>
-                          <Button
-                            onClick={() => {
-                              profileForm.resetFields();
-                              profileForm.setFieldsValue({
-                                username: user?.username || '',
-                                avatarUrl: user?.avatarUrl || '',
-                              });
-                              setAvatarPreview(user?.avatarUrl || '');
-                            }}
-                          >
-                            重置
-                          </Button>
-                          <Button
-                            type='primary'
-                            htmlType='submit'
-                            loading={profileLoading}
-                            disabled={!isAuthenticated}
-                          >
-                            保存资料
-                          </Button>
-                        </Space>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form>
-                {!isAuthenticated && (
-                  <Alert
-                    type='info'
-                    showIcon
-                    message='当前为未登录状态，暂无法修改账户资料'
-                    style={{ marginTop: 16 }}
-                  />
-                )}
-              </Card>
-            </SettingsCard>
-          )}
+                          重置
+                        </Button>
+                        <Button
+                          type='primary'
+                          htmlType='submit'
+                          loading={profileLoading}
+                          disabled={!isAuthenticated}
+                        >
+                          保存资料
+                        </Button>
+                      </Space>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+              {!isAuthenticated && (
+                <Alert
+                  type='info'
+                  showIcon
+                  message='当前为未登录状态，暂无法修改账户资料'
+                  style={{ marginTop: 16 }}
+                />
+              )}
+            </Card>
+          </SettingsCard>
 
-          {passwordExpanded && (
-            <SettingsCard>
-              <Card
-                title={
-                  <Space>
-                    <CardIcon>
-                      <LockOutlined />
-                    </CardIcon>
-                    <span>账户安全</span>
-                  </Space>
-                }
-                extra={
-                  <Button
-                    type='text'
-                    icon={<CloseOutlined />}
-                    onClick={() => setPasswordExpanded(false)}
-                  >
-                    关闭
-                  </Button>
-                }
-              >
-                <Form
-                  form={passwordForm}
-                  layout='vertical'
-                  onFinish={handlePasswordSubmit}
-                  disabled={!isAuthenticated}
+          <SettingsCard
+            style={{ display: passwordExpanded ? 'block' : 'none' }}
+          >
+            <Card
+              title={
+                <Space>
+                  <CardIcon>
+                    <LockOutlined />
+                  </CardIcon>
+                  <span>账户安全</span>
+                </Space>
+              }
+              extra={
+                <Button
+                  type='text'
+                  icon={<CloseOutlined />}
+                  onClick={() => setPasswordExpanded(false)}
                 >
-                  <Row gutter={16}>
-                    <Col span={8}>
-                      <Form.Item
-                        label='旧密码'
-                        name='currentPassword'
-                        rules={[{ required: true, message: '请输入旧密码' }]}
-                      >
-                        <Input.Password placeholder='请输入当前密码' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        label='新密码'
-                        name='newPassword'
-                        rules={[
-                          { required: true, message: '请输入新密码' },
-                          { min: 6, message: '新密码至少6个字符' },
-                        ]}
-                      >
-                        <Input.Password placeholder='请输入新密码' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        label='确认新密码'
-                        name='confirmPassword'
-                        dependencies={['newPassword']}
-                        rules={[
-                          { required: true, message: '请确认新密码' },
-                          ({ getFieldValue }) => ({
-                            validator(_, value) {
-                              if (
-                                !value ||
-                                getFieldValue('newPassword') === value
-                              )
-                                return Promise.resolve();
-                              return Promise.reject(
-                                new Error('两次输入的新密码不一致'),
-                              );
-                            },
-                          }),
-                        ]}
-                      >
-                        <Input.Password placeholder='请再次输入新密码' />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Form.Item style={{ marginBottom: 0 }}>
-                    <Space>
-                      <Button
-                        onClick={() => passwordForm.resetFields()}
-                        disabled={passwordLoading}
-                      >
-                        清空
-                      </Button>
-                      <Button
-                        type='primary'
-                        htmlType='submit'
-                        loading={passwordLoading}
-                        disabled={!isAuthenticated}
-                      >
-                        修改密码
-                      </Button>
-                    </Space>
-                  </Form.Item>
-                </Form>
-                {!isAuthenticated && (
-                  <Alert
-                    type='info'
-                    showIcon
-                    message='请先登录后再修改密码'
-                    style={{ marginTop: 16 }}
-                  />
-                )}
-              </Card>
-            </SettingsCard>
-          )}
+                  关闭
+                </Button>
+              }
+            >
+              <Form
+                form={passwordForm}
+                layout='vertical'
+                onFinish={handlePasswordSubmit}
+                disabled={!isAuthenticated}
+              >
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item
+                      label='旧密码'
+                      name='currentPassword'
+                      rules={[{ required: true, message: '请输入旧密码' }]}
+                    >
+                      <Input.Password placeholder='请输入当前密码' />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label='新密码'
+                      name='newPassword'
+                      rules={[
+                        { required: true, message: '请输入新密码' },
+                        { min: 6, message: '新密码至少6个字符' },
+                      ]}
+                    >
+                      <Input.Password placeholder='请输入新密码' />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label='确认新密码'
+                      name='confirmPassword'
+                      dependencies={['newPassword']}
+                      rules={[
+                        { required: true, message: '请确认新密码' },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (
+                              !value ||
+                              getFieldValue('newPassword') === value
+                            )
+                              return Promise.resolve();
+                            return Promise.reject(
+                              new Error('两次输入的新密码不一致'),
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password placeholder='请再次输入新密码' />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Space>
+                    <Button
+                      onClick={() => passwordForm.resetFields()}
+                      disabled={passwordLoading}
+                    >
+                      清空
+                    </Button>
+                    <Button
+                      type='primary'
+                      htmlType='submit'
+                      loading={passwordLoading}
+                      disabled={!isAuthenticated}
+                    >
+                      修改密码
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Form>
+              {!isAuthenticated && (
+                <Alert
+                  type='info'
+                  showIcon
+                  message='请先登录后再修改密码'
+                  style={{ marginTop: 16 }}
+                />
+              )}
+            </Card>
+          </SettingsCard>
 
           <Form
             form={form}

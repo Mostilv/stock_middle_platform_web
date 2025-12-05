@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { message } from 'antd';
+import { App as AntdApp } from 'antd';
 import { login as loginRequest } from '../api/auth';
 import {
   AUTH_TOKEN_KEY,
@@ -24,6 +24,7 @@ const readStoredUser = (): AuthUser | null => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { message } = AntdApp.useApp();
   const user = useGlobalStore(state => state.user);
   const setUser = useGlobalStore(state => state.setUser);
   const [hydrated, setHydrated] = useState(false);

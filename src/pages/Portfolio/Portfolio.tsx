@@ -35,8 +35,6 @@ import {
   ClickableButton,
 } from './Portfolio.styles';
 
-// 删除未使用的导入
-const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
 interface PortfolioItem {
@@ -430,93 +428,95 @@ const Portfolio: React.FC = () => {
 
         {/* 策略列表 */}
         <PortfolioCard>
-          <Collapse defaultActiveKey={['1']} ghost>
-            {strategies.map(strategy => (
-              <Panel
-                key={strategy.id}
-                header={
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      width: '100%',
-                    }}
-                  >
-                    <div>
-                      <Title
-                        level={4}
-                        style={{
-                          margin: 0,
-                          display: 'inline-block',
-                          marginRight: 16,
-                        }}
-                      >
-                        {strategy.name}
-                      </Title>
-                      <Tag
-                        color={strategy.status === 'active' ? 'green' : 'red'}
-                      >
-                        {strategy.status === 'active' ? '活跃' : '停用'}
-                      </Tag>
-                      <Text type='secondary' style={{ marginLeft: 16 }}>
-                        创建于 {strategy.createdAt}
-                      </Text>
-                    </div>
-                    <div onClick={e => e.stopPropagation()}>
-                      <Switch
-                        checked={strategy.status === 'active'}
-                        onChange={(checked, event) => {
-                          // 阻止事件冒泡，防止触发菜单折叠
-                          event?.stopPropagation();
-                          toggleStrategyStatus(strategy.id);
-                        }}
-                        checkedChildren='启用'
-                        unCheckedChildren='停用'
-                      />
-                    </div>
+          <Collapse
+            ghost
+            defaultActiveKey={
+              strategies.length > 0 ? [strategies[0].id] : undefined
+            }
+            items={strategies.map(strategy => ({
+              key: strategy.id,
+              label: (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }}
+                >
+                  <div>
+                    <Title
+                      level={4}
+                      style={{
+                        margin: 0,
+                        display: 'inline-block',
+                        marginRight: 16,
+                      }}
+                    >
+                      {strategy.name}
+                    </Title>
+                    <Tag color={strategy.status === 'active' ? 'green' : 'red'}>
+                      {strategy.status === 'active' ? '活跃' : '停用'}
+                    </Tag>
+                    <Text type='secondary' style={{ marginLeft: 16 }}>
+                      创建于 {strategy.createdAt}
+                    </Text>
                   </div>
-                }
-              >
-                <div style={{ marginBottom: 16 }}>
-                  <Row gutter={16}>
-                    <Col span={8}>
-                      <Text strong>策略总价值：</Text>
-                      <Text>¥{strategy.totalValue.toLocaleString()}</Text>
-                    </Col>
-                    <Col span={8}>
-                      <Text strong>总权重：</Text>
-                      <Text>{strategy.totalWeight}%</Text>
-                    </Col>
-                    <Col span={8}>
-                      <Text strong>持仓数量：</Text>
-                      <Text>{strategy.items.length}只</Text>
-                    </Col>
-                  </Row>
+                  <div onClick={e => e.stopPropagation()}>
+                    <Switch
+                      checked={strategy.status === 'active'}
+                      onChange={(_checked, event) => {
+                        event?.stopPropagation();
+                        toggleStrategyStatus(strategy.id);
+                      }}
+                      checkedChildren='启用'
+                      unCheckedChildren='停用'
+                    />
+                  </div>
                 </div>
-
-                {strategy.items.length > 0 ? (
-                  <Table
-                    columns={columns}
-                    dataSource={strategy.items}
-                    pagination={false}
-                    size='small'
-                    scroll={{ x: 800 }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: '20px',
-                      color: '#999',
-                    }}
-                  >
-                    暂无调仓记录
+              ),
+              children: (
+                <>
+                  <div style={{ marginBottom: 16 }}>
+                    <Row gutter={16}>
+                      <Col span={8}>
+                        <Text strong>策略总价值：</Text>
+                        <Text>¥{strategy.totalValue.toLocaleString()}</Text>
+                      </Col>
+                      <Col span={8}>
+                        <Text strong>总权重：</Text>
+                        <Text>{strategy.totalWeight}%</Text>
+                      </Col>
+                      <Col span={8}>
+                        <Text strong>持仓数量：</Text>
+                        <Text>{strategy.items.length}只</Text>
+                      </Col>
+                    </Row>
                   </div>
-                )}
-              </Panel>
-            ))}
-          </Collapse>
+
+                  {strategy.items.length > 0 ? (
+                    <Table
+                      columns={columns}
+                      dataSource={strategy.items}
+                      pagination={false}
+                      size='small'
+                      scroll={{ x: 800 }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        padding: '20px',
+                        color: '#999',
+                      }}
+                    >
+                      暂无调仓记录
+                    </div>
+                  )}
+                </>
+              ),
+            }))}
+          />
         </PortfolioCard>
       </PortfolioContent>
 

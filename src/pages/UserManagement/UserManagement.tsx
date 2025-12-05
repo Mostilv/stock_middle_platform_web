@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  App as AntdApp,
   Table,
   Button,
   Space,
@@ -7,7 +8,6 @@ import {
   Form,
   Input,
   Switch,
-  message,
   Popconfirm,
   Tag,
   Avatar,
@@ -52,6 +52,7 @@ const UserManagement: React.FC = () => {
   const [tableLoading, setTableLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
+  const { message } = AntdApp.useApp();
 
   // 获取用户列表
   const loadUsers = async () => {
