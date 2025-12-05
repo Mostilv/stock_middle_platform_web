@@ -1,5 +1,9 @@
 import { createContext } from 'react';
 import type { StrategySubscriptionPreference } from '../types/subscription';
+import type {
+  EmailConfig,
+  NotificationTemplate,
+} from '../types/emailSettings';
 
 export interface AuthUser {
   username: string;
@@ -8,6 +12,8 @@ export interface AuthUser {
   displayName?: string;
   avatarUrl?: string;
   subscriptions?: StrategySubscriptionPreference[];
+  emailConfigs?: EmailConfig[];
+  notificationTemplates?: NotificationTemplate[];
 }
 
 export interface AuthContextValue {

@@ -1,4 +1,5 @@
 import { http } from './httpClient';
+import type { EmailConfig, NotificationTemplate } from '../types/emailSettings';
 
 export interface LoginRequestBody {
   username: string;
@@ -13,6 +14,8 @@ export interface LoginResponse {
     email?: string;
     displayName?: string;
     avatarUrl?: string;
+    emailConfigs?: EmailConfig[];
+    notificationTemplates?: NotificationTemplate[];
   };
 }
 

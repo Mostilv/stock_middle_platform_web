@@ -5,28 +5,18 @@ import {
   Button,
   Card,
   Col,
-  Divider,
   Form,
   Input,
   message,
-  Popconfirm,
   Row,
   Select,
   Space,
-  Switch,
   Tag,
-  Typography,
   Upload,
 } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  SaveOutlined,
-  ReloadOutlined,
   SettingOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  MailOutlined,
-  NotificationOutlined,
   IdcardOutlined,
   LockOutlined,
   CameraOutlined,
@@ -41,19 +31,24 @@ import {
   saveSettingsData,
   updateAccountProfile,
 } from './services/settings.api';
-import type {
-  EmailConfigDTO,
-  NotificationTemplateDTO,
-  SettingsDataResponse,
-} from './services/settings.api';
+import type { SettingsDataResponse } from './services/settings.api';
 import { useAuth } from '../../contexts/useAuth';
 import { useTheme } from '../../contexts/useTheme';
 import type { ThemeMode } from '../../contexts/theme-context';
+import EmailSettingsModule from './components/EmailSettingsModule';
+import {
+  getDefaultEmailConfigs,
+  getDefaultNotificationTemplates,
+  MAX_EMAIL_CONFIGS,
+  normalizeEmailConfigs,
+  normalizeNotificationTemplates,
+  type EmailConfig,
+  type NotificationTemplate,
+} from '../../types/emailSettings';
 import {
   AccountActions,
   AccountCard,
   AccountInfo,
-  SettingsActions,
   SettingsCard,
   SettingsContainer,
   SettingsContent,
@@ -63,90 +58,6 @@ import {
 } from './Settings.styles';
 
 const { Option } = Select;
-const { Text } = Typography;
-
-interface EmailConfig {
-  id: string;
-  email: string;
-  remark: string;
-  enabled: boolean;
-}
-
-interface NotificationTemplate {
-  id: string;
-  name: string;
-  subject: string;
-  content: string;
-  enabled: boolean;
-}
-
-const MAX_EMAIL_CONFIGS = 3;
-
-const DEFAULT_EMAIL_CONFIGS: EmailConfig[] = [
-  {
-    id: '1',
-    email: 'admin@example.com',
-    remark: '管理员邮箱',
-    enabled: true,
-  },
-  {
-    id: '2',
-    email: 'trader@example.com',
-    remark: '交易员邮箱',
-    enabled: true,
-  },
-];
-
-const DEFAULT_NOTIFICATION_TEMPLATE: NotificationTemplate = {
-  id: 'tpl-default',
-  name: '通知模板',
-  subject: '投资组合调仓通知 - {{date}}',
-  content: `策略名称：{{strategyName}}
-委托时间：{{orderTime}}
-股票|委托数量|委托类型|委托价格|操作|持仓
-{{#orders}}{{stock}}|{{quantity}}|{{orderType}}|{{price}}|{{action}}|{{position}}
-{{/orders}}`,
-  enabled: true,
-};
-
-const getDefaultEmailConfigs = (): EmailConfig[] =>
-  DEFAULT_EMAIL_CONFIGS.map(config => ({ ...config }));
-
-const getDefaultNotificationTemplates = (): NotificationTemplate[] => [
-  { ...DEFAULT_NOTIFICATION_TEMPLATE },
-];
-
-const normalizeEmailConfigs = (
-  configs?: EmailConfigDTO[] | EmailConfig[],
-): EmailConfig[] => {
-  if (!Array.isArray(configs) || configs.length === 0) {
-    return getDefaultEmailConfigs();
-  }
-  return configs.map((config, index) => ({
-    id: config.id || `email-${index + 1}`,
-    email: config.email || '',
-    remark: config.remark || '',
-    enabled: typeof config.enabled === 'boolean' ? config.enabled : true,
-  }));
-};
-
-const normalizeNotificationTemplates = (
-  templates?: NotificationTemplateDTO[] | NotificationTemplate[],
-): NotificationTemplate[] => {
-  if (!Array.isArray(templates) || templates.length === 0) {
-    return getDefaultNotificationTemplates();
-  }
-  return templates.map((template, index) => ({
-    id: template.id || `tpl-${index + 1}`,
-    name: template.name || DEFAULT_NOTIFICATION_TEMPLATE.name,
-    subject: template.subject || DEFAULT_NOTIFICATION_TEMPLATE.subject,
-    content: template.content || DEFAULT_NOTIFICATION_TEMPLATE.content,
-    enabled:
-      typeof template.enabled === 'boolean'
-        ? template.enabled
-        : DEFAULT_NOTIFICATION_TEMPLATE.enabled,
-  }));
-};
 
 interface ProfileFormValues {
   username: string;
@@ -174,12 +85,12 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const [previewContent, setPreviewContent] = useState<string>('');
   const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>(() =>
     getDefaultEmailConfigs(),
   );
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user, logout, updateUser } = useAuth();
   const { themeMode, setThemeMode } = useTheme();
   const [profileExpanded, setProfileExpanded] = useState(false);
@@ -198,10 +109,18 @@ const Settings: React.FC = () => {
     fetchSettingsData()
       .then(data => {
         if (!mounted) return;
-        setEmailConfigs(normalizeEmailConfigs(data.emailConfigs as any));
-        setNotificationTemplates(
-          normalizeNotificationTemplates(data.notificationTemplates as any),
+        const normalizedEmailConfigs = normalizeEmailConfigs(
+          data.emailConfigs as any,
         );
+        const normalizedTemplates = normalizeNotificationTemplates(
+          data.notificationTemplates as any,
+        );
+        setEmailConfigs(normalizedEmailConfigs);
+        setNotificationTemplates(normalizedTemplates);
+        updateUser({
+          emailConfigs: normalizedEmailConfigs,
+          notificationTemplates: normalizedTemplates,
+        });
       })
       .catch(() => {
         settingsLoadedRef.current = false;
@@ -209,7 +128,7 @@ const Settings: React.FC = () => {
     return () => {
       mounted = false;
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, updateUser]);
 
   useEffect(() => {
     profileForm.setFieldsValue({
@@ -218,6 +137,18 @@ const Settings: React.FC = () => {
     });
     setAvatarPreview(user?.avatarUrl || '');
   }, [profileForm, user]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+    if (user.emailConfigs) {
+      setEmailConfigs(normalizeEmailConfigs(user.emailConfigs));
+    }
+    if (user.notificationTemplates) {
+      setNotificationTemplates(
+        normalizeNotificationTemplates(user.notificationTemplates),
+      );
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     if (!isAuthenticated || profileLoadedRef.current) return;
@@ -260,7 +191,6 @@ const Settings: React.FC = () => {
       settingsLoadedRef.current = false;
       setEmailConfigs(getDefaultEmailConfigs());
       setNotificationTemplates(getDefaultNotificationTemplates());
-      setPreviewContent('');
     }
   }, [isAuthenticated]);
 
@@ -270,7 +200,7 @@ const Settings: React.FC = () => {
     });
   }, [form, themeMode]);
 
-  const onFinish = (_values: any) => {
+  const handleSaveEmailSettings = () => {
     if (!isAuthenticated) {
       message.info('请先登录后再保存配置');
       return;
@@ -281,19 +211,27 @@ const Settings: React.FC = () => {
       notificationTemplates: notificationTemplates as any,
     };
     saveSettingsData(payload)
-      .then(() => message.success('设置保存成功'))
+      .then(() => {
+        updateUser({
+          emailConfigs,
+          notificationTemplates,
+        });
+        message.success('邮箱设置保存成功');
+      })
       .catch(() => message.error('设置保存失败，请稍后重试'))
       .finally(() => setLoading(false));
   };
 
-  const handleReset = () => {
-    // 重置邮箱配置
-    setEmailConfigs(getDefaultEmailConfigs());
-    setNotificationTemplates(getDefaultNotificationTemplates());
-
-    form.resetFields();
-    form.setFieldsValue({ theme: themeMode });
-    message.info('设置已重置');
+  const handleResetEmailSettings = () => {
+    const defaults = getDefaultEmailConfigs();
+    const defaultTemplates = getDefaultNotificationTemplates();
+    setEmailConfigs(defaults);
+    setNotificationTemplates(defaultTemplates);
+    updateUser({
+      emailConfigs: defaults,
+      notificationTemplates: defaultTemplates,
+    });
+    message.info('邮箱设置已重置');
   };
 
   const handleThemeSelect = (mode: ThemeMode) => {
@@ -344,139 +282,13 @@ const Settings: React.FC = () => {
     );
   };
 
-  // 简易模板渲染：支持 {{var}} 与数组块 {{#orders}}...{{/orders}}
-  const renderTemplate = (tpl: string, data: any): string => {
-    if (!tpl) return '';
-    let output = tpl;
-    // 处理数组块 orders
-    output = output.replace(
-      /\{\{#(\w+)\}\}([\s\S]*?)\{\{\/(\w+)\}\}/g,
-      (_m, key, block, endKey) => {
-        if (key !== endKey) return '';
-        const arr = data[key];
-        if (!Array.isArray(arr)) return '';
-        return arr
-          .map((item: any) =>
-            block.replace(/\{\{(\w+)\}\}/g, (_m2: string, k: string) => {
-              const v = item[k];
-              return v === undefined || v === null ? '' : String(v);
-            }),
-          )
-          .join('');
-      },
-    );
-    // 标量变量
-    output = output.replace(/\{\{(\w+)\}\}/g, (_m, k) => {
-      const v = data[k];
-      return v === undefined || v === null ? '' : String(v);
-    });
-    return output;
-  };
-
-  const handlePreviewTemplate = () => {
-    const tpl = notificationTemplates[0]?.content || '';
-    const sample = {
-      date: '2025-08-28',
-      strategyName: '趋势增强策略',
-      orderTime: '09:35:20',
-      orders: [
-        {
-          stock: '招商银行',
-          quantity: 2000,
-          orderType: '限价',
-          price: 33.58,
-          action: '买入',
-          position: '20%',
-        },
-        {
-          stock: '中兴通讯',
-          quantity: 1500,
-          orderType: '市价',
-          price: 28.4,
-          action: '卖出',
-          position: '10%',
-        },
-        {
-          stock: '宁德时代',
-          quantity: 500,
-          orderType: '限价',
-          price: 176.3,
-          action: '买入',
-          position: '15%',
-        },
-      ],
-    };
-    setPreviewContent(renderTemplate(tpl, sample));
-  };
-
-  // 预览开关：再次点击关闭预览
-  const handleTogglePreview = () => {
-    if (previewContent) {
-      setPreviewContent('');
-    } else {
-      handlePreviewTemplate();
-    }
-  };
-
-  // 测试发送邮件（模拟）
-  const handleTestSendEmail = () => {
-    const key = 'test-mail';
-    const subjectTpl = notificationTemplates[0]?.subject || '';
-    const contentTpl = notificationTemplates[0]?.content || '';
-    const sample = {
-      date: '2025-08-28',
-      strategyName: '趋势增强策略',
-      orderTime: '09:35:20',
-      orders: [
-        {
-          stock: '招商银行',
-          quantity: 2000,
-          orderType: '限价',
-          price: 33.58,
-          action: '买入',
-          position: '20%',
-        },
-        {
-          stock: '中兴通讯',
-          quantity: 1500,
-          orderType: '市价',
-          price: 28.4,
-          action: '卖出',
-          position: '10%',
-        },
-        {
-          stock: '宁德时代',
-          quantity: 500,
-          orderType: '限价',
-          price: 176.3,
-          action: '买入',
-          position: '15%',
-        },
-      ],
-    };
-    const renderedSubject = renderTemplate(subjectTpl, sample);
-    const renderedContent = renderTemplate(contentTpl, sample);
-
-    message.loading({ content: '正在发送测试邮件...', key });
-    setTimeout(() => {
-      // 这里可接入后端 API：发送到启用的邮箱列表
-      console.log('测试邮件主题:', renderedSubject);
-      console.log('测试邮件内容:', renderedContent);
-      console.log(
-        '收件人(启用):',
-        emailConfigs.filter(e => e.enabled).map(e => e.email),
-      );
-      message.success({ content: '测试邮件已发送（模拟）', key, duration: 2 });
-    }, 800);
-  };
-
   const handleLogout = () => {
     logout();
     message.success('已退出登录');
   };
 
   const handleGoLogin = () => {
-    navigate('/login');
+    navigate('/login', { state: { from: location } });
   };
 
   const handleProfileSubmit = async (values: ProfileFormValues) => {
@@ -886,10 +698,9 @@ const Settings: React.FC = () => {
           <Form
             form={form}
             layout='vertical'
-            onFinish={onFinish}
+            onFinish={handleSaveEmailSettings}
             initialValues={{
               theme: themeMode,
-              rebalanceNotifications: true,
             }}
           >
             {/* 主题设置 */}
@@ -917,375 +728,20 @@ const Settings: React.FC = () => {
               </Card>
             </SettingsCard>
 
-            {!isAuthenticated && (
-              <SettingsCard>
-                <Card
-                  title={
-                    <Space>
-                      <CardIcon>
-                        <MailOutlined />
-                      </CardIcon>
-                      <span>通知与邮箱</span>
-                    </Space>
-                  }
-                >
-                  <Alert
-                    type='info'
-                    showIcon
-                    message='请先登录后再配置调仓通知邮箱'
-                    description='通知邮箱会随账号单独保存，登录后可看到对应账号的配置'
-                  />
-                </Card>
-              </SettingsCard>
-            )}
-
-            {isAuthenticated && (
-              <SettingsCard>
-                <Card
-                  title={
-                    <Space>
-                      <CardIcon>
-                        <MailOutlined />
-                      </CardIcon>
-                      <span>通知与邮箱</span>
-                    </Space>
-                  }
-                >
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item
-                        name='rebalanceNotifications'
-                        label='调仓通知'
-                        valuePropName='checked'
-                      >
-                        <Switch />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Divider orientation='left'>邮箱配置</Divider>
-                  <Text
-                    type='secondary'
-                    style={{ display: 'block', marginBottom: 12 }}
-                  >
-                    每个账号最多可设置{MAX_EMAIL_CONFIGS}个通知邮箱
-                  </Text>
-                  <div style={{ marginBottom: 16 }}>
-                    {emailConfigs.map(config => (
-                      <Card
-                        key={config.id}
-                        size='small'
-                        style={{
-                          marginBottom: 12,
-                          backgroundColor: '#f9fafb',
-                        }}
-                      >
-                        <Row gutter={16} align='middle'>
-                          <Col span={8}>
-                            <div style={{ marginBottom: 8 }}>
-                              <label
-                                style={{
-                                  fontSize: '14px',
-                                  fontWeight: 500,
-                                  color: '#374151',
-                                }}
-                              >
-                                邮箱地址
-                              </label>
-                            </div>
-                            <Input
-                              placeholder='请输入邮箱地址'
-                              value={config.email}
-                              onChange={e =>
-                                updateEmailConfig(
-                                  config.id,
-                                  'email',
-                                  e.target.value,
-                                )
-                              }
-                              prefix={<MailOutlined />}
-                            />
-                          </Col>
-                          <Col span={8}>
-                            <div style={{ marginBottom: 8 }}>
-                              <label
-                                style={{
-                                  fontSize: '14px',
-                                  fontWeight: 500,
-                                  color: '#374151',
-                                }}
-                              >
-                                邮箱备注
-                              </label>
-                            </div>
-                            <Input
-                              placeholder='请输入备注'
-                              value={config.remark}
-                              onChange={e =>
-                                updateEmailConfig(
-                                  config.id,
-                                  'remark',
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </Col>
-                          <Col span={4}>
-                            <div style={{ marginBottom: 8 }}>
-                              <label
-                                style={{
-                                  fontSize: '14px',
-                                  fontWeight: 500,
-                                  color: '#374151',
-                                }}
-                              >
-                                启用状态
-                              </label>
-                            </div>
-                            <Switch
-                              checked={config.enabled}
-                              onChange={checked =>
-                                updateEmailConfig(config.id, 'enabled', checked)
-                              }
-                            />
-                          </Col>
-                          <Col span={4}>
-                            <Popconfirm
-                              title='确定要删除这个邮箱配置吗？'
-                              onConfirm={() => removeEmailConfig(config.id)}
-                              okText='确定'
-                              cancelText='取消'
-                            >
-                              <Button
-                                type='text'
-                                danger
-                                icon={<DeleteOutlined />}
-                                disabled={emailConfigs.length <= 1}
-                              >
-                                删除
-                              </Button>
-                            </Popconfirm>
-                          </Col>
-                        </Row>
-                      </Card>
-                    ))}
-                    <Button
-                      type='dashed'
-                      icon={<PlusOutlined />}
-                      onClick={addEmailConfig}
-                      style={{ width: '100%' }}
-                      disabled={emailConfigs.length >= MAX_EMAIL_CONFIGS}
-                    >
-                      {emailConfigs.length >= MAX_EMAIL_CONFIGS
-                        ? '已达到上限'
-                        : '添加邮箱配置'}
-                    </Button>
-                  </div>
-                </Card>
-              </SettingsCard>
-            )}
-
-            {isAuthenticated && (
-              <SettingsCard>
-                <Card
-                  title={
-                    <Space>
-                      <CardIcon>
-                        <NotificationOutlined />
-                      </CardIcon>
-                      <span>通知模板</span>
-                    </Space>
-                  }
-                >
-                  {notificationTemplates.slice(0, 1).map(template => (
-                    <Card
-                      key={template.id}
-                      size='small'
-                      style={{ backgroundColor: '#f9fafb' }}
-                    >
-                      <Row gutter={16}>
-                        <Col span={24}>
-                          <div style={{ marginBottom: 8 }}>
-                            <label
-                              style={{
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                color: '#374151',
-                              }}
-                            >
-                              模板名称
-                            </label>
-                          </div>
-                          <Input
-                            placeholder='请输入模板名称'
-                            value={template.name}
-                            onChange={e =>
-                              updateNotificationTemplate(
-                                template.id,
-                                'name',
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </Col>
-                      </Row>
-                      <Row gutter={16} style={{ marginTop: 12 }}>
-                        <Col span={12}>
-                          <div style={{ marginBottom: 8 }}>
-                            <label
-                              style={{
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                color: '#374151',
-                              }}
-                            >
-                              邮件主题
-                            </label>
-                          </div>
-                          <Input
-                            placeholder='请输入邮件主题'
-                            value={template.subject}
-                            onChange={e =>
-                              updateNotificationTemplate(
-                                template.id,
-                                'subject',
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <div style={{ marginBottom: 8 }}>
-                            <label
-                              style={{
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                color: '#374151',
-                              }}
-                            >
-                              启用状态
-                            </label>
-                          </div>
-                          <Switch
-                            checked={template.enabled}
-                            onChange={checked =>
-                              updateNotificationTemplate(
-                                template.id,
-                                'enabled',
-                                checked,
-                              )
-                            }
-                          />
-                        </Col>
-                      </Row>
-                      <Row gutter={16} style={{ marginTop: 12 }}>
-                        <Col span={24}>
-                          <div style={{ marginBottom: 8 }}>
-                            <label
-                              style={{
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                color: '#374151',
-                              }}
-                            >
-                              邮件内容
-                            </label>
-                            <Text
-                              type='secondary'
-                              style={{ fontSize: '12px', marginLeft: 8 }}
-                            >
-                              支持变量：{'{{date}}'} {'{{strategyName}}'}{' '}
-                              {'{{orderTime}}'}；数组块：
-                              {'{{#orders}}...{{/orders}}'}，行内变量：
-                              {'{{stock}}'} {'{{quantity}}'} {'{{orderType}}'}{' '}
-                              {'{{price}}'} {'{{action}}'} {'{{position}}'}
-                            </Text>
-                          </div>
-                          <Input.TextArea
-                            rows={8}
-                            placeholder='请输入邮件内容'
-                            value={template.content}
-                            onChange={e =>
-                              updateNotificationTemplate(
-                                template.id,
-                                'content',
-                                e.target.value,
-                              )
-                            }
-                          />
-                          <div style={{ marginTop: 8 }}>
-                            <Space>
-                              <Button onClick={handleTogglePreview}>
-                                {previewContent ? '关闭预览' : '预览模板'}
-                              </Button>
-                              <Button
-                                type='primary'
-                                onClick={handleTestSendEmail}
-                              >
-                                测试发送邮件
-                              </Button>
-                              <Text type='secondary'>
-                                使用示例数据渲染含多只股票的表格
-                              </Text>
-                            </Space>
-                            {previewContent && (
-                              <Card
-                                size='small'
-                                style={{
-                                  marginTop: 8,
-                                  whiteSpace: 'pre-wrap',
-                                  backgroundColor: '#0f172a',
-                                  color: '#e2e8f0',
-                                  position: 'relative',
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    position: 'absolute',
-                                    right: 8,
-                                    top: 6,
-                                  }}
-                                >
-                                  <Button
-                                    type='link'
-                                    size='small'
-                                    onClick={() => setPreviewContent('')}
-                                    style={{ color: '#93c5fd' }}
-                                  >
-                                    关闭
-                                  </Button>
-                                </div>
-                                {previewContent}
-                              </Card>
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card>
-                  ))}
-                </Card>
-              </SettingsCard>
-            )}
+            <EmailSettingsModule
+              isAuthenticated={isAuthenticated}
+              themeMode={themeMode}
+              emailConfigs={emailConfigs}
+              notificationTemplates={notificationTemplates}
+              onAddEmail={addEmailConfig}
+              onRemoveEmail={removeEmailConfig}
+              onUpdateEmail={updateEmailConfig}
+              onUpdateTemplate={updateNotificationTemplate}
+              onSave={handleSaveEmailSettings}
+              onReset={handleResetEmailSettings}
+              loading={loading}
+            />
           </Form>
-
-          {/* 操作按钮 */}
-          <SettingsCard>
-            <Card>
-              <SettingsActions>
-                <Button
-                  type='primary'
-                  icon={<SaveOutlined />}
-                  htmlType='submit'
-                  loading={loading}
-                >
-                  保存设置
-                </Button>
-                <Button icon={<ReloadOutlined />} onClick={handleReset}>
-                  重置
-                </Button>
-              </SettingsActions>
-            </Card>
-          </SettingsCard>
         </SettingsForm>
       </SettingsContent>
     </SettingsContainer>
