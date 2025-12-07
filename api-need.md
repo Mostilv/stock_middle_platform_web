@@ -1,5 +1,6 @@
 # 项目接口需求说明
 - 所有接口使用 JSON 请求/响应，默认 `Content-Type: application/json`，超时 15s。`VITE_API_BASE_URL` 作为基地址；`VITE_ENABLE_API_MOCK=true` 或未配置基址时走前端内置 Mock。
+- 后端数据库已有指数、股票基础数据（含名称）、自定义指标数据、策略与用户数据；前端需按下述请求格式传递查询条件，后端据此返回匹配的数据。
 - 登录成功后返回的 `token` 会存入 `localStorage`(`auth_token`)；当前 Axios 未自动附带 Authorization 头，如需要请兼容 `Authorization: Bearer <token>`。
 
 ## 1. 认证
@@ -119,7 +120,11 @@
 
 ## 3. 行情与行业指标
 ### GET /market/data
-- 功能：获取大盘、指数行情数据。
+- 功能：按名称获取所需指数行情数据。
+- 请求参数：
+  - `symbols`（必填）：字符串数组，指数名称/标识列表。示例：`["shanghaiIndex", "nasdaqIndex", "goldIndex", "zhongzheng2000Index"]`。
+  - `historyDays`（可选）：数值，返回近 N 天/周期的历史点位，默认 5。
+- 请求示例：`GET /market/data?symbols=shanghaiIndex,nasdaqIndex,goldIndex,zhongzheng2000Index&historyDays=5`
 - 响应示例
 ```json
 {
