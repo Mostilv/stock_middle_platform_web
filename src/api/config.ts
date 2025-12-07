@@ -1,10 +1,11 @@
 // API 全局配置
+const rawBaseURL = (import.meta as any).env?.VITE_API_BASE_URL || '';
+
 export const API_CONFIG = {
-  baseURL: (import.meta as any).env?.VITE_API_BASE_URL || '',
+  baseURL: rawBaseURL.replace(/\/$/, ''),
   timeoutMs: 15000,
-  enableMock:
-    (import.meta as any).env?.VITE_ENABLE_API_MOCK === 'true' ||
-    !(import.meta as any).env?.VITE_API_BASE_URL,
+  // 默认走真实后端，只有显式配置 VITE_ENABLE_API_MOCK=true 时才使用前端内置 Mock
+  enableMock: (import.meta as any).env?.VITE_ENABLE_API_MOCK === 'true',
 };
 
 export type QueryParams = Record<
