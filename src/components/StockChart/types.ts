@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'candlestick';
+﻿export type ChartType = 'line' | 'candlestick';
 export type Theme = 'light' | 'dark';
 
 export interface StockDataPoint {

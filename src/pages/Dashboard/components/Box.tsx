@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BoxContainer, BoxContent, BoxHeader } from './Box.styles';
 
 export type BoxTitleSize = 'sm' | 'md' | 'lg';

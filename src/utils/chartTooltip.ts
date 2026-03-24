@@ -1,4 +1,4 @@
-export interface RankingTooltipItem {
+﻿export interface RankingTooltipItem {
   rank: number;
   label: string;
   value: string;

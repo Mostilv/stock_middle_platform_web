@@ -1,4 +1,4 @@
-import { http } from '../../../api/httpClient';
+﻿import { http } from '../../../api/httpClient';
 import type { NotificationChannel } from '../../../types/subscription';
 
 export interface StrategySubscriptionItem {

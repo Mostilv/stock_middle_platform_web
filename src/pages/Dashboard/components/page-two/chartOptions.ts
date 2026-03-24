@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts';
+﻿import type { EChartsOption } from 'echarts';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
 import { buildRecentDateLabels } from '../../../../utils/date';
 import {

@@ -1,4 +1,4 @@
-export interface HeroMetric {
+﻿export interface HeroMetric {
   label: string;
   value: string;
   hint: string;

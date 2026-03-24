@@ -1,4 +1,4 @@
-export type NotificationChannel = 'app' | 'email' | 'sms' | 'webhook';
+﻿export type NotificationChannel = 'app' | 'email' | 'sms' | 'webhook';
 
 export interface StrategySubscriptionPreference {
   strategyId: string;

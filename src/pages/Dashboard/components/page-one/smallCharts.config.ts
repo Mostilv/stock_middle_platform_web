@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts';
+﻿import type { EChartsOption } from 'echarts';
 import { buildRecentDateLabels } from '../../../../utils/date';
 
 export interface SmallChartConfig {

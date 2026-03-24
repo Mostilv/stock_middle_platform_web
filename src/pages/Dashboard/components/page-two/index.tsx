@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Row, Col } from 'antd';
 import { MainContent } from '../../Dashboard.styles';
 import IndustryTrendPanel from './IndustryTrendPanel';

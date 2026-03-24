@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
 
 export const StockChartContainer = styled.div<{ $theme: 'light' | 'dark' }>`
   position: relative;

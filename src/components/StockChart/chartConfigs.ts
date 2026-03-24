@@ -1,4 +1,4 @@
-import * as echarts from 'echarts';
+﻿import * as echarts from 'echarts';
 import type { StockDataPoint } from './types';
 
 export interface ChartConfigOptions {

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import Box from '../Box';
 import { useEChart } from '../../../../hooks/useEChart';
 import { buildLimitUpCountOption } from './chartOptions';

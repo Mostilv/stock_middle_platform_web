@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Card, Switch, Select, Space, Radio } from 'antd';
 import StockChart from './StockChart';
 import type { StockDataPoint, ChartType, Theme } from './types';

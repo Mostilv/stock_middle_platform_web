@@ -1,4 +1,4 @@
-import type { MarketNarrative } from './types';
+﻿import type { MarketNarrative } from './types';
 
 interface SectionCopy {
   eyebrow: string;

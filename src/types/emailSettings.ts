@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   EmailConfigDTO,
   NotificationTemplateDTO,
 } from '../pages/Settings/services/settings.api';

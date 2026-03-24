@@ -1,1 +1,1 @@
-export { default } from './StrategySubscription';
+﻿export { default } from './StrategySubscription';

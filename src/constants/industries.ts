@@ -1,4 +1,4 @@
-export const SHENWAN_LEVEL1_INDUSTRIES = [
+﻿export const SHENWAN_LEVEL1_INDUSTRIES = [
   '农林牧渔',
   '采掘',
   '化工',

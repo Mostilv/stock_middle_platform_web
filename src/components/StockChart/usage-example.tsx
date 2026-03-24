@@ -1,4 +1,4 @@
-// 这是一个简单的使用示例，展示如何在其他页面中使用 StockChart 组件
+﻿// 这是一个简单的使用示例，展示如何在其他页面中使用 StockChart 组件
 
 import React from 'react';
 import StockChart from './StockChart';

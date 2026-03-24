@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import SmallChartCard from './SmallChartCard';
 import { CombinedSmallChartsContainer } from './CombinedSmallCharts.styles';
 import { allSmallCharts } from './smallCharts.config';

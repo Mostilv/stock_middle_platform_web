@@ -1,4 +1,4 @@
-import { http } from '../httpClient';
+﻿import { http } from '../httpClient';
 
 export interface IndustryMetricPoint {
   date: string;

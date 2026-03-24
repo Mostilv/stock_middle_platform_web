@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+﻿import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../constants/industries';
 import { API_CONFIG } from './config';
 

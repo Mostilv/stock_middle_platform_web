@@ -1,4 +1,4 @@
-// API 全局配置
+﻿// API 全局配置
 const rawBaseURL = (import.meta as any).env?.VITE_API_BASE_URL || '';
 
 export const API_CONFIG = {

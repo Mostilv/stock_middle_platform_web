@@ -1,4 +1,4 @@
-// 市场数据接口定义
+﻿// 市场数据接口定义
 export interface MarketData {
   current: number;
   change: number;

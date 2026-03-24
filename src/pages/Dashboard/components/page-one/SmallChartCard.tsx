@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useEChart } from '../../../../hooks/useEChart';
 import {
   ChartCanvas,

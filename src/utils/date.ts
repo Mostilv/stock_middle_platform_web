@@ -1,4 +1,4 @@
-import dayjs, { type ConfigType } from 'dayjs';
+﻿import dayjs, { type ConfigType } from 'dayjs';
 
 export const buildRecentDateLabels = (
   days: number,

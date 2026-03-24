@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
 import { Layout as AntLayout } from 'antd';
 
 const { Sider: AntSider, Header: AntHeader, Content: AntContent } = AntLayout;

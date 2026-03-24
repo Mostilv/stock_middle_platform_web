@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { Row, Col } from 'antd';
 import { TopIndicatorsContainer, IndicatorCard } from './TopIndicators.styles';
 import { useEChart } from '../../../../hooks/useEChart';
