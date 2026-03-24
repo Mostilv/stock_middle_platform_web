@@ -204,6 +204,9 @@ export const MainLayout = styled(AntLayout)<{ $collapsed: boolean }>`
   transition: margin-left 0.25s ease;
   position: relative;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 `;
 
 export const HeaderContainer = styled(AntHeader)`
@@ -259,7 +262,10 @@ export const HeaderTitle = styled.span`
 export const ContentContainer = styled(AntContent)`
   margin: 0;
   padding: 0;
-  min-height: 280px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background: transparent;
   border-radius: 0;
   box-shadow: none;

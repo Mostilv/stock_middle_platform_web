@@ -26,6 +26,18 @@ export const GlobalStyles = createGlobalStyle`
     --app-card-hover-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
     --app-table-hover: rgba(255, 255, 255, 0.06);
     --app-table-header-bg: #152236;
+
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
   }
 
   /* 全局样式重置 */

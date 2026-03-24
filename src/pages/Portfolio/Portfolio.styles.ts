@@ -86,7 +86,7 @@ export const PortfolioCard = styled.div`
   .ant-table-wrapper {
     .ant-table {
       .ant-table-thead > tr > th {
-        background-color: #fafafa;
+        background-color: var(--app-table-header-bg);
         font-weight: 600;
       }
     }
@@ -94,87 +94,93 @@ export const PortfolioCard = styled.div`
 `;
 
 export const ActionTag = styled.span<{ $action: 'buy' | 'sell' | 'hold' }>`
-  &.ant-tag {
-    background-color: ${props => {
-      switch (props.$action) {
-        case 'buy':
-          return '#f6ffed';
-        case 'sell':
-          return '#fff2f0';
-        case 'hold':
-          return '#e6f7ff';
-        default:
-          return '#f0f0f0';
-      }
-    }};
-    border-color: ${props => {
-      switch (props.$action) {
-        case 'buy':
-          return '#b7eb8f';
-        case 'sell':
-          return '#ffccc7';
-        case 'hold':
-          return '#91d5ff';
-        default:
-          return '#d9d9d9';
-      }
-    }};
-    color: ${props => {
-      switch (props.$action) {
-        case 'buy':
-          return '#52c41a';
-        case 'sell':
-          return '#ff4d4f';
-        case 'hold':
-          return '#1890ff';
-        default:
-          return '#666';
-      }
-    }};
-  }
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: ${props => {
+    switch (props.$action) {
+      case 'buy':
+        return '#f6ffed';
+      case 'sell':
+        return '#fff2f0';
+      case 'hold':
+        return '#e6f7ff';
+      default:
+        return '#f0f0f0';
+    }
+  }};
+  border: 1px solid ${props => {
+    switch (props.$action) {
+      case 'buy':
+        return '#b7eb8f';
+      case 'sell':
+        return '#ffccc7';
+      case 'hold':
+        return '#91d5ff';
+      default:
+        return '#d9d9d9';
+    }
+  }};
+  color: ${props => {
+    switch (props.$action) {
+      case 'buy':
+        return '#52c41a';
+      case 'sell':
+        return '#ff4d4f';
+      case 'hold':
+        return '#1890ff';
+      default:
+        return '#666';
+    }
+  }};
 `;
 
 export const StatusTag = styled.span<{
   $status: 'pending' | 'completed' | 'cancelled';
 }>`
-  &.ant-tag {
-    background-color: ${props => {
-      switch (props.$status) {
-        case 'completed':
-          return '#f6ffed';
-        case 'pending':
-          return '#fff7e6';
-        case 'cancelled':
-          return '#fff2f0';
-        default:
-          return '#f0f0f0';
-      }
-    }};
-    border-color: ${props => {
-      switch (props.$status) {
-        case 'completed':
-          return '#b7eb8f';
-        case 'pending':
-          return '#ffd591';
-        case 'cancelled':
-          return '#ffccc7';
-        default:
-          return '#d9d9d9';
-      }
-    }};
-    color: ${props => {
-      switch (props.$status) {
-        case 'completed':
-          return '#52c41a';
-        case 'pending':
-          return '#fa8c16';
-        case 'cancelled':
-          return '#ff4d4f';
-        default:
-          return '#666';
-      }
-    }};
-  }
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: ${props => {
+    switch (props.$status) {
+      case 'completed':
+        return '#f6ffed';
+      case 'pending':
+        return '#fff7e6';
+      case 'cancelled':
+        return '#fff2f0';
+      default:
+        return '#f0f0f0';
+    }
+  }};
+  border: 1px solid ${props => {
+    switch (props.$status) {
+      case 'completed':
+        return '#b7eb8f';
+      case 'pending':
+        return '#ffd591';
+      case 'cancelled':
+        return '#ffccc7';
+      default:
+        return '#d9d9d9';
+    }
+  }};
+  color: ${props => {
+    switch (props.$status) {
+      case 'completed':
+        return '#52c41a';
+      case 'pending':
+        return '#fa8c16';
+      case 'cancelled':
+        return '#ff4d4f';
+      default:
+        return '#666';
+    }
+  }};
 `;
 
 export const ActionButton = styled.button`

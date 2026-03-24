@@ -6,6 +6,7 @@ export const SubscriptionContainer = styled.div`
   gap: 16px;
   flex: 1;
   min-height: 0;
+  height: 100%;
 `;
 
 export const SectionGrid = styled.div`

@@ -6,17 +6,17 @@ export const LoginPage = styled.div`
   justify-content: center;
   padding: 32px 16px 48px;
   box-sizing: border-box;
-  background: radial-gradient(circle at 20% 20%, #ffffff, #f1f5f9);
+  background: var(--app-page-bg);
 `;
 
 export const Panel = styled.div`
   width: 100%;
   max-width: 520px;
-  background: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border-color);
   border-radius: 20px;
   padding: 32px;
-  box-shadow: 0 35px 70px rgba(15, 23, 42, 0.15);
+  box-shadow: var(--app-card-shadow);
 
   @media (max-width: 768px) {
     padding: 24px;
@@ -27,7 +27,7 @@ export const FormCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  color: #0f172a;
+  color: var(--app-text-primary);
 
   .login-error {
     margin-bottom: 8px;
@@ -50,7 +50,7 @@ export const FormCard = styled.div`
   }
 
   .quick-fill {
-    border-top: 1px dashed rgba(148, 163, 184, 0.5);
+    border-top: 1px dashed var(--app-border-color);
     padding-top: 16px;
 
     .badges {
@@ -60,18 +60,19 @@ export const FormCard = styled.div`
       margin-top: 8px;
 
       button {
-        border: 1px solid rgba(148, 163, 184, 0.6);
+        border: 1px solid var(--app-border-color);
         border-radius: 10px;
         padding: 6px 12px;
-        background: #f8fafc;
-        color: #0f172a;
+        background: var(--app-surface-muted);
+        color: var(--app-text-primary);
         font-size: 12px;
         cursor: pointer;
         transition: all 0.2s ease;
 
         &:hover {
-          background: #e0f2ff;
+          background: var(--app-table-hover);
           border-color: #3b82f6;
+          color: #3b82f6;
         }
       }
 
@@ -81,3 +82,4 @@ export const FormCard = styled.div`
     }
   }
 `;
+

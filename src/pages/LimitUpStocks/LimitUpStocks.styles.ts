@@ -15,6 +15,11 @@ export const LimitUpContent = styled(PageBody)`
 
 export const LimitUpStocksHeader = styled(PageHeader)`
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 
   .header-left {
     display: flex;
@@ -23,13 +28,13 @@ export const LimitUpStocksHeader = styled(PageHeader)`
 
     .date-info {
       font-size: 14px;
-      color: #333;
+      color: var(--app-text-primary);
       font-weight: 500;
     }
 
     .display-option {
       font-size: 14px;
-      color: #666;
+      color: var(--app-text-secondary);
     }
   }
 
@@ -44,17 +49,18 @@ export const LimitUpStocksHeader = styled(PageHeader)`
 
 export const SectorFilterBar = styled.div`
   display: flex;
-  background: #fff2f0;
+  background: var(--app-surface-muted);
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 16px;
   overflow-x: auto;
   gap: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--app-border-color);
 
   .sector-header {
     font-weight: 600;
-    color: #333;
+    color: var(--app-text-primary);
     min-width: 80px;
     display: flex;
     align-items: center;
@@ -66,15 +72,15 @@ export const SectorFilterBar = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 8px 12px;
-    background: white;
+    background: var(--app-surface);
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
     min-width: 80px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--app-border-color);
 
     &:hover {
-      background: #f0f0f0;
+      background: var(--app-table-hover);
     }
 
     &.selected {
@@ -85,47 +91,53 @@ export const SectorFilterBar = styled.div`
 
     .sector-count {
       font-size: 12px;
-      color: #666;
+      color: var(--app-text-secondary);
       margin-bottom: 2px;
     }
 
     .sector-name {
       font-size: 14px;
       font-weight: 500;
+      color: var(--app-text-primary);
       margin-bottom: 2px;
     }
 
     .sector-value {
       font-size: 12px;
-      color: #999;
+      color: var(--app-text-secondary);
     }
 
     &.selected .sector-count,
     &.selected .sector-value {
       color: rgba(255, 255, 255, 0.8);
     }
+
+    &.selected .sector-name {
+      color: white;
+    }
   }
 `;
 
 export const LadderTable = styled.div`
-  background: white;
+  background: var(--app-surface);
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--app-border-color);
   margin-bottom: 16px;
 
   .table-header {
     display: flex;
-    background: #fafafa;
-    border-bottom: 1px solid #e8e8e8;
+    background: var(--app-table-header-bg);
+    border-bottom: 1px solid var(--app-border-color);
 
     .header-cell {
       padding: 12px 8px;
       font-weight: 600;
       font-size: 14px;
-      color: #333;
+      color: var(--app-text-secondary);
       text-align: center;
-      border-right: 1px solid #e8e8e8;
+      border-right: 1px solid var(--app-border-color);
       min-height: 48px;
       display: flex;
       align-items: center;
@@ -141,7 +153,7 @@ export const LadderTable = styled.div`
   .table-body {
     .ladder-row {
       display: flex;
-      border-bottom: 1px solid #e8e8e8;
+      border-bottom: 1px solid var(--app-border-color);
 
       &:last-child {
         border-bottom: none;
@@ -149,8 +161,8 @@ export const LadderTable = styled.div`
 
       .ladder-level {
         padding: 12px 8px;
-        background: #fafafa;
-        border-right: 1px solid #e8e8e8;
+        background: var(--app-table-header-bg);
+        border-right: 1px solid var(--app-border-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -165,12 +177,12 @@ export const LadderTable = styled.div`
           .level-number {
             font-size: 16px;
             font-weight: 600;
-            color: #333;
+            color: var(--app-text-primary);
           }
 
           .level-count {
             font-size: 12px;
-            color: #666;
+            color: var(--app-text-secondary);
           }
         }
       }
@@ -178,7 +190,7 @@ export const LadderTable = styled.div`
       .sector-column {
         flex: 1;
         min-width: 120px;
-        border-right: 1px solid #e8e8e8;
+        border-right: 1px solid var(--app-border-color);
         padding: 8px;
         display: flex;
         flex-direction: column;
@@ -193,19 +205,20 @@ export const LadderTable = styled.div`
 `;
 
 export const StockCell = styled.div`
-  background: #f8f9fa;
+  background: var(--app-surface-muted);
   border-radius: 4px;
   padding: 6px 8px;
   font-size: 12px;
   line-height: 1.4;
+  border: 1px solid var(--app-border-color);
 
   .stock-time {
-    color: #666;
+    color: var(--app-text-secondary);
     font-weight: 500;
   }
 
   .stock-name {
-    color: #333;
+    color: var(--app-text-primary);
     font-weight: 600;
     margin: 2px 0;
   }
@@ -221,12 +234,12 @@ export const StockCell = styled.div`
   }
 
   .stock-volume {
-    color: #666;
+    color: var(--app-text-secondary);
     font-size: 11px;
   }
 
   .stock-ratio {
-    color: #999;
+    color: var(--app-text-secondary);
     font-size: 11px;
   }
 `;
@@ -255,9 +268,10 @@ export const StatsGrid = styled.div`
 `;
 
 export const LimitUpStocksCard = styled.div`
-  background: white;
+  background: var(--app-surface);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--app-border-color);
   overflow: hidden;
 `;
 
@@ -275,7 +289,7 @@ export const ClickableButton = styled.button`
   color: #1890ff;
 
   &:hover {
-    background-color: #e6f7ff;
+    background-color: var(--app-table-hover);
   }
 `;
 

@@ -19,7 +19,7 @@ export const UserManagementHeader = styled(PageHeader)`
     gap: 8px;
     font-size: 18px;
     font-weight: 600;
-    color: #111827;
+    color: var(--app-text-primary);
   }
 
   .header-actions {
@@ -40,7 +40,7 @@ export const UserManagementCard = styled(Card)`
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--app-border-color);
   box-shadow: var(--page-panel-shadow);
 
   .ant-card-body {

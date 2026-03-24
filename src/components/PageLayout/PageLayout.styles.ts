@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
   --page-panel-shadow: var(--app-card-shadow);
-  height: 100vh;
+  flex: 1;
   min-height: 100vh;
   padding: 16px 24px 24px;
   background: var(--app-page-bg);
