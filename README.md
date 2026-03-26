@@ -1,103 +1,77 @@
-﻿# A 股指标平台前端
+# 股票中台前端
 
-基于 React + TypeScript + Ant Design 构建的现代化 A 股指标与调仓管理系统，提供仪表盘、指标管理、调仓管理与系统设置等页面。
-
-## 功能特性
-
-### 🎯 仪表盘页面（大屏风格）
-
-- 蓝黑主题与渐变背景，长时间查看不疲劳
-- 右上角显示实时时间，可点击调整日期范围
-- 顶部数字指标：上证、深证、创业板等关键指数
-- 三列布局：左侧上证指数图，中部行业分布/资产配置，右侧深证成指图
-- 响应式适配，窄屏自动堆叠
-
-### 📊 指标管理页面
-
-- 居中标题及说明
-- 指标 CRUD：创建、查看、编辑、删除
-- 分类管理：技术指标、自定义指标、基本面指标
-- 状态切换：启用/禁用
-
-### 💼 调仓管理页面
-
-- 居中标题
-- 调仓记录完整展示
-- 统计卡片：待执行、已完成、总调仓数
-- 操作状态：买入、卖出、持有等
-
-### ⚙️ 系统设置页面
-
-- 居中标题
-- 个人信息、界面、数据、通知、风控等配置
-- 支持主题与语言切换
+`stock_middle_platform_web` 是股票中台的前端应用，基于 React、TypeScript 和 Vite 构建，当前主要服务于仪表盘、涨停复盘、投资组合、策略订阅、用户管理和系统设置页面。
 
 ## 技术栈
 
-- React 18 + TypeScript
-- Ant Design 5.x
-- Styled Components + Tailwind CSS
-- ECharts 图表
-- React Router 6
-- Vite + pnpm
+- React 19
+- TypeScript
+- Vite
+- React Router
+- Ant Design
+- styled-components
+- ECharts
+- Zustand
 
-## 开发环境
+## 当前页面
 
-- Node.js >= 16
-- pnpm >= 7
+- 仪表盘 `Dashboard`
+- 涨停复盘 `LimitUpStocks`
+- 投资组合 `Portfolio`
+- 登录 `Login`
+- 策略订阅 `StrategySubscription`
+- 用户管理 `UserManagement`
+- 系统设置 `Settings`
+
+## 目录结构
+
+```text
+src/
+|-- api/          接口封装
+|-- assets/       静态资源
+|-- components/   通用组件
+|-- constants/    常量
+|-- contexts/     认证与主题上下文
+|-- hooks/        自定义 hooks
+|-- pages/        页面模块
+|-- stores/       全局状态
+|-- styles/       全局样式与主题
+|-- types/        类型定义
+|-- utils/        工具函数
+|-- App.tsx       路由入口
+`-- main.tsx      应用入口
+```
+
+## 环境变量
+
+- `VITE_API_BASE_URL`
+  用于指定后端地址，例如 `http://localhost:8000/api/v1`
+- `VITE_ENABLE_API_MOCK`
+  设为 `true` 时启用前端内置 Mock 数据
+
+## 本地开发
 
 ```bash
-pnpm install      # 安装依赖
-pnpm dev          # 启动开发服务器
-pnpm build        # 构建生产版本
+pnpm install
+pnpm dev
 ```
 
-## 项目结构
+## 构建
 
-```
-src/
-├── components/          # 公共组件
-│  ├── EChart.tsx        # ECharts 封装
-│  └── Layout/           # 布局组件
-├── pages/
-│  ├── Dashboard/        # 仪表盘
-│  ├── Indicators/       # 指标管理
-│  ├── Portfolio/        # 调仓管理
-│  └── Settings/         # 系统设置
-├── styles/              # 全局样式
-├── types/               # TS 类型
-└── utils/               # 工具函数
+```bash
+pnpm build
 ```
 
-## 设计亮点
+## 当前实现说明
 
-### 🎨 视觉
+- API 封装位于 `src/api/`
+- 应用通过 `src/contexts/` 提供认证和主题能力
+- 路由集中在 `src/App.tsx`
+- 组件样式主要通过 `styled-components` 管理
+- 前端仍保留一部分 Mock 数据，用于没有后端时的页面联调
 
-- 大屏布局，适合监控
-- 蓝黑主题与毛玻璃效果
-- 渐变边框提升观感
+## 相关文档
 
-### 📱 体验
-
-- 时间与数据实时更新
-- 交互反馈完整（悬停、点击）
-- 响应式布局，兼容桌面与移动
-- 具备辅助功能（键盘导航、可读标签）
-
-## 开发规范
-
-- 全量 TypeScript 类型检查
-- 遵循 ESLint 规则
-- 使用函数式组件 + Hooks
-- 样式采用 Styled Components 封装
-
-## 浏览器支持
-
-- Chrome >= 88
-- Firefox >= 85
-- Safari >= 14
-- Edge >= 88
-
-## 许可
-
-MIT License
+- 接口需求说明见 `api-need.md`
+- 仪表盘说明见 `src/pages/Dashboard/README.md`
+- 图表组件说明见 `src/components/StockChart/README.md`
