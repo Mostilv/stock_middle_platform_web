@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   App as AntdApp,
   Table,
@@ -30,8 +30,8 @@ import {
   createUser,
   updateUser,
   deleteUser,
-} from './services/user.api';
-import type { User, UserCreate, UserUpdate } from './services/user.api';
+} from '../../api/users';
+import type { User } from '../../api/users';
 import {
   UserManagementContainer,
   UserManagementHeader,
@@ -84,7 +84,7 @@ const UserManagement: React.FC = () => {
       setLoading(true);
       if (editingUser) {
         // 编辑用户
-        const updateData: UserUpdate = {
+        const updateData: Partial<User> = {
           username: values.username,
           email: values.email,
           is_active: values.is_active,
@@ -98,7 +98,7 @@ const UserManagement: React.FC = () => {
         message.success('用户更新成功');
       } else {
         // 新增用户
-        const createData: UserCreate = {
+        const createData: Partial<User> = {
           username: values.username,
           email: values.email,
           password: values.password,

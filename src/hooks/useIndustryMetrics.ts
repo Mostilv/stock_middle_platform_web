@@ -1,6 +1,6 @@
-﻿import { useEffect, useState } from 'react';
-import type { IndustryMetricResponse } from '../api/modules/analytics';
-import { fetchIndustryMetrics } from '../api/modules/analytics';
+import { useEffect, useState } from 'react';
+import type { IndustryMetricsData as IndustryMetricResponse } from '../api/dashboard';
+import { fetchIndustryMetrics } from '../api/dashboard';
 
 interface IndustryMetricsState {
   data: IndustryMetricResponse | null;

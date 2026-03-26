@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Card,
   Checkbox,
@@ -11,8 +11,8 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
-import { fetchLimitUpOverview } from './services/limitUp.api';
-import type { LimitUpOverviewResponse } from './services/limitUp.api';
+import { fetchLimitUpOverview } from '../../api/limitUp';
+import type { LimitUpOverviewResponse } from '../../api/limitUp';
 import { LineChartOutlined, BarChartOutlined } from '@ant-design/icons';
 import {
   LimitUpContent,

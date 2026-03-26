@@ -1,4 +1,4 @@
-﻿import React, {
+import React, {
   useState,
   useCallback,
   useEffect,
@@ -8,9 +8,8 @@
 } from 'react';
 import type { CarouselRef } from 'antd/es/carousel';
 import { PageOne, PageTwo } from './components';
-import { getMarketData } from './services/marketData';
-import type { MarketDataState } from './services/marketData';
-import { fetchMarketData } from './services/marketData.api';
+import { fetchMarketData } from '../../api/dashboard';
+import type { RemoteMarketDataState as MarketDataState } from '../../api/dashboard';
 import type { HeroMetric, MarketNarrative } from './types';
 import TimeDisplay from './components/page-one/TimeDisplay';
 import { dashboardCopy as DASHBOARD_COPY } from './dashboardCopy';
@@ -36,9 +35,12 @@ const MARKET_ORDER: (keyof MarketDataState)[] = [
 
 const Dashboard: React.FC = React.memo(() => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [marketData, setMarketData] = useState<MarketDataState>(() =>
-    getMarketData(),
-  );
+  const [marketData, setMarketData] = useState<MarketDataState>({
+    shanghaiIndex: { current: 0, change: 0, history: [] },
+    nasdaqIndex: { current: 0, change: 0, history: [] },
+    goldIndex: { current: 0, change: 0, history: [] },
+    zhongzheng2000Index: { current: 0, change: 0, history: [] },
+  });
   const carouselRef = useRef<CarouselRef | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);

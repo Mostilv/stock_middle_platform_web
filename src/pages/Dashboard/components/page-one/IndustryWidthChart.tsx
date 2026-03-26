@@ -1,7 +1,7 @@
-﻿import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useEChart } from '../../../../hooks/useEChart';
 import { SHENWAN_LEVEL1_INDUSTRIES } from '../../../../constants/industries';
-import type { IndustryMetricResponse } from '../../../../api/modules/analytics';
+import type { IndustryMetricsData as IndustryMetricResponse } from '../../../../api/dashboard';
 import { formatShortDateLabel } from '../../../../utils/date';
 import {
   buildRankingTooltipContent,

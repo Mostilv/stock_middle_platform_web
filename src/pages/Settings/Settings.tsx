@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   App as AntdApp,
   Alert,
@@ -8,6 +8,7 @@ import {
   Col,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
@@ -25,13 +26,15 @@ import {
 } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
 import {
-  changeAccountPassword,
-  fetchAccountProfile,
+  fetchProfile,
+  updateProfile,
+  updatePassword,
+} from '../../api/auth';
+import {
   fetchSettingsData,
-  saveSettingsData,
-  updateAccountProfile,
-} from './services/settings.api';
-import type { SettingsDataResponse } from './services/settings.api';
+  updateSettingsData,
+} from '../../api/settings';
+import type { SettingsData as SettingsDataResponse } from '../../api/settings';
 import { useAuth } from '../../contexts/useAuth';
 import { useTheme } from '../../contexts/useTheme';
 import type { ThemeMode } from '../../contexts/theme-context';
@@ -155,7 +158,7 @@ const Settings: React.FC = () => {
     if (!isAuthenticated || profileLoadedRef.current) return;
     let mounted = true;
     profileLoadedRef.current = true;
-    fetchAccountProfile()
+    fetchProfile()
       .then(profile => {
         if (!mounted) return;
         const usernameValue = profile.username || user?.username || '';
@@ -211,7 +214,7 @@ const Settings: React.FC = () => {
       emailConfigs: emailConfigs as any,
       notificationTemplates: notificationTemplates as any,
     };
-    saveSettingsData(payload)
+    updateSettingsData(payload)
       .then(() => {
         updateUser({
           emailConfigs,
@@ -301,9 +304,9 @@ const Settings: React.FC = () => {
     try {
       const username = values.username?.trim() || user?.username || '';
       const avatarUrl = values.avatarUrl?.trim() || '';
-      const response = await updateAccountProfile({
+      const response = await updateProfile({
         username,
-        avatarUrl,
+        avatar_url: avatarUrl,
       });
       const resolvedUsername = response.username || username;
       const resolvedName =
@@ -354,7 +357,7 @@ const Settings: React.FC = () => {
     }
     setPasswordLoading(true);
     try {
-      await changeAccountPassword({
+      await updatePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });
@@ -589,110 +592,89 @@ const Settings: React.FC = () => {
             </Card>
           </SettingsCard>
 
-          <SettingsCard
-            style={{ display: passwordExpanded ? 'block' : 'none' }}
+          <Modal
+            title="修改密码"
+            open={passwordExpanded}
+            onCancel={() => {
+              setPasswordExpanded(false);
+              passwordForm.resetFields();
+            }}
+            footer={null}
+            destroyOnClose
+            width={480}
           >
-            <Card
-              title={
-                <Space>
-                  <CardIcon>
-                    <LockOutlined />
-                  </CardIcon>
-                  <span>账户安全</span>
-                </Space>
-              }
-              extra={
-                <Button
-                  type='text'
-                  icon={<CloseOutlined />}
-                  onClick={() => setPasswordExpanded(false)}
-                >
-                  关闭
-                </Button>
-              }
+            <Form
+              form={passwordForm}
+              layout='vertical'
+              onFinish={handlePasswordSubmit}
+              disabled={!isAuthenticated}
+              style={{ marginTop: 20 }}
             >
-              <Form
-                form={passwordForm}
-                layout='vertical'
-                onFinish={handlePasswordSubmit}
-                disabled={!isAuthenticated}
+              <Form.Item
+                label='旧密码'
+                name='currentPassword'
+                rules={[{ required: true, message: '请输入旧密码' }]}
               >
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Form.Item
-                      label='旧密码'
-                      name='currentPassword'
-                      rules={[{ required: true, message: '请输入旧密码' }]}
-                    >
-                      <Input.Password placeholder='请输入当前密码' />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label='新密码'
-                      name='newPassword'
-                      rules={[
-                        { required: true, message: '请输入新密码' },
-                        { min: 6, message: '新密码至少6个字符' },
-                      ]}
-                    >
-                      <Input.Password placeholder='请输入新密码' />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item
-                      label='确认新密码'
-                      name='confirmPassword'
-                      dependencies={['newPassword']}
-                      rules={[
-                        { required: true, message: '请确认新密码' },
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (
-                              !value ||
-                              getFieldValue('newPassword') === value
-                            )
-                              return Promise.resolve();
-                            return Promise.reject(
-                              new Error('两次输入的新密码不一致'),
-                            );
-                          },
-                        }),
-                      ]}
-                    >
-                      <Input.Password placeholder='请再次输入新密码' />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Form.Item style={{ marginBottom: 0 }}>
-                  <Space>
-                    <Button
-                      onClick={() => passwordForm.resetFields()}
-                      disabled={passwordLoading}
-                    >
-                      清空
-                    </Button>
-                    <Button
-                      type='primary'
-                      htmlType='submit'
-                      loading={passwordLoading}
-                      disabled={!isAuthenticated}
-                    >
-                      修改密码
-                    </Button>
-                  </Space>
-                </Form.Item>
-              </Form>
-              {!isAuthenticated && (
-                <Alert
-                  type='info'
-                  showIcon
-                  message='请先登录后再修改密码'
-                  style={{ marginTop: 16 }}
-                />
-              )}
-            </Card>
-          </SettingsCard>
+                <Input.Password placeholder='请输入当前密码' size="large" />
+              </Form.Item>
+              <Form.Item
+                label='新密码'
+                name='newPassword'
+                rules={[
+                  { required: true, message: '请输入新密码' },
+                  { min: 6, message: '新密码至少6个字符' },
+                ]}
+              >
+                <Input.Password placeholder='请输入新密码' size="large" />
+              </Form.Item>
+              <Form.Item
+                label='确认新密码'
+                name='confirmPassword'
+                dependencies={['newPassword']}
+                rules={[
+                  { required: true, message: '请确认新密码' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('newPassword') === value)
+                        return Promise.resolve();
+                      return Promise.reject(new Error('两次输入的新密码不一致'));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder='请再次输入新密码' size="large" />
+              </Form.Item>
+              <Form.Item style={{ marginBottom: 0, marginTop: 24, textAlign: 'right' }}>
+                <Space>
+                  <Button
+                    onClick={() => {
+                      setPasswordExpanded(false);
+                      passwordForm.resetFields();
+                    }}
+                    disabled={passwordLoading}
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    loading={passwordLoading}
+                    disabled={!isAuthenticated}
+                  >
+                    确认修改
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
+            {!isAuthenticated && (
+              <Alert
+                type='info'
+                showIcon
+                message='请先登录后再修改密码'
+                style={{ marginTop: 16 }}
+              />
+            )}
+          </Modal>
 
           <Form
             form={form}

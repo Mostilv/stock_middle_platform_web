@@ -1,4 +1,4 @@
-﻿import styled from 'styled-components';
+import styled from 'styled-components';
 import { Layout as AntLayout } from 'antd';
 
 const { Sider: AntSider, Header: AntHeader, Content: AntContent } = AntLayout;
@@ -50,6 +50,7 @@ export const SiderContainer = styled(AntSider)<{ $collapsed: boolean }>`
     flex: 1;
     overflow-y: auto;
     padding: 10px 6px;
+    position: relative;
   }
 
   .menu-scroll::-webkit-scrollbar {

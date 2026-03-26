@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   App as AntdApp,
   Card,
@@ -9,9 +9,9 @@ import {
   Table,
   Tag,
   Typography,
-  type CheckboxValueType,
-  type ColumnsType,
 } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { NotificationChannel, StrategySubscriptionPreference } from '../../types/subscription';
 import {
   BellOutlined,
   RadarChartOutlined,
@@ -28,11 +28,9 @@ import {
   fetchStrategySubscriptions,
   updateStrategySubscription,
   updateStrategyBlacklist,
-} from './services/subscription.api';
-import type {
-  NotificationChannel,
-  StrategySubscriptionItem,
-} from './services/subscription.api';
+} from '../../api/strategy';
+
+type StrategySubscriptionItem = any;
 import {
   CardPanel,
   ChannelRow,
@@ -91,11 +89,11 @@ const StrategySubscription: React.FC = () => {
 
   useEffect(() => {
     if (!user) return;
-    const subscriptions = Object.entries(subscriptionMap).map(
+    const subscriptions: StrategySubscriptionPreference[] = Object.entries(subscriptionMap).map(
       ([strategyId, pref]) => ({
         strategyId,
         subscribed: pref.subscribed,
-        channels: pref.channels,
+        channels: pref.channels as NotificationChannel[],
       }),
     );
     const existing = user.subscriptions ?? [];
@@ -116,7 +114,7 @@ const StrategySubscription: React.FC = () => {
           item.strategyId === next.strategyId &&
           item.subscribed === next.subscribed &&
           item.channels.length === next.channels.length &&
-          item.channels.every((channel, channelIndex) => {
+          item.channels.every((channel: string, channelIndex: number) => {
             return channel === next.channels[channelIndex];
           })
         );
@@ -193,7 +191,7 @@ const StrategySubscription: React.FC = () => {
     const preference = subscriptionMap[record.id];
     const currentChannels = preference?.channels ?? [];
     const payloadChannels =
-      channels && channels.length > 0 ? channels : currentChannels;
+      channels !== undefined ? channels : currentChannels;
     const targetId = preference?.externalId ?? record.id;
     try {
       await updateStrategySubscription({
@@ -241,7 +239,7 @@ const StrategySubscription: React.FC = () => {
 
   const handleChannelChange = async (
     record: SubscriptionRow,
-    values: CheckboxValueType[],
+    values: any[],
   ) => {
     if (strategiesLoaded && !isStrategyEnabled(record.id)) {
       message.warning('总策略信号停用时无法配置通知渠道');
@@ -335,20 +333,20 @@ const StrategySubscription: React.FC = () => {
       title: '策略',
       dataIndex: 'name',
       key: 'name',
-      render: (_: string, record) => <Text strong>{record.name}</Text>,
+      render: (_: string, record: SubscriptionRow) => <Text strong>{record.name}</Text>,
     },
     {
       title: '通知渠道',
       dataIndex: 'channels',
       key: 'channels',
       width: 240,
-      render: (_: NotificationChannel[], record) => (
+      render: (_: NotificationChannel[], record: SubscriptionRow) => (
         <ChannelRow>
           <Checkbox.Group
             options={[{ label: '邮件', value: 'email' }]}
             value={record.channels}
             disabled={strategiesLoaded && !isStrategyEnabled(record.id)}
-            onChange={values => handleChannelChange(record, values)}
+            onChange={(values: any[]) => handleChannelChange(record, values)}
           />
         </ChannelRow>
       ),
@@ -357,7 +355,7 @@ const StrategySubscription: React.FC = () => {
       title: '订阅',
       key: 'subscription',
       width: 110,
-      render: (_: unknown, record) => {
+      render: (_: unknown, record: SubscriptionRow) => {
         const disabled = strategiesLoaded && !isStrategyEnabled(record.id);
         const switchDisabled = disabled && !record.subscribed;
         return (
@@ -372,7 +370,7 @@ const StrategySubscription: React.FC = () => {
               disabled={switchDisabled}
               checked={record.subscribed}
               loading={savingId === record.id}
-              onChange={checked => handleSubscriptionToggle(record, checked)}
+              onChange={(checked: boolean) => handleSubscriptionToggle(record, checked)}
             />
             {disabled && (
               <Text type='secondary' style={{ fontSize: 12 }}>
@@ -462,8 +460,8 @@ const StrategySubscription: React.FC = () => {
                     value={blacklistInput}
                     disabled={blacklistSaving}
                     loading={blacklistSaving}
-                    onChange={e => setBlacklistInput(e.target.value)}
-                    onSearch={value => handleBlacklistAdd(value)}
+                    onChange={(e: any) => setBlacklistInput(e.target.value)}
+                    onSearch={(value: string) => handleBlacklistAdd(value)}
                   />
                   {blacklist.length === 0 ? (
                     <EmptyState>暂无黑名单股票</EmptyState>
@@ -473,7 +471,7 @@ const StrategySubscription: React.FC = () => {
                         <Tag
                           key={item}
                           closable={!blacklistSaving}
-                          onClose={e => {
+                          onClose={(e: any) => {
                             e.preventDefault();
                             handleBlacklistRemove(item);
                           }}

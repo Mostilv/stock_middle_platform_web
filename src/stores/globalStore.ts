@@ -1,10 +1,10 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 import type { AuthUser } from '../contexts/auth-context';
 import {
   fetchPortfolioOverview,
   type PortfolioOverviewResponse,
-  type StrategyDTO,
-} from '../pages/Portfolio/services/portfolio.api';
+  type StrategyPortfolio as StrategyDTO,
+} from '../api/portfolio';
 
 export interface GlobalStoreState {
   user: AuthUser | null;
@@ -40,17 +40,30 @@ export const useGlobalStore = create<GlobalStoreState>((set, get) => ({
       strategies: overview.strategies,
       strategiesLoaded: true,
     }),
-  toggleStrategyStatus: strategyId => {
+  toggleStrategyStatus: async strategyId => {
+    const { strategies } = get();
+    const strategy = strategies.find(s => s.id === strategyId);
+    if (!strategy) return;
+    const newStatus = strategy.status === 'active' ? 'inactive' : 'active';
+    
+    // 乐观更新
     set(state => ({
-      strategies: state.strategies.map(strategy =>
-        strategy.id === strategyId
-          ? {
-              ...strategy,
-              status: strategy.status === 'active' ? 'inactive' : 'active',
-            }
-          : strategy,
+      strategies: state.strategies.map(s =>
+        s.id === strategyId ? { ...s, status: newStatus } : s,
       ),
     }));
+
+    try {
+      const { togglePortfolioStrategy } = await import('../api/portfolio');
+      await togglePortfolioStrategy(strategyId, newStatus === 'active');
+    } catch (e) {
+      // 请求失败则回滚状态
+      set(state => ({
+        strategies: state.strategies.map(s =>
+          s.id === strategyId ? { ...s, status: strategy.status } : s,
+        ),
+      }));
+    }
   },
   isStrategyEnabled: strategyId =>
     get().strategies.find(strategy => strategy.id === strategyId)?.status ===

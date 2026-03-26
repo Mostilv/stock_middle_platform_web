@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Table,
@@ -84,6 +84,8 @@ const Portfolio: React.FC = () => {
   const toggleStrategyStatus = useGlobalStore(
     state => state.toggleStrategyStatus,
   );
+  const user = useGlobalStore(state => state.user);
+  const isAdmin = user?.role === 'admin';
   useEffect(() => {
     loadStrategies().catch(() => {});
   }, [loadStrategies]);
@@ -462,17 +464,19 @@ const Portfolio: React.FC = () => {
                       创建于 {strategy.createdAt}
                     </Text>
                   </div>
-                  <div onClick={e => e.stopPropagation()}>
-                    <Switch
-                      checked={strategy.status === 'active'}
-                      onChange={(_checked, event) => {
-                        event?.stopPropagation();
-                        toggleStrategyStatus(strategy.id);
-                      }}
-                      checkedChildren='启用'
-                      unCheckedChildren='停用'
-                    />
-                  </div>
+                  {isAdmin && (
+                    <div onClick={e => e.stopPropagation()}>
+                      <Switch
+                        checked={strategy.status === 'active'}
+                        onChange={(_checked, event) => {
+                          event?.stopPropagation();
+                          toggleStrategyStatus(strategy.id);
+                        }}
+                        checkedChildren='启用'
+                        unCheckedChildren='停用'
+                      />
+                    </div>
+                  )}
                 </div>
               ),
               children: (

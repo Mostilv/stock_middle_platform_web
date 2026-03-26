@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Avatar, Menu } from 'antd';
 import {
   LeftOutlined,
@@ -32,7 +32,7 @@ const LayoutComponent: React.FC = React.memo(() => {
     user?.displayName?.charAt(0).toUpperCase() ||
     'U';
 
-  const menuItems = [
+  const baseMenuItems = [
     {
       key: '/',
       icon: <DashboardOutlined />,
@@ -64,6 +64,13 @@ const LayoutComponent: React.FC = React.memo(() => {
       label: '设置',
     },
   ];
+
+  const visibleMenuItems = baseMenuItems.filter((item) => {
+    if (item.key === '/user-management') {
+      return user?.role === 'admin';
+    }
+    return true;
+  });
 
   // 使用useCallback优化事件处理函数
   const handleMenuClick = useCallback(
@@ -143,7 +150,7 @@ const LayoutComponent: React.FC = React.memo(() => {
             theme='dark'
             mode='inline'
             selectedKeys={[location.pathname]}
-            items={menuItems}
+            items={visibleMenuItems}
             onClick={handleMenuClick}
           />
         </div>
